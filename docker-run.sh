@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME=redss-csap
+IMAGE_NAME=adss-csap
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -79,7 +79,7 @@ fi
 CMD="
     $GSUTIL_CP_CMD \
 
-    pipenv run $PROFILE_CPU_CMD python -u redss_pipeline.py $DRIVE_UPLOAD_ARG \
+    pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
     \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \
