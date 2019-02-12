@@ -17,10 +17,10 @@ class CodeSchemes(object):
 
     GENDER = _open_scheme("gender.json")
     MOGADISHU_SUB_DISTRICT = _open_scheme("mogadishu_sub_district.json")
-    DISTRICT = _open_scheme("district.json")
-    REGION = _open_scheme("region.json")
-    STATE = _open_scheme("state.json")
-    ZONE = _open_scheme("zone.json")
+    SOMALIA_DISTRICT = _open_scheme("somalia_district.json")
+    SOMALIA_REGION = _open_scheme("somalia_region.json")
+    SOMALIA_STATE = _open_scheme("somalia_state.json")
+    SOMALIA_ZONE = _open_scheme("somalia_zone.json")
     AGE = _open_scheme("age.json")
     IDP_CAMP = _open_scheme("idp_camp.json")
     RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
@@ -99,7 +99,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key="district",
                    cleaner=somali.DemographicCleaner.clean_somalia_district,
-                   code_scheme=CodeSchemes.DISTRICT),
+                   code_scheme=CodeSchemes.SOMALIA_DISTRICT),
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
@@ -108,7 +108,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key="region",
                    cleaner=None,
-                   code_scheme=CodeSchemes.REGION),
+                   code_scheme=CodeSchemes.SOMALIA_REGION),
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
@@ -117,7 +117,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key="state",
                    cleaner=None,
-                   code_scheme=CodeSchemes.STATE),
+                   code_scheme=CodeSchemes.SOMALIA_STATE),
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
@@ -126,7 +126,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key="zone",
                    cleaner=None,
-                   code_scheme=CodeSchemes.ZONE),
+                   code_scheme=CodeSchemes.SOMALIA_ZONE),
     ]
 
     SURVEY_CODING_PLANS = [
