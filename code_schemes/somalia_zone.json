@@ -1,83 +1,39 @@
 {
-  "SchemeID": "Scheme-a390e6ce",
-  "Name": "State",
+  "SchemeID": "Scheme-b8ce44fb",
+  "Name": "Somalia Zone",
   "Version": "0.0.0.1",
   "Codes": [
     {
-      "CodeID": "code-3951a76e",
+      "CodeID": "code-af199806",
       "CodeType": "Normal",
-      "DisplayText": "banadir",
-      "StringValue": "banadir",
+      "DisplayText": "nez",
+      "StringValue": "nez",
       "NumericValue": 1,
       "VisibleInCoda": true,
       "MatchValues": [
-        "banadir"
+        "nez"
       ]
     },
     {
-      "CodeID": "code-42498bd0",
+      "CodeID": "code-af3d9e5b",
       "CodeType": "Normal",
-      "DisplayText": "galmudug",
-      "StringValue": "galmudug",
+      "DisplayText": "nwz",
+      "StringValue": "nwz",
       "NumericValue": 2,
       "VisibleInCoda": true,
       "MatchValues": [
-        "galmudug"
+        "nwz"
       ]
     },
     {
-      "CodeID": "code-79e2b000",
+      "CodeID": "code-dc3483fa",
       "CodeType": "Normal",
-      "DisplayText": "hir-shabelle",
-      "StringValue": "hir-shabelle",
+      "DisplayText": "scz",
+      "StringValue": "scz",
       "NumericValue": 3,
       "VisibleInCoda": true,
       "MatchValues": [
-        "hir-shabelle"
-      ]
-    },
-    {
-      "CodeID": "code-0a1aaafb",
-      "CodeType": "Normal",
-      "DisplayText": "jubbaland",
-      "StringValue": "jubbaland",
-      "NumericValue": 4,
-      "VisibleInCoda": true,
-      "MatchValues": [
-        "jubbaland"
-      ]
-    },
-    {
-      "CodeID": "code-8ba54648",
-      "CodeType": "Normal",
-      "DisplayText": "puntland",
-      "StringValue": "puntland",
-      "NumericValue": 5,
-      "VisibleInCoda": true,
-      "MatchValues": [
-        "puntland"
-      ]
-    },
-    {
-      "CodeID": "code-3e70a2b5",
-      "CodeType": "Normal",
-      "DisplayText": "somaliland",
-      "StringValue": "somaliland",
-      "NumericValue": 6,
-      "VisibleInCoda": true,
-      "MatchValues": [
-        "somaliland"
-      ]
-    },
-    {
-      "CodeID": "code-1cb9c226",
-      "CodeType": "Normal",
-      "DisplayText": "south west state",
-      "StringValue": "south west state",
-      "NumericValue": 7,
-      "VisibleInCoda": true,
-      "MatchValues": [
-        "south west state"
+        "scz"
       ]
     },
     {
