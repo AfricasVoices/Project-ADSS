@@ -32,7 +32,12 @@ if __name__ == "__main__":
     uuid_table_path = f"{root_data_dir}/UUIDs/phone_uuids.json"
 
     SHOWS = [
-        # TODO
+        "csap_s02e01_activation",
+        "csap_s02e02_activation",
+        "csap_s02e03_activation",
+        "csap_s02e04_activation",
+        "csap_s02e05_activation",
+        "csap_s02e06_activation"
     ]
 
     SURVEYS = [
