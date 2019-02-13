@@ -140,7 +140,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key=None,
                    cleaner=None,
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
@@ -186,7 +186,7 @@ class PipelineConfiguration(object):
                    coda_filename="gender.json",
                    analysis_file_key="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
-                   code_scheme=None)
+                   code_scheme=None)  # TODO
     ]
     SURVEY_CODING_PLANS.extend(LOCATION_CODING_PLANS)
     SURVEY_CODING_PLANS.extend([
@@ -196,7 +196,7 @@ class PipelineConfiguration(object):
                    coda_filename="age.json",
                    analysis_file_key="age",
                    cleaner=lambda text: PipelineConfiguration.clean_age_with_range_filter(text),
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="idp_camp_raw",
                    coded_field="idp_camp_coded",
@@ -204,7 +204,7 @@ class PipelineConfiguration(object):
                    coda_filename="idp_camp.json",
                    analysis_file_key="idp_camp",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="recently_displaced_raw",
                    coded_field="recently_displaced_coded",
@@ -212,7 +212,7 @@ class PipelineConfiguration(object):
                    coda_filename="recently_displaced.json",
                    analysis_file_key="recently_displaced",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="hh_language_raw",
                    coded_field="hh_language_coded",
@@ -220,7 +220,7 @@ class PipelineConfiguration(object):
                    coda_filename="hh_language.json",
                    analysis_file_key="hh_language",
                    cleaner=None,
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="repeated_raw",
                    coded_field="repeated_coded",
@@ -228,7 +228,7 @@ class PipelineConfiguration(object):
                    coda_filename="repeated.json",
                    analysis_file_key="repeated",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=None),
+                   code_scheme=None),  # TODO
 
         CodingPlan(raw_field="involved_raw",
                    coded_field="involved_coded",
@@ -236,5 +236,5 @@ class PipelineConfiguration(object):
                    coda_filename="involved.json",
                    analysis_file_key="involved",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=None)
+                   code_scheme=None)  # TODO
     ])
