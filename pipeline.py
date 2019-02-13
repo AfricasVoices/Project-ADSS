@@ -3,6 +3,8 @@ import argparse
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable
 
+from src import CombineRawDatasets
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
                                      # Support \n and long lines
@@ -126,5 +128,9 @@ if __name__ == "__main__":
     print("Loading Evaluation...")
     with open(evaluation_input_path, "r") as f:
         evaluation = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+
+    # Add survey data to the messages
+    print("Combining Datasets...")
+    data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [demographics, evaluation])
 
     print("Python script complete")

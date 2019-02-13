@@ -34,5 +34,5 @@ RUN mkdir /data
 
 # Copy the rest of the project
 ADD code_schemes/*.json /app/code_schemes/
-#ADD project_redss /app/project_redss
+ADD src /app/src
 ADD pipeline.py /app
