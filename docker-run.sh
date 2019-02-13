@@ -34,7 +34,7 @@ if [[ $# -ne 17 ]]; then
     [--drive-upload <drive-auth-file> <messages-drive-path> <individuals-drive-path> <production-drive-path>]
     <user> <phone-number-uuid-table-path>
     <s02e01-input-path> <s02e02-input-path> <s02e03-input-path> <s02e04-input-path> <s02e05-input-path> <s02e06-input-path>
-    <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path>
+    <s01-demog-input-path> <s02-demog-input-path> <prev-coded-dir> <json-output-path>
     <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>"
     exit
 fi
@@ -48,8 +48,8 @@ INPUT_S02E03=$5
 INPUT_S02E04=$6
 INPUT_S02E05=$7
 INPUT_S02E06=$8
-INPUT_DEMOG=$9
-INPUT_EVALUATION=${10}
+INPUT_S01_DEMOG=$9
+INPUT_S02_DEMOG=${10}
 PREV_CODED_DIR=${11}
 OUTPUT_JSON=${12}
 OUTPUT_ICR_DIR=${13}
@@ -83,7 +83,7 @@ CMD="
     \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \
-    /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
+    /data/s01-demog-input.json /data/s02-demog-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
 "
@@ -103,8 +103,8 @@ docker cp "$INPUT_S02E03" "$container:/data/s02e03-input.json"
 docker cp "$INPUT_S02E04" "$container:/data/s02e04-input.json"
 docker cp "$INPUT_S02E05" "$container:/data/s02e05-input.json"
 docker cp "$INPUT_S02E06" "$container:/data/s02e06-input.json"
-docker cp "$INPUT_DEMOG" "$container:/data/demog-input.json"
-docker cp "$INPUT_EVALUATION" "$container:/data/evaluation-input.json"
+docker cp "$INPUT_S01_DEMOG" "$container:/data/s01-demog-input.json"
+docker cp "$INPUT_S02_DEMOG" "$container:/data/s02-demog-input.json"
 if [[ -d "$PREV_CODED_DIR" ]]; then
     docker cp "$PREV_CODED_DIR" "$container:/data/prev-coded"
 fi
@@ -116,20 +116,20 @@ docker start -a -i "$container"
 mkdir -p "$(dirname "$OUTPUT_JSON")"
 docker cp "$container:/data/output.json" "$OUTPUT_JSON"
 
-mkdir -p "$OUTPUT_ICR_DIR"
-docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
-
-mkdir -p "$OUTPUT_CODED_DIR"
-docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
-
-mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
-docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
-
-mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
-docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
-
-mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
-docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
+#mkdir -p "$OUTPUT_ICR_DIR"
+#docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
+#
+#mkdir -p "$OUTPUT_CODED_DIR"
+#docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
+#
+#mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
+#docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
+#
+#mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
+#docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
+#
+#mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
+#docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
 
 if [[ "$PROFILE_CPU" = true ]]; then
     mkdir -p "$(dirname "$CPU_PROFILE_OUTPUT_PATH")"
