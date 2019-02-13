@@ -1,7 +1,7 @@
 {
   "SchemeID": "Scheme-07dfc611",
   "Name": "Mogadishu Sub-District",
-  "Version": "0.0.0.1",
+  "Version": "0.0.0.2",
   "Codes": [
     {
       "CodeID": "code-d170504a",
@@ -89,6 +89,17 @@
       "VisibleInCoda": true,
       "MatchValues": [
         "karaan"
+      ]
+    },
+    {
+      "CodeID": "code-15b664b5",
+      "CodeType": "Normal",
+      "DisplayText": "kaxda",
+      "StringValue": "kaxda",
+      "NumericValue": 17,
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "kaxda"
       ]
     },
     {
