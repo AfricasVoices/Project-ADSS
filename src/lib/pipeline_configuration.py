@@ -55,7 +55,7 @@ class CodingPlan(object):
 
 
 class PipelineConfiguration(object):
-    DEV_MODE = False
+    DEV_MODE = True
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s02e01_raw",
