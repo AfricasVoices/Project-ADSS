@@ -42,7 +42,8 @@ if __name__ == "__main__":
 
     SURVEYS = [
         "csap_demog",
-        # TODO
+        "csap_s02_demog"
+        # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
     TEST_CONTACTS_PATH = os.path.abspath("./test_contacts.json")
