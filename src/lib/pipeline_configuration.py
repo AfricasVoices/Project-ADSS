@@ -4,30 +4,30 @@ from core_data_modules.cleaners import somali, Codes
 from core_data_modules.data_models import Scheme
 
 
-class CodeSchemes(object):
-    @staticmethod
-    def _open_scheme(filename):
-        with open(f"code_schemes/{filename}", "r") as f:
-            firebase_map = json.load(f)
-            return Scheme.from_firebase_map(firebase_map)
+def _open_scheme(filename):
+    with open(f"code_schemes/{filename}", "r") as f:
+        firebase_map = json.load(f)
+        return Scheme.from_firebase_map(firebase_map)
 
+
+class CodeSchemes(object):
     S02E01_REASONS = _open_scheme("s02e01_reasons.json")
 
-    OPERATOR = _open_scheme("operator.json")
+    # OPERATOR = _open_scheme("operator.json")
 
-    GENDER = _open_scheme("gender.json")
-    MOGADISHU_SUB_DISTRICT = _open_scheme("mogadishu_sub_district.json")
+    # GENDER = _open_scheme("gender.json")
+    # MOGADISHU_SUB_DISTRICT = _open_scheme("mogadishu_sub_district.json")
     SOMALIA_DISTRICT = _open_scheme("somalia_district.json")
     SOMALIA_REGION = _open_scheme("somalia_region.json")
     SOMALIA_STATE = _open_scheme("somalia_state.json")
     SOMALIA_ZONE = _open_scheme("somalia_zone.json")
-    AGE = _open_scheme("age.json")
-    IDP_CAMP = _open_scheme("idp_camp.json")
-    RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
-    HH_LANGUAGE = _open_scheme("hh_language.json")
+    # AGE = _open_scheme("age.json")
+    # IDP_CAMP = _open_scheme("idp_camp.json")
+    # RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
+    # HH_LANGUAGE = _open_scheme("hh_language.json")
 
-    REPEATED = _open_scheme("repeated.json")
-    INVOLVED = _open_scheme("involved.json")
+    # REPEATED = _open_scheme("repeated.json")
+    # INVOLVED = _open_scheme("involved.json")
 
     # WS_CORRECT_DATASET = _open_scheme("ws_correct_dataset.json")
 
@@ -90,7 +90,7 @@ class PipelineConfiguration(object):
                    coda_filename="location.json",
                    analysis_file_key=None,
                    cleaner=None,
-                   code_scheme=CodeSchemes.MOGADISHU_SUB_DISTRICT),
+                   code_scheme=None),
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
@@ -136,7 +136,7 @@ class PipelineConfiguration(object):
                    coda_filename="gender.json",
                    analysis_file_key="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
-                   code_scheme=CodeSchemes.GENDER)
+                   code_scheme=None)
     ]
     SURVEY_CODING_PLANS.extend(LOCATION_CODING_PLANS)
     SURVEY_CODING_PLANS.extend([
@@ -146,7 +146,7 @@ class PipelineConfiguration(object):
                    coda_filename="age.json",
                    analysis_file_key="age",
                    cleaner=lambda text: PipelineConfiguration.clean_age_with_range_filter(text),
-                   code_scheme=CodeSchemes.AGE),
+                   code_scheme=None),
 
         CodingPlan(raw_field="idp_camp_raw",
                    coded_field="idp_camp_coded",
@@ -154,7 +154,7 @@ class PipelineConfiguration(object):
                    coda_filename="idp_camp.json",
                    analysis_file_key="idp_camp",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=CodeSchemes.IDP_CAMP),
+                   code_scheme=None),
 
         CodingPlan(raw_field="recently_displaced_raw",
                    coded_field="recently_displaced_coded",
@@ -162,7 +162,7 @@ class PipelineConfiguration(object):
                    coda_filename="recently_displaced.json",
                    analysis_file_key="recently_displaced",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=CodeSchemes.RECENTLY_DISPLACED),
+                   code_scheme=None),
 
         CodingPlan(raw_field="hh_language_raw",
                    coded_field="hh_language_coded",
@@ -170,7 +170,7 @@ class PipelineConfiguration(object):
                    coda_filename="hh_language.json",
                    analysis_file_key="hh_language",
                    cleaner=None,
-                   code_scheme=CodeSchemes.HH_LANGUAGE),
+                   code_scheme=None),
 
         CodingPlan(raw_field="repeated_raw",
                    coded_field="repeated_coded",
@@ -178,7 +178,7 @@ class PipelineConfiguration(object):
                    coda_filename="repeated.json",
                    analysis_file_key="repeated",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=CodeSchemes.REPEATED),
+                   code_scheme=None),
 
         CodingPlan(raw_field="involved_raw",
                    coded_field="involved_coded",
@@ -186,5 +186,5 @@ class PipelineConfiguration(object):
                    coda_filename="involved.json",
                    analysis_file_key="involved",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
-                   code_scheme=CodeSchemes.INVOLVED)
+                   code_scheme=None)
     ])

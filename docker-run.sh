@@ -127,9 +127,9 @@ docker cp "$container:/data/output.json" "$OUTPUT_JSON"
 #
 #mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
 #docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
-#
-#mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
-#docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
+
+mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
+docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
 
 if [[ "$PROFILE_CPU" = true ]]; then
     mkdir -p "$(dirname "$CPU_PROFILE_OUTPUT_PATH")"

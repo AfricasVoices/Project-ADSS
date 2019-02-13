@@ -4,6 +4,8 @@ from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 
 from src import CombineRawDatasets
+from src.production_file import ProductionFile
+from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -132,6 +134,12 @@ if __name__ == "__main__":
     # Add survey data to the messages
     print("Combining Datasets...")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
+
+    print("Translating Rapid Pro Keys...")
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
+
+    print("Exporting production CSV...")
+    data = ProductionFile.generate(data, production_csv_output_path)
 
     print("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
