@@ -66,7 +66,57 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e01_run_id",
                    analysis_file_key="rqa_s02e01_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS)
+                   code_scheme=CodeSchemes.S02E01_REASONS),
+
+        CodingPlan(raw_field="rqa_s02e02_raw",
+                   coded_field="rqa_s02e02_coded",
+                   time_field="sent_on",
+                   coda_filename="s02e02.json",
+                   icr_filename="s02e02.csv",
+                   run_id_field="rqa_s02e02_run_id",
+                   analysis_file_key="rqa_s02e02_",
+                   cleaner=None,
+                   code_scheme=None),  # TODO
+
+        CodingPlan(raw_field="rqa_s02e03_raw",
+                   coded_field="rqa_s02e03_coded",
+                   time_field="sent_on",
+                   coda_filename="s02e03.json",
+                   icr_filename="s02e03.csv",
+                   run_id_field="rqa_s02e03_run_id",
+                   analysis_file_key="rqa_s02e03_",
+                   cleaner=None,
+                   code_scheme=None),  # TODO
+
+        CodingPlan(raw_field="rqa_s02e04_raw",
+                   coded_field="rqa_s02e04_coded",
+                   time_field="sent_on",
+                   coda_filename="s02e04.json",
+                   icr_filename="s02e04.csv",
+                   run_id_field="rqa_s02e04_run_id",
+                   analysis_file_key="rqa_s02e04_",
+                   cleaner=None,
+                   code_scheme=None),  # TODO
+
+        CodingPlan(raw_field="rqa_s02e05_raw",
+                   coded_field="rqa_s02e05_coded",
+                   time_field="sent_on",
+                   coda_filename="s02e05.json",
+                   icr_filename="s02e05.csv",
+                   run_id_field="rqa_s02e05_run_id",
+                   analysis_file_key="rqa_s02e05_",
+                   cleaner=None,
+                   code_scheme=None),  # TODO
+
+        CodingPlan(raw_field="rqa_s02e06_raw",
+                   coded_field="rqa_s02e06_coded",
+                   time_field="sent_on",
+                   coda_filename="s02e06.json",
+                   icr_filename="s02e06.csv",
+                   run_id_field="rqa_s02e06_run_id",
+                   analysis_file_key="rqa_s02e06_",
+                   cleaner=None,
+                   code_scheme=None),  # TODO
     ]
 
     @staticmethod
