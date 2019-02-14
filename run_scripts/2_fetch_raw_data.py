@@ -46,7 +46,7 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
-    TEST_CONTACTS_PATH = os.path.abspath("./test_contacts.json")
+    TEST_CONTACTS_PATH = os.path.abspath("./test_contact_rapid_pro_ids.json")
 
     # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
