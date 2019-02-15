@@ -32,8 +32,8 @@ class TranslateRapidProKeys(object):
         ("idp_camp_time", "Idp_Camp (Time) - csap_demog"),
         ("recently_displaced_raw", "Recently_Displaced (Value) - csap_demog"),
         ("recently_displaced_time", "Recently_Displaced (Time) - csap_demog"),
-        ("hh_language_raw", "Hh_Language (Value) - csap_demog"),
-        ("hh_language_time", "Hh_Language (Time) - csap_demog"),
+        ("household_language_raw", "Hh_Language (Value) - csap_demog"),
+        ("household_language_time", "Hh_Language (Time) - csap_demog"),
 
         ("gender_raw", "Gender (Value) - csap_s02_demog"),
         ("gender_time", "Gender (Time) - csap_s02_demog"),
@@ -45,8 +45,8 @@ class TranslateRapidProKeys(object):
         ("idp_camp_time", "Idp_Camp (Time) - csap_s02_demog"),
         ("recently_displaced_raw", "Recently_Displaced (Value) - csap_s02_demog"),
         ("recently_displaced_time", "Recently_Displaced (Time) - csap_s02_demog"),
-        ("hh_language_raw", "Hh_Language (Value) - csap_s02_demog"),
-        ("hh_language_time", "Hh_Language (Time) - csap_s02_demog"),
+        ("household_language_raw", "Hh_Language (Value) - csap_s02_demog"),
+        ("household_language_time", "Hh_Language (Time) - csap_s02_demog"),
 
         # ("repeated_raw", "Repeated (Value) - csap_evaluation"),
         # ("repeated_time", "Repeated (Time) - csap_evaluation"),
