@@ -1,5 +1,7 @@
 import json
+from datetime import datetime
 
+import pytz
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.data_models import Scheme
 
@@ -56,6 +58,9 @@ class CodingPlan(object):
 
 class PipelineConfiguration(object):
     DEV_MODE = True
+    
+    PROJECT_START_DATE = pytz.utc.localize(datetime.min)
+    PROJECT_END_DATE = pytz.utc.localize(datetime.max)
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s02e01_raw",
