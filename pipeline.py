@@ -1,9 +1,13 @@
 import argparse
+import os
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from storage.google_drive import drive_client_wrapper
 
 from src import CombineRawDatasets
+from src.production_file import ProductionFile
+from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -132,6 +136,24 @@ if __name__ == "__main__":
     # Add survey data to the messages
     print("Combining Datasets...")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
+
+    print("Translating Rapid Pro Keys...")
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
+
+    print("Exporting production CSV...")
+    data = ProductionFile.generate(data, production_csv_output_path)
+
+    if drive_upload:
+        print("Uploading CSVs to Google Drive...")
+        drive_client_wrapper.init_client(drive_credentials_path)
+
+        production_csv_drive_dir = os.path.dirname(production_csv_drive_path)
+        production_csv_drive_file_name = os.path.basename(production_csv_drive_path)
+        drive_client_wrapper.update_or_create(production_csv_output_path, production_csv_drive_dir,
+                                              target_file_name=production_csv_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
+    else:
+        print("Not uploading to Google Drive")
 
     print("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
