@@ -122,11 +122,11 @@ docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
 mkdir -p "$OUTPUT_CODED_DIR"
 docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
 
-#mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
-#docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
-#
-#mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
-#docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
+mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
+docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
+
+mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
+docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
 docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
