@@ -116,9 +116,9 @@ docker start -a -i "$container"
 mkdir -p "$(dirname "$OUTPUT_JSON")"
 docker cp "$container:/data/output.json" "$OUTPUT_JSON"
 
-#mkdir -p "$OUTPUT_ICR_DIR"
-#docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
-#
+mkdir -p "$OUTPUT_ICR_DIR"
+docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
+
 #mkdir -p "$OUTPUT_CODED_DIR"
 #docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
 #

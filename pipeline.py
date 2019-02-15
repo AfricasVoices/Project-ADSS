@@ -6,6 +6,7 @@ from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from storage.google_drive import drive_client_wrapper
 
 from src import CombineRawDatasets
+from src.auto_code_show_messages import AutoCodeShowMessages
 from src.production_file import ProductionFile
 from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
@@ -139,6 +140,9 @@ if __name__ == "__main__":
 
     print("Translating Rapid Pro Keys...")
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
+
+    print("Auto Coding Messages...")
+    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
     print("Exporting production CSV...")
     data = ProductionFile.generate(data, production_csv_output_path)
