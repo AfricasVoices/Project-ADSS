@@ -1,9 +1,8 @@
 import json
-from datetime import datetime
 
-import pytz
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.data_models import Scheme
+from dateutil.parser import isoparse
 
 
 def _open_scheme(filename):
@@ -59,8 +58,8 @@ class CodingPlan(object):
 class PipelineConfiguration(object):
     DEV_MODE = True
     
-    PROJECT_START_DATE = pytz.utc.localize(datetime.min)
-    PROJECT_END_DATE = pytz.utc.localize(datetime.max)
+    PROJECT_START_DATE = isoparse("2019-02-17T00:00:00+03:00")
+    PROJECT_END_DATE = isoparse("2019-03-30T24:00:00+03:00")
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s02e01_raw",
