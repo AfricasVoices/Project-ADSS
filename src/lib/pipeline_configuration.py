@@ -76,7 +76,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e02_run_id",
                    analysis_file_key="rqa_s02e02_",
                    cleaner=None,
-                   code_scheme=None),  # TODO
+                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
 
         CodingPlan(raw_field="rqa_s02e03_raw",
                    coded_field="rqa_s02e03_coded",
@@ -86,7 +86,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e03_run_id",
                    analysis_file_key="rqa_s02e03_",
                    cleaner=None,
-                   code_scheme=None),  # TODO
+                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
 
         CodingPlan(raw_field="rqa_s02e04_raw",
                    coded_field="rqa_s02e04_coded",
@@ -96,7 +96,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e04_run_id",
                    analysis_file_key="rqa_s02e04_",
                    cleaner=None,
-                   code_scheme=None),  # TODO
+                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
 
         CodingPlan(raw_field="rqa_s02e05_raw",
                    coded_field="rqa_s02e05_coded",
@@ -106,7 +106,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e05_run_id",
                    analysis_file_key="rqa_s02e05_",
                    cleaner=None,
-                   code_scheme=None),  # TODO
+                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
 
         CodingPlan(raw_field="rqa_s02e06_raw",
                    coded_field="rqa_s02e06_coded",
@@ -116,7 +116,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e06_run_id",
                    analysis_file_key="rqa_s02e06_",
                    cleaner=None,
-                   code_scheme=None),  # TODO
+                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
     ]
 
     @staticmethod
