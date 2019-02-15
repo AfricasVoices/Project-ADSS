@@ -135,7 +135,7 @@ class PipelineConfiguration(object):
     LOCATION_CODING_PLANS = [
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
-                   coded_field="location_coded",
+                   coded_field="mogadishu_sub_district_coded",
                    time_field="location_time",
                    coda_filename="location.json",
                    analysis_file_key=None,
@@ -144,7 +144,7 @@ class PipelineConfiguration(object):
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
-                   coded_field="location_coded",
+                   coded_field="district_coded",
                    time_field="location_time",
                    coda_filename="location.json",
                    analysis_file_key="district",
@@ -153,7 +153,7 @@ class PipelineConfiguration(object):
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
-                   coded_field="location_coded",
+                   coded_field="region_coded",
                    time_field="location_time",
                    coda_filename="location.json",
                    analysis_file_key="region",
@@ -162,7 +162,7 @@ class PipelineConfiguration(object):
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
-                   coded_field="location_coded",
+                   coded_field="state_coded",
                    time_field="location_time",
                    coda_filename="location.json",
                    analysis_file_key="state",
@@ -171,7 +171,7 @@ class PipelineConfiguration(object):
 
         CodingPlan(raw_field="location_raw",
                    id_field="location_raw_id",
-                   coded_field="location_coded",
+                   coded_field="zone_coded",
                    time_field="location_time",
                    coda_filename="location.json",
                    analysis_file_key="zone",

@@ -9,6 +9,7 @@ from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
 
 from src.lib import PipelineConfiguration
+from src.lib.pipeline_configuration import CodeSchemes
 
 
 class ApplyManualCodes(object):
@@ -117,23 +118,23 @@ class ApplyManualCodes(object):
                                                SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "district_coded": CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.DISTRICT,
-                        cls.make_location_code(CodeSchemes.DISTRICT,
+                        CodeSchemes.SOMALIA_DISTRICT,
+                        cls.make_location_code(CodeSchemes.SOMALIA_DISTRICT,
                                                SomaliaLocations.district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "region_coded": CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.REGION,
-                        cls.make_location_code(CodeSchemes.REGION,
+                        CodeSchemes.SOMALIA_REGION,
+                        cls.make_location_code(CodeSchemes.SOMALIA_REGION,
                                                SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "state_coded": CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.STATE,
-                        cls.make_location_code(CodeSchemes.STATE,
+                        CodeSchemes.SOMALIA_STATE,
+                        cls.make_location_code(CodeSchemes.SOMALIA_STATE,
                                                SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "zone_coded": CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.ZONE,
-                        cls.make_location_code(CodeSchemes.ZONE,
+                        CodeSchemes.SOMALIA_ZONE,
+                        cls.make_location_code(CodeSchemes.SOMALIA_ZONE,
                                                SomaliaLocations.zone_for_location_code(location)),
                         Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
