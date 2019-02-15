@@ -148,14 +148,7 @@ class AnalysisFile(object):
         bool_keys = [
             consent_withdrawn_key,
 
-            "sms_ad",
-            "radio_promo",
-            "radio_show",
-            "non_logical_time",
-            "radio_participation_s01e01",
-            "radio_participation_s01e02",
-            "radio_participation_s01e03",
-            "radio_participation_s01e04"
+            # TODO: Channel keys
         ]
 
         # Export to CSV
