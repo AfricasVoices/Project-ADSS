@@ -91,7 +91,7 @@ class AnalysisFile(object):
         # Set the list of raw/coded keys which
         survey_keys = []
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
-            if plan.analysis_file_key not in survey_keys:
+            if plan.analysis_file_key is not None and plan.analysis_file_key not in survey_keys:
                 survey_keys.append(plan.analysis_file_key)
             if plan.raw_field not in survey_keys:
                 survey_keys.append(plan.raw_field)
