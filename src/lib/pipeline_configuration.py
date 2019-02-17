@@ -56,9 +56,9 @@ class CodingPlan(object):
 
 
 class PipelineConfiguration(object):
-    DEV_MODE = True
+    DEV_MODE = False
     
-    PROJECT_START_DATE = isoparse("2019-02-17T00:00:00+03:00")
+    PROJECT_START_DATE = isoparse("2019-01-17T00:00:00+03:00")
     PROJECT_END_DATE = isoparse("2019-03-30T24:00:00+03:00")
 
     RQA_CODING_PLANS = [
