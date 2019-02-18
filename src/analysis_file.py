@@ -125,18 +125,14 @@ class AnalysisFile(object):
         matrix_keys = []
 
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            # TODO: If this was a list, codes would come out in the order they're in in the schemes, rather than
-            #       needing to be sorted alphabetically. Clarify which is preferable before the next project.
-            show_matrix_keys = set()
+            show_matrix_keys = list()
             for code in plan.code_scheme.codes:
-                show_matrix_keys.add(f"{plan.analysis_file_key}{code.string_value}")
+                show_matrix_keys.append(f"{plan.analysis_file_key}{code.string_value}")
 
             AnalysisKeys.set_matrix_keys(
                 user, data, show_matrix_keys, plan.code_scheme, plan.coded_field, plan.analysis_file_key)
 
             matrix_keys.extend(show_matrix_keys)
-
-        matrix_keys.sort()
 
         binary_keys = [plan.binary_analysis_file_key
                        for plan in PipelineConfiguration.RQA_CODING_PLANS
