@@ -9,6 +9,7 @@ from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 
 from src.lib import PipelineConfiguration, MessageFilters, ICRTools
+from src.lib.channels import Channels
 
 
 class AutoCodeShowMessages(object):
@@ -63,8 +64,7 @@ class AutoCodeShowMessages(object):
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
-        # TODO: Re-enable when timestamps set
-        # Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
