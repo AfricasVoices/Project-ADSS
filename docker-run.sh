@@ -119,9 +119,9 @@ docker cp "$container:/data/output.json" "$OUTPUT_JSON"
 mkdir -p "$OUTPUT_ICR_DIR"
 docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
 
-#mkdir -p "$OUTPUT_CODED_DIR"
-#docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
-#
+mkdir -p "$OUTPUT_CODED_DIR"
+docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
+
 #mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
 #docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
 #
