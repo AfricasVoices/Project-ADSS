@@ -187,4 +187,15 @@ class ApplyManualCodes(object):
                         Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
 
+            # If the location is not coded, set the zone from the operator
+            if location_code.control_code == Codes.NOT_CODED:
+                operator = CodeSchemes.SOMALIA_OPERATOR.get_code_with_id(td["operator_coded"]["CodeID"]).match_values[0]
+                td.append_data({
+                    "zone_coded": CleaningUtils.make_label_from_cleaner_code(
+                        CodeSchemes.SOMALIA_ZONE,
+                        cls.make_location_code(CodeSchemes.SOMALIA_ZONE,
+                                               SomaliaLocations.zone_for_operator_code(operator)),
+                        Metadata.get_call_location()).to_dict()
+                }, Metadata(user, Metadata.get_call_location(), time.time()))
+
         return data
