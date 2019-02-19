@@ -14,7 +14,7 @@ class ProductionFile(object):
             if plan.raw_field not in production_keys:
                 production_keys.append(plan.raw_field)
 
-        not_noise = data if PipelineConfiguration.DEV_MODE else MessageFilters.filter_noise(data, "noise", lambda x: x)
+        not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
         with open(production_csv_output_path, "w") as f:
             TracedDataCSVIO.export_traced_data_iterable_to_csv(not_noise, f, headers=production_keys)
 
