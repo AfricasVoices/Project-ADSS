@@ -7,9 +7,9 @@ from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
-from dateutil.parser import isoparse
 
 from src.lib import PipelineConfiguration, MessageFilters, ICRTools
+from src.lib.channels import Channels
 
 
 class AutoCodeShowMessages(object):
@@ -19,8 +19,6 @@ class AutoCodeShowMessages(object):
 
     SENT_ON_KEY = "sent_on"
     NOISE_KEY = "noise"
-    PROJECT_START_DATE = isoparse("2000-01-01T00:00:00+03:00")
-    PROJECT_END_DATE = isoparse("2030-01-01T00:00:00+03:00")
     ICR_MESSAGES_COUNT = 200
     ICR_SEED = 0
 
@@ -34,7 +32,8 @@ class AutoCodeShowMessages(object):
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
 
         # Filter out runs sent outwith the project start and end dates
-        data = MessageFilters.filter_time_range(data, cls.SENT_ON_KEY, cls.PROJECT_START_DATE, cls.PROJECT_END_DATE)
+        data = MessageFilters.filter_time_range(
+            data, cls.SENT_ON_KEY, PipelineConfiguration.PROJECT_START_DATE, PipelineConfiguration.PROJECT_END_DATE)
 
         # Tag messages which are noise as being noise
         for td in data:
@@ -65,8 +64,7 @@ class AutoCodeShowMessages(object):
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
-        # TODO: Re-enable when timestamps set
-        # Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
