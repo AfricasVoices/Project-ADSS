@@ -14,7 +14,7 @@ while [[ $# -gt 0 ]]; do
             DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL=$2
             DRIVE_UPLOAD_DIR=$3
 
-            DRIVE_UPLOAD_ARG="--drive-upload $DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL $DRIVE_UPLOAD_DIR/csap_mes.csv $DRIVE_UPLOAD_DIR/csap_ind.csv $DRIVE_UPLOAD_DIR/csap_s02_production.csv"
+            DRIVE_UPLOAD_ARG="--drive-upload $DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL $DRIVE_UPLOAD_DIR/csap_s02_messages.csv $DRIVE_UPLOAD_DIR/csap_s02_individuals.csv $DRIVE_UPLOAD_DIR/csap_s02_production.csv"
             shift 3;;
         --)
             shift
@@ -45,5 +45,5 @@ cd ..
     "$DATA_ROOT/Raw Data/csap_demog.json" "$DATA_ROOT/Raw Data/csap_s02_demog.json" "$DATA_ROOT/Coded Coda Files/" \
     "$DATA_ROOT/Outputs/traced_data.json" \
     "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
-    "$DATA_ROOT/Outputs/csap_mes.csv" "$DATA_ROOT/Outputs/csap_ind.csv" \
+    "$DATA_ROOT/Outputs/csap_s02_messages.csv" "$DATA_ROOT/Outputs/csap_s02_individuals.csv" \
     "$DATA_ROOT/Outputs/csap_s02_production.csv"

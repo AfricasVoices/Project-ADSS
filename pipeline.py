@@ -6,6 +6,8 @@ from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from storage.google_drive import drive_client_wrapper
 
 from src import CombineRawDatasets
+from src.analysis_file import AnalysisFile
+from src.apply_manual_codes import ApplyManualCodes
 from src.auto_code_show_messages import AutoCodeShowMessages
 from src.lib.auto_code_surveys import AutoCodeSurveys
 from src.production_file import ProductionFile
@@ -145,15 +147,33 @@ if __name__ == "__main__":
     print("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
+    print("Exporting production CSV...")
+    data = ProductionFile.generate(data, production_csv_output_path)
+
     print("Auto Coding Surveys...")
     data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
 
-    print("Exporting production CSV...")
-    data = ProductionFile.generate(data, production_csv_output_path)
+    print("Applying Manual Codes from Coda...")
+    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
+
+    print("Generating Analysis CSVs...")
+    data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
     if drive_upload:
         print("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
+
+        csv_by_message_drive_dir = os.path.dirname(csv_by_message_drive_path)
+        csv_by_message_drive_file_name = os.path.basename(csv_by_message_drive_path)
+        drive_client_wrapper.update_or_create(csv_by_message_output_path, csv_by_message_drive_dir,
+                                              target_file_name=csv_by_message_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
+
+        csv_by_individual_drive_dir = os.path.dirname(csv_by_individual_drive_path)
+        csv_by_individual_drive_file_name = os.path.basename(csv_by_individual_drive_path)
+        drive_client_wrapper.update_or_create(csv_by_individual_output_path, csv_by_individual_drive_dir,
+                                              target_file_name=csv_by_individual_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
 
         production_csv_drive_dir = os.path.dirname(production_csv_drive_path)
         production_csv_drive_file_name = os.path.basename(production_csv_drive_path)
