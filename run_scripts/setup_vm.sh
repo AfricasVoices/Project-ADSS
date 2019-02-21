@@ -7,7 +7,7 @@ PROJECT_ROOT="~/app"
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 pip3 install --user pipenv
 
-sudo apt-get install \
+sudo apt install \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -18,8 +18,7 @@ sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt install docker-ce docker-ce-cli containerd.io
 
 cd "$PROJECT_ROOT/Project-ADSS"
 pipenv --three

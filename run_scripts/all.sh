@@ -26,7 +26,7 @@ pipenv run python 2_fetch_raw_data.py "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" ../
 
 ./3_generate_outputs.sh --drive-upload "$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL" "$DRIVE_UPLOAD_DIR" "$USER" "$DATA_ROOT"
 
-./coda_add.sh "$CODA_PULL_CREDENTIALS_PATH" "$CODA_TOOLS_ROOT" "$DATA_ROOT"
+./coda_add.sh "$CODA_PUSH_CREDENTIALS_PATH" "$CODA_TOOLS_ROOT" "$DATA_ROOT"
 
 # Backup the project data directory
 DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
