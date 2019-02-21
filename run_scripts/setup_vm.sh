@@ -7,9 +7,6 @@ PROJECT_ROOT="~/app"
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 pip3 install --user pipenv
 
-cd "$PROJECT_ROOT/Project-ADSS"
-pipenv --three
-
 sudo apt-get install \
     apt-transport-https \
     ca-certificates \
@@ -23,6 +20,10 @@ sudo add-apt-repository \
    stable"
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+cd "$PROJECT_ROOT/Project-ADSS"
+pipenv --three
+pipenv sync
 
 # Get Coda V2
 cd "$PROJECT_ROOT"
