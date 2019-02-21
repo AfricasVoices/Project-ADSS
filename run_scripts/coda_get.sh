@@ -27,7 +27,7 @@ DATASETS=(
 cd "$CODA_TOOLS_ROOT"
 mkdir -p "$DATA_ROOT/Coded Coda Files"
 
-for DATASET in ${DATASETS@]}
+for DATASET in ${DATASETS[@]}
 do
     echo "Getting messages data from ${PROJECT_NAME}_${DATASET}..."
 

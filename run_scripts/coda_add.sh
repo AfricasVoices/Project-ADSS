@@ -26,7 +26,7 @@ DATASETS=(
 
 cd "$CODA_TOOLS_ROOT"
 
-for DATASET in ${DATASETS@]}
+for DATASET in ${DATASETS[@]}
 do
     echo "Pushing messages data to ${PROJECT_NAME}_${DATASET}..."
 
