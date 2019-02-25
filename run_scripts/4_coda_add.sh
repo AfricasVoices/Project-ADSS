@@ -3,14 +3,16 @@
 set -e
 
 if [[ $# -ne 3 ]]; then
-    echo "Usage: ./4_coda_add.sh <coda-auth-file> <coda-tools-root> <data-root>"
+    echo "Usage: ./4_coda_add.sh <coda-auth-file> <coda-v2-root> <data-root>"
     echo "Uploads coded messages datasets from '<data-root>/Outputs/Coda Files' to Coda"
     exit
 fi
 
 AUTH=$1
-CODA_TOOLS_ROOT=$2
+CODA_V2_ROOT=$2
 DATA_ROOT=$3
+
+./checkout_coda_v2 "$CODA_V2_ROOT"
 
 PROJECT_NAME="ADSS"
 DATASETS=(
@@ -24,7 +26,7 @@ DATASETS=(
     "household_language"
 )
 
-cd "$CODA_TOOLS_ROOT"
+cd "$CODA_V2_ROOT/data_tools"
 
 for DATASET in ${DATASETS[@]}
 do
