@@ -7,7 +7,7 @@ sudo apt update && sudo apt install -y python3.6 python3-pip git
 pip3 install --user pipenv
 
 # Install Docker
-sudo apt install \
+sudo apt install -y \
     apt-transport-https \
     ca-certificates \
     curl \
