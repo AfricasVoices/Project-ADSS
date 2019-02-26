@@ -16,8 +16,11 @@ sudo add-apt-repository \
    stable"
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
-# Start Docker on boot
+# Start the Docker daemon on boot
 sudo systemctl enable docker
+
+# Allow this user to connect to the Docker daemon
+sudo usermod -a -G docker "$USER"
 
 # Install gsutil
 sudo apt update && sudo apt install -y lsb-release apt-transport-https curl gnupg git python2.7
