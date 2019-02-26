@@ -15,9 +15,10 @@ CODA_V2_REPO="https://github.com/AfricasVoices/CodaV2.git"
 mkdir -p "$CODA_V2_DIRECTORY"
 cd "$CODA_V2_DIRECTORY"
 
-# If the RAPID_PRO_DIR does not contain a git repository, clone the rapid pro tools repo
+# If the CODA_V2_DIR does not contain a git repository, clone the coda v2 repo
 if ! [ -d .git ]; then
     git clone "$CODA_V2_REPO" .
+    cd data_tools
     pipenv --three && pipenv update  # TODO: Change to 'sync' once the corrupted Pipfile.lock in CodaV2 is fixed.
 fi
 
