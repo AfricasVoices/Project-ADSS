@@ -16,6 +16,9 @@ sudo add-apt-repository \
    stable"
 sudo apt install -y docker-ce docker-ce-cli containerd.io
 
+# Start Docker on boot
+sudo systemctl enable docker
+
 # Install gsutil
 sudo apt update && sudo apt install -y lsb-release apt-transport-https curl gnupg git python2.7
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
