@@ -6,7 +6,6 @@ set -e
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 pip3 install --user pipenv
 echo "PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
-source ~/.bashrc
 
 # Install Docker
 sudo apt install -y \
@@ -34,8 +33,9 @@ export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
     sudo apt update && sudo apt install -y google-cloud-sdk
-sudo chown -R "$USER" "/home/$USER/.config/gcloud"
+mkdir "/home/$USER/.config/gcloud"
 
 # Install project dependencies
+source ~/.bashrc
 pipenv --three
 pipenv sync
