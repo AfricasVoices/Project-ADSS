@@ -24,7 +24,7 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io
 sudo apt update && sudo apt install -y lsb-release apt-transport-https curl gnupg git python2.7
 export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     echo "deb https://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee /etc/apt/sources.list.d/google-cloud-sdk.list && \
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
     sudo apt update && sudo apt install -y google-cloud-sdk
 
 # Install project dependencies
