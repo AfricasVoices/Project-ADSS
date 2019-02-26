@@ -17,6 +17,7 @@ DATA_ROOT=$3
 PROJECT_NAME="ADSS"
 DATASETS=(
     "s02e01"
+    "s02e02"
 
     "gender"
     "location"
