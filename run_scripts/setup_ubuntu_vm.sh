@@ -4,8 +4,7 @@ set -e
 
 # Install Python 3.6
 sudo apt update && sudo apt install -y python3.6 python3-pip git
-pip3 install --user pipenv
-echo "PATH=$HOME/.local/bin:$PATH" >> ~/.bashrc
+sudo -H pip3 install pipenv
 
 # Install Docker
 sudo apt install -y \
@@ -36,6 +35,5 @@ export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
 mkdir "/home/$USER/.config/gcloud"
 
 # Install project dependencies
-source ~/.bashrc
 pipenv --three
 pipenv sync
