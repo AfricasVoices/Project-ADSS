@@ -11,7 +11,6 @@ fi
 CODA_V2_DIRECTORY="$1"
 
 CODA_V2_REPO="https://github.com/AfricasVoices/CodaV2.git"
-TAG="v0.2.4"
 
 mkdir -p "$CODA_V2_DIRECTORY"
 cd "$CODA_V2_DIRECTORY"
