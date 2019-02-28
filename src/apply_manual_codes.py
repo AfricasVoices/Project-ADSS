@@ -125,6 +125,18 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
+        # Label missing surveys
+        for td in data:
+            missing_dict = dict()
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+                if td.get(plan.raw_field, "") == "":
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = na_label.to_dict()
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
             # Up to 1 location code should have been assigned in Coda. Search for that code,
