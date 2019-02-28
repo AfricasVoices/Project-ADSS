@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-CoreDataModules = {editable = true, ref = "660cfdba5638a0d7855ea0ca258bc3161a92a6ec", git = "https://www.github.com/AfricasVoices/CoreDataModules"}
+CoreDataModules = {editable = true, ref = "05fa28d24da98722da8101c9a3f0045ef4b11dad", git = "https://www.github.com/AfricasVoices/CoreDataModules"}
 PipelineInfrastructure = {editable = true, ref = "2390ad8af87edca38d71ea5666a8758a0c4c124f", git = "https://www.github.com/AfricasVoices/PipelineInfrastructure"}
 pytz = "*"
 python-dateutil = ">=2.8.0"  # Need this minimum so that isoparse handles T24:00:00 correctly.
