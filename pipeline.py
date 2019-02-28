@@ -1,6 +1,8 @@
 import argparse
 import os
+import random
 
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from storage.google_drive import drive_client_wrapper
@@ -12,6 +14,8 @@ from src.auto_code_show_messages import AutoCodeShowMessages
 from src.lib.auto_code_surveys import AutoCodeSurveys
 from src.production_file import ProductionFile
 from src.translate_rapid_pro_keys import TranslateRapidProKeys
+
+log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -124,18 +128,21 @@ if __name__ == "__main__":
     # Load messages
     messages_datasets = []
     for i, path in enumerate(message_paths):
-        print("Loading Episode {}/{}...".format(i + 1, len(message_paths)))
+        log.info("Loading Episode {}/{}...".format(i + 1, len(message_paths)))
         with open(path, "r") as f:
             messages_datasets.append(TracedDataJsonIO.import_json_to_traced_data_iterable(f))
+        log.debug(f"Loaded {len(messages_datasets[-1])} messages")
 
     # Load surveys
-    print("Loading Demographics 1/2...")
+    log.info("Loading Demographics 1/2...")
     with open(s01_demog_input_path, "r") as f:
         s01_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        log.debug(f"Loaded {len(s01_demographics)} contacts")
 
-    print("Loading Demographics 2/2...")
+    log.info("Loading Demographics 2/2...")
     with open(s02_demog_input_path, "r") as f:
         s02_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        log.debug(f"Loaded {len(s02_demographics)} contacts")
 
     # Add survey data to the messages
     print("Combining Datasets...")
