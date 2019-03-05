@@ -4,7 +4,10 @@ import os
 import subprocess
 from urllib.parse import urlparse
 
+from core_data_modules.traced_data.io import TracedDataJsonIO
+from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
+from rapid_pro_tools.rapid_pro_client import RapidProClient
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -70,43 +73,45 @@ if __name__ == "__main__":
     storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
     credentials_bucket = storage_client.bucket(bucket_name)
     credentials_file = credentials_bucket.blob(blob_name)
-    rapid_pro_token = credentials_file.download_as_string().strip()
+    rapid_pro_token = credentials_file.download_as_string().strip().decode("utf-8")
     print("Downloaded Rapid Pro token.")
 
+    with open(uuid_table_path) as f:
+        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
+
+    with open(TEST_CONTACTS_PATH) as f:
+        test_contacts = json.load(f)
+
     # Download all the runs for each of the radio shows
+    rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
     for show in SHOWS:
         output_file_path = f"{root_data_dir}/Raw Data/{show}.json"
         print(f"Exporting show '{show}' to '{output_file_path}'...")
 
-        exit_code = subprocess.call([
-            "./docker-run.sh",
-            "--flow-name", show,
-            "--test-contacts-path", TEST_CONTACTS_PATH,
-            rapid_pro_base_url,
-            rapid_pro_token,
-            user,
-            "all",
-            uuid_table_path,
-            output_file_path
-        ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
+        flow_id = rapid_pro.get_flow_id(show)
+        traced_runs = rapid_pro.get_traced_runs_for_flow_id(user, flow_id, phone_number_uuid_table,
+                                                            test_contacts=test_contacts)
 
-        assert exit_code == 0, f"{rapid_pro_tools_dir}/fetch_runs/fetch_runs.py failed with exit_code {exit_code}"
+        with open(uuid_table_path, "w") as f:
+            phone_number_uuid_table.dump(f)
+
+        IOUtils.ensure_dirs_exist_for_file(output_file_path)
+        with open(output_file_path, "w") as f:
+            TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
 
     # Download all the runs for each of the surveys
     for survey in SURVEYS:
         output_file_path = f"{root_data_dir}/Raw Data/{survey}.json"
         print(f"Exporting survey '{survey}' to '{output_file_path}'...")
 
-        exit_code = subprocess.call([
-            "./docker-run.sh",
-            "--flow-name", survey,
-            "--test-contacts-path", TEST_CONTACTS_PATH,
-            rapid_pro_base_url,
-            rapid_pro_token,
-            user,
-            "latest-only",
-            uuid_table_path,
-            output_file_path
-        ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
+        flow_id = rapid_pro.get_flow_id(survey)
+        traced_runs = rapid_pro.get_traced_runs_for_flow_id(user, flow_id, phone_number_uuid_table,
+                                                            test_contacts=test_contacts)
+        traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
 
-        assert exit_code == 0, f"{rapid_pro_tools_dir}/fetch_runs/fetch_runs.py failed with exit_code {exit_code}"
+        with open(uuid_table_path, "w") as f:
+            phone_number_uuid_table.dump(f)
+
+        IOUtils.ensure_dirs_exist_for_file(output_file_path)
+        with open(output_file_path, "w") as f:
+            TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
