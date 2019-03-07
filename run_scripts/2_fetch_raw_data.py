@@ -8,6 +8,7 @@ from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
 from rapid_pro_tools.rapid_pro_client import RapidProClient
+from temba_client.v2 import Contact
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -81,9 +82,19 @@ if __name__ == "__main__":
 
     with open(TEST_CONTACTS_PATH) as f:
         test_contacts = json.load(f)
-        
+
     rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
-    raw_contacts = rapid_pro.get_raw_contacts()
+
+    # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
+    raw_contacts_path = f"{root_data_dir}/Raw Data/raw_contacts.json"
+    try:
+        print(f"Loading raw contacts from file '{raw_contacts_path}'...")
+        with open(raw_contacts_path) as f:
+            raw_contacts = [Contact.deserialize(contact_json) for contact_json in json.load(f)]
+        print(f"Loaded {len(raw_contacts)} contacts")
+    except FileNotFoundError:
+        print(f"File '{raw_contacts_path}' not found, will fetch all contacts from the Rapid Pro server...")
+        raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
     for show in SHOWS:
@@ -121,3 +132,9 @@ if __name__ == "__main__":
         IOUtils.ensure_dirs_exist_for_file(output_file_path)
         with open(output_file_path, "w") as f:
             TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
+            
+    # Save the latest raw contacts to a file
+    with open(raw_contacts_path, "w") as f:
+        print(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
+        json.dump([contact.serialize() for contact in raw_contacts], f)
+        print(f"Saved {len(raw_contacts)} contacts")
