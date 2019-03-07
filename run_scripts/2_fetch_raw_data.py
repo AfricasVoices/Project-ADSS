@@ -87,14 +87,16 @@ if __name__ == "__main__":
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
     raw_contacts_path = f"{root_data_dir}/Raw Data/raw_contacts.json"
+    contacts_log_path = f"{root_data_dir}/Raw Data/raw_contacts_log.jsonl"
     try:
         print(f"Loading raw contacts from file '{raw_contacts_path}'...")
         with open(raw_contacts_path) as f:
             raw_contacts = [Contact.deserialize(contact_json) for contact_json in json.load(f)]
         print(f"Loaded {len(raw_contacts)} contacts")
     except FileNotFoundError:
-        print(f"File '{raw_contacts_path}' not found, will fetch all contacts from the Rapid Pro server...")
-        raw_contacts = rapid_pro.get_raw_contacts()
+        print(f"File '{raw_contacts_path}' not found, will fetch all contacts from the Rapid Pro server")
+        with open(contacts_log_path, "a") as f:
+            raw_contacts = rapid_pro.get_raw_contacts(raw_export_log=f)
 
     # Download all the runs for each of the radio shows
     for show in SHOWS:
@@ -103,7 +105,10 @@ if __name__ == "__main__":
 
         flow_id = rapid_pro.get_flow_id(show)
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
-        raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
+
+        with open(contacts_log_path, "a") as f:
+            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
+
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
 
@@ -121,7 +126,10 @@ if __name__ == "__main__":
 
         flow_id = rapid_pro.get_flow_id(survey)
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
-        raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
+
+        with open(contacts_log_path, "a") as f:
+            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
+
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
         traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
