@@ -81,16 +81,20 @@ if __name__ == "__main__":
 
     with open(TEST_CONTACTS_PATH) as f:
         test_contacts = json.load(f)
+        
+    rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
+    raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
-    rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
     for show in SHOWS:
         output_file_path = f"{root_data_dir}/Raw Data/{show}.json"
         print(f"Exporting show '{show}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(show)
-        traced_runs = rapid_pro.get_traced_runs_for_flow_id(user, flow_id, phone_number_uuid_table,
-                                                            test_contacts=test_contacts)
+        raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
+        raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
+        traced_runs = rapid_pro.convert_runs_to_traced_data(
+            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
 
         with open(uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
@@ -105,8 +109,10 @@ if __name__ == "__main__":
         print(f"Exporting survey '{survey}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(survey)
-        traced_runs = rapid_pro.get_traced_runs_for_flow_id(user, flow_id, phone_number_uuid_table,
-                                                            test_contacts=test_contacts)
+        raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
+        raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
+        traced_runs = rapid_pro.convert_runs_to_traced_data(
+            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
         traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
 
         with open(uuid_table_path, "w") as f:
