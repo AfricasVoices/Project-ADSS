@@ -159,6 +159,11 @@ if __name__ == "__main__":
     print("Generating Analysis CSVs...")
     data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
+    print("Writing TracedData to file...")
+    IOUtils.ensure_dirs_exist_for_file(json_output_path)
+    with open(json_output_path, "w") as f:
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
+
     if drive_upload:
         print("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
@@ -182,10 +187,5 @@ if __name__ == "__main__":
                                               target_folder_is_shared_with_me=True)
     else:
         print("Not uploading to Google Drive")
-
-    print("Writing TracedData to file...")
-    IOUtils.ensure_dirs_exist_for_file(json_output_path)
-    with open(json_output_path, "w") as f:
-        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
 
     print("Python script complete")
