@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4f9ed428adfd63a39d98c82a2a1e6d8deefe28c9567caf9d880b6a51018da8b9"
+            "sha256": "cad740c3d8d934ac71b2a1d79ec46a84c5781bfd4f1597415cac97e99c0b33be"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -305,7 +305,7 @@
         "rapidprotools": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/RapidProTools",
-            "ref": "dfaa9c2284671e65a08662a77eb819ca5b1d7fa7"
+            "ref": "1b99496d4f60e7d145ed1207ad3ac0a3ddeee6a8"
         },
         "requests": {
             "hashes": [

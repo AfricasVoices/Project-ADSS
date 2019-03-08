@@ -8,7 +8,7 @@ from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
 from rapid_pro_tools.rapid_pro_client import RapidProClient
-from temba_client.v2 import Contact
+from temba_client.v2 import Contact, Run
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -50,6 +50,8 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
+    FLOWS = SHOWS + SURVEYS
+
     TEST_CONTACTS_PATH = os.path.abspath("./test_contact_rapid_pro_ids.json")
 
     # Read the settings from the configuration file
@@ -83,6 +85,8 @@ if __name__ == "__main__":
     with open(TEST_CONTACTS_PATH) as f:
         test_contacts = json.load(f)
 
+    IOUtils.ensure_dirs_exist(f"{root_data_dir}/Raw Data")
+
     rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
@@ -99,49 +103,50 @@ if __name__ == "__main__":
             raw_contacts = rapid_pro.get_raw_contacts(raw_export_log=f)
 
     # Download all the runs for each of the radio shows
-    for show in SHOWS:
-        output_file_path = f"{root_data_dir}/Raw Data/{show}.json"
-        print(f"Exporting show '{show}' to '{output_file_path}'...")
+    for flow in FLOWS:
+        runs_log_path = f"{root_data_dir}/Raw Data/{flow}_log.jsonl"
+        raw_runs_path = f"{root_data_dir}/Raw Data/{flow}_raw.json"
+        traced_runs_output_path = f"{root_data_dir}/Raw Data/{flow}.json"
+        print(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
 
-        flow_id = rapid_pro.get_flow_id(show)
-        raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
+        flow_id = rapid_pro.get_flow_id(flow)
 
+        # Load the previous export of runs for this flow, and update them with the newest runs.
+        # If there is no previous export for this flow, fetch all the runs from Rapid Pro.
+        with open(runs_log_path, "a") as raw_export_log_file:
+            try:
+                print(f"Loading raw runs from file '{raw_runs_path}'...")
+                with open(raw_runs_path) as f:
+                    raw_runs = [Run.deserialize(run_json) for run_json in json.load(f)]
+                print(f"Loaded {len(raw_runs)} runs")
+                raw_runs = rapid_pro.update_raw_runs_with_latest_modified(
+                    flow_id, raw_runs, raw_export_log=raw_export_log_file)
+            except FileNotFoundError:
+                print(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
+                raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log=raw_export_log_file)
+
+        # Fetch the latest contacts from Rapid Pro.
         with open(contacts_log_path, "a") as f:
             raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
 
+        # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
+        
+        # Save the latest set of raw runs to disk.
+        with open(raw_runs_path, "w") as f:
+            json.dump([run.serialize() for run in raw_runs], f)
 
+        # Save the updated phone number <-> uuid table to disk.
         with open(uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
 
-        IOUtils.ensure_dirs_exist_for_file(output_file_path)
-        with open(output_file_path, "w") as f:
+        # Save the traced runs to disk..
+        IOUtils.ensure_dirs_exist_for_file(traced_runs_output_path)
+        with open(traced_runs_output_path, "w") as f:
             TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
 
-    # Download all the runs for each of the surveys
-    for survey in SURVEYS:
-        output_file_path = f"{root_data_dir}/Raw Data/{survey}.json"
-        print(f"Exporting survey '{survey}' to '{output_file_path}'...")
-
-        flow_id = rapid_pro.get_flow_id(survey)
-        raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
-
-        with open(contacts_log_path, "a") as f:
-            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
-
-        traced_runs = rapid_pro.convert_runs_to_traced_data(
-            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
-        traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
-
-        with open(uuid_table_path, "w") as f:
-            phone_number_uuid_table.dump(f)
-
-        IOUtils.ensure_dirs_exist_for_file(output_file_path)
-        with open(output_file_path, "w") as f:
-            TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
-            
-    # Save the latest raw contacts to a file
+    # Save the latest raw contacts to disk.
     with open(raw_contacts_path, "w") as f:
         print(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
         json.dump([contact.serialize() for contact in raw_contacts], f)

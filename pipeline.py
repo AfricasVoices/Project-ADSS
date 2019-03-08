@@ -3,6 +3,7 @@ import os
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from rapid_pro_tools.rapid_pro_client import RapidProClient
 from storage.google_drive import drive_client_wrapper
 
 from src import CombineRawDatasets
@@ -132,10 +133,12 @@ if __name__ == "__main__":
     print("Loading Demographics 1/2...")
     with open(s01_demog_input_path, "r") as f:
         s01_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        s01_demographics = RapidProClient.coalesce_traced_runs_by_key(user, s01_demographics, "avf_phone_id")
 
     print("Loading Demographics 2/2...")
     with open(s02_demog_input_path, "r") as f:
         s02_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        s02_demographics = RapidProClient.coalesce_traced_runs_by_key(user, s02_demographics, "avf_phone_id")
 
     # Add survey data to the messages
     print("Combining Datasets...")
