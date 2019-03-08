@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import subprocess
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
@@ -50,8 +49,6 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
-    FLOWS = SHOWS + SURVEYS
-
     TEST_CONTACTS_PATH = os.path.abspath("./test_contact_rapid_pro_ids.json")
 
     # Read the settings from the configuration file
@@ -60,10 +57,6 @@ if __name__ == "__main__":
 
         rapid_pro_base_url = pipeline_config["RapidProBaseURL"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
-
-    # Download/checkout the appropriate version of RapidProTools
-    exit_code = subprocess.call(["./checkout_rapid_pro_tools.sh", rapid_pro_tools_dir])
-    assert exit_code == 0, f"./checkout_rapid_pro_tools.sh failed with exit_code {exit_code}"
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
     parsed_rapid_pro_token_file_url = urlparse(rapid_pro_token_file_url)
@@ -103,7 +96,7 @@ if __name__ == "__main__":
             raw_contacts = rapid_pro.get_raw_contacts(raw_export_log=f)
 
     # Download all the runs for each of the radio shows
-    for flow in FLOWS:
+    for flow in SHOWS + SURVEYS:
         runs_log_path = f"{root_data_dir}/Raw Data/{flow}_log.jsonl"
         raw_runs_path = f"{root_data_dir}/Raw Data/{flow}_raw.json"
         traced_runs_output_path = f"{root_data_dir}/Raw Data/{flow}.json"
