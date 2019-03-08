@@ -133,6 +133,7 @@ if __name__ == "__main__":
     print("Loading Demographics 1/2...")
     with open(s01_demog_input_path, "r") as f:
         s01_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        # TODO: Move this function out of RapidProClient
         s01_demographics = RapidProClient.coalesce_traced_runs_by_key(user, s01_demographics, "avf_phone_id")
 
     print("Loading Demographics 2/2...")
