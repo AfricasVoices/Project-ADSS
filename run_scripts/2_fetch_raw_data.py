@@ -90,8 +90,8 @@ if __name__ == "__main__":
     rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
-    raw_contacts_path = f"{root_data_dir}/Raw Data/raw_contacts.json"
-    contacts_log_path = f"{root_data_dir}/Raw Data/raw_contacts_log.jsonl"
+    raw_contacts_path = f"{root_data_dir}/Raw Data/contacts_raw.json"
+    contacts_log_path = f"{root_data_dir}/Raw Data/contacts_log.jsonl"
     try:
         print(f"Loading raw contacts from file '{raw_contacts_path}'...")
         with open(raw_contacts_path) as f:
