@@ -18,6 +18,10 @@ PROJECT_NAME="ADSS"
 DATASETS=(
     "s02e01"
     "s02e02"
+    "s02e03"
+    "s02e04"
+    "s02e05"
+    "s02e06"
 
     "gender"
     "location"
