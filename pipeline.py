@@ -186,6 +186,6 @@ if __name__ == "__main__":
                                               target_file_name=production_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
     else:
-        print("Not uploading to Google Drive")
+        print("Skipping uploading to Google Drive (because --drive-upload flag was not set)")
 
     print("Python script complete")
