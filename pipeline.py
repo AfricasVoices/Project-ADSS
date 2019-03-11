@@ -164,6 +164,10 @@ if __name__ == "__main__":
     with open(json_output_path, "w") as f:
         TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
 
+    # Upload to Google Drive, if requested.
+    # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
+    # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
+    # traced data log.
     if drive_upload:
         print("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
