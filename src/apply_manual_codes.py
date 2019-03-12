@@ -43,7 +43,8 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
-        # Label missing radio show messages
+        # At this point, the TracedData objects still contain messages for at most one week each.
+        # Label the weeks for which there is no response as TRUE_MISSING.
         for td in data:
             missing_dict = dict()
             for plan in PipelineConfiguration.RQA_CODING_PLANS:
@@ -144,7 +145,8 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
-        # Label missing surveys
+        # Not everyone will have answered all of the demographic flows.
+        # Label demographic questions which had no responses as TRUE_MISSING.
         for td in data:
             missing_dict = dict()
             for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
