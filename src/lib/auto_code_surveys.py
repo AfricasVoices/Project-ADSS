@@ -15,19 +15,7 @@ class AutoCodeSurveys(object):
 
     @classmethod
     def auto_code_surveys(cls, user, data, phone_uuid_table, coda_output_dir):
-        # Label missing data
-        for td in data:
-            missing_dict = dict()
-            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
-                if td.get(plan.raw_field, "") == "":
-                    na_label = CleaningUtils.make_label_from_cleaner_code(
-                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
-                        Metadata.get_call_location()
-                    )
-                    missing_dict[plan.coded_field] = na_label.to_dict()
-            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Auto-code remaining data
+        # Auto-code surveys
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.cleaner is not None:
                 CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,

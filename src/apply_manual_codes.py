@@ -43,6 +43,27 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
+        # At this point, the TracedData objects still contain messages for at most one week each.
+        # Label the weeks for which there is no response as TRUE_MISSING.
+        for td in data:
+            missing_dict = dict()
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
+                if plan.raw_field not in td:
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = [na_label.to_dict()]
+
+                    if plan.binary_code_scheme is not None:
+                        na_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                            Metadata.get_call_location()
+                        )
+                        missing_dict[plan.binary_coded_field] = na_label.to_dict()
+
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
             if td["noise"]:
@@ -123,6 +144,19 @@ class ApplyManualCodes(object):
             finally:
                 if f is not None:
                     f.close()
+
+        # Not everyone will have answered all of the demographic flows.
+        # Label demographic questions which had no responses as TRUE_MISSING.
+        for td in data:
+            missing_dict = dict()
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+                if td.get(plan.raw_field, "") == "":
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = na_label.to_dict()
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
