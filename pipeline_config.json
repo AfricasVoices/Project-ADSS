@@ -1,5 +1,5 @@
 {
-  "RapidProBaseURL": "https://textit.in",
+  "RapidProDomain": "textit.in",
   "RapidProTokenFileURL": "gs://avf-credentials/csap-text-it-token.txt",
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},

@@ -52,7 +52,7 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_config = json.load(f)
 
-        rapid_pro_base_url = pipeline_config["RapidProBaseURL"]
+        rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
 
     # Download/checkout the appropriate version of RapidProTools
@@ -82,7 +82,7 @@ if __name__ == "__main__":
             "./docker-run.sh",
             "--flow-name", show,
             "--test-contacts-path", TEST_CONTACTS_PATH,
-            rapid_pro_base_url,
+            rapid_pro_domain,
             rapid_pro_token,
             user,
             "all",
@@ -101,7 +101,7 @@ if __name__ == "__main__":
             "./docker-run.sh",
             "--flow-name", survey,
             "--test-contacts-path", TEST_CONTACTS_PATH,
-            rapid_pro_base_url,
+            rapid_pro_domain,
             rapid_pro_token,
             user,
             "latest-only",
