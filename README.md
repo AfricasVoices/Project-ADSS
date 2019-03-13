@@ -56,7 +56,7 @@ where:
    Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`. 
 
 ### 3. Generate Outputs
-Finally, process the raw data to produce outputs for The Interface, ICR, Coda, and messages/individuals/production
+Finally, process the raw data to produce outputs for ICR, Coda, and messages/individuals/production
 CSVs for final analysis, by running the following command in the `run_scripts` directory.
 
 ```
