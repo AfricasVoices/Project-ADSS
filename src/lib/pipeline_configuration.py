@@ -248,17 +248,17 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_base_url, rapid_pro_token_file_url, rapid_pro_key_remappings):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings):
         """
-        :param rapid_pro_base_url: URL of the Rapid Pro server to download data from.
-        :type rapid_pro_base_url: str
+        :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
+        :type rapid_pro_domain: str
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
         """
-        self.rapid_pro_base_url = rapid_pro_base_url
+        self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         
@@ -266,21 +266,21 @@ class PipelineConfiguration(object):
 
     @classmethod
     def from_configuration_dict(cls, configuration_dict):
-        rapid_pro_base_url = configuration_dict["RapidProBaseURL"]
+        rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
 
         rapid_pro_key_remappings = []
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
-        return cls(rapid_pro_base_url, rapid_pro_token_file_url, rapid_pro_key_remappings)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings)
 
     @classmethod
     def from_configuration_file(cls, f):
         return cls.from_configuration_dict(json.load(f))
     
     def validate(self):
-        validators.validate_string(self.rapid_pro_base_url, "rapid_pro_base_url")
+        validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
 
         validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
