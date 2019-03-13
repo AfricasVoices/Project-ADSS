@@ -4,7 +4,6 @@ from os import path
 from core_data_modules.cleaners import Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.cleaners.location_tools import SomaliaLocations
-from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
 from core_data_modules.util import TimeUtils
@@ -136,14 +135,14 @@ class ApplyManualCodes(object):
                 coda_code = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
                 if location_code is not None:
                     if not (coda_code.code_id == location_code.code_id or coda_code.control_code == Codes.NOT_REVIEWED):
-                        location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_INTERNALLY_CONSISTENT)
+                        location_code = CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_INTERNALLY_CONSISTENT)
                 elif coda_code.control_code != Codes.NOT_REVIEWED:
                     location_code = coda_code
 
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.
             if location_code is None:
-                location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_REVIEWED)
+                location_code = CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_REVIEWED)
 
             # If a control code was found, set all other location keys to that control code,
             # otherwise convert the provided location to the other locations in the hierarchy.
