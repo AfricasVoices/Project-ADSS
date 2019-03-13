@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cad740c3d8d934ac71b2a1d79ec46a84c5781bfd4f1597415cac97e99c0b33be"
+            "sha256": "72e1e8ef05e699071006d4f254e3135bbed7002b9db473a7a9226e54940a9c1b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -31,10 +31,10 @@
         },
         "certifi": {
             "hashes": [
-                "sha256:47f9c83ef4c0c621eaef743f133f09fa8a74a9b75f037e8624f83bd1b6626cb7",
-                "sha256:993f830721089fef441cdfeb4b2c8c9df86f0c63239f06bd025a76a7daddb033"
+                "sha256:59b7658e26ca9c7339e00f8f4636cdfe59d34fa37b9b04f6f9e9926b3cece1a5",
+                "sha256:b26104d6835d1f5e49452a26eb2ff87fe7090b89dfcaee5ea2212697e1e1d7ae"
             ],
-            "version": "==2018.11.29"
+            "version": "==2019.3.9"
         },
         "chardet": {
             "hashes": [
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "4d3eb58635f3344b7d5a68dda79e9de70aac9ea3"
+            "ref": "2986e313892544855802c16d929db5f376dff3a1"
         },
         "deprecation": {
             "hashes": [
@@ -305,7 +305,7 @@
         "rapidprotools": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/RapidProTools",
-            "ref": "1b99496d4f60e7d145ed1207ad3ac0a3ddeee6a8"
+            "ref": "61cce5dd79b52faffbed056e8a3bfb539e1aac96"
         },
         "requests": {
             "hashes": [

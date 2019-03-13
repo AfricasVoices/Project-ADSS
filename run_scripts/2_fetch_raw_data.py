@@ -55,7 +55,7 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_config = json.load(f)
 
-        rapid_pro_base_url = pipeline_config["RapidProBaseURL"]
+        rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     IOUtils.ensure_dirs_exist(f"{root_data_dir}/Raw Data")
 
-    rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
+    rapid_pro = RapidProClient(rapid_pro_domain, rapid_pro_token)
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
     raw_contacts_path = f"{root_data_dir}/Raw Data/contacts_raw.json"
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
-        
+
         # Save the latest set of raw runs to disk.
         with open(raw_runs_path, "w") as f:
             json.dump([run.serialize() for run in raw_runs], f)

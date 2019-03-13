@@ -80,7 +80,7 @@ CMD="
     $GSUTIL_CP_CMD \
 
     pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
-    \"$USER\" /data/phone-number-uuid-table-input.json \
+    \"$USER\" pipeline_config.json /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \
     /data/s01-demog-input.json /data/s02-demog-input.json /data/prev-coded \

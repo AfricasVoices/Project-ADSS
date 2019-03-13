@@ -3,7 +3,6 @@ import time
 from os import path
 
 from core_data_modules.cleaners import somali, Codes
-from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
@@ -42,26 +41,6 @@ class AutoCodeShowMessages(object):
                 if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=10):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Label missing data
-        for td in data:
-            missing_dict = dict()
-            for plan in PipelineConfiguration.RQA_CODING_PLANS:
-                if plan.raw_field not in td:
-                    na_label = CleaningUtils.make_label_from_cleaner_code(
-                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
-                        Metadata.get_call_location()
-                    )
-                    missing_dict[plan.coded_field] = [na_label.to_dict()]
-
-                    if plan.binary_code_scheme is not None:
-                        na_label = CleaningUtils.make_label_from_cleaner_code(
-                            plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
-                            Metadata.get_call_location()
-                        )
-                        missing_dict[plan.binary_coded_field] = na_label.to_dict()
-
-            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
         Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
