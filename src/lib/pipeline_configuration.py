@@ -1,7 +1,7 @@
 import json
 
 from core_data_modules.cleaners import somali, Codes
-from core_data_modules.data_models import Scheme
+from core_data_modules.data_models import Scheme, validators
 from dateutil.parser import isoparse
 
 
@@ -247,3 +247,69 @@ class PipelineConfiguration(object):
         #            cleaner=somali.DemographicCleaner.clean_yes_no,
         #            code_scheme=None)  # TODO
     ])
+
+    def __init__(self, rapid_pro_base_url, rapid_pro_token_file_url, rapid_pro_key_remappings):
+        """
+        :param rapid_pro_base_url: URL of the Rapid Pro server to download data from.
+        :type rapid_pro_base_url: str
+        :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
+                                         server.
+        :type rapid_pro_token_file_url: str
+        :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
+        :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        """
+        self.rapid_pro_base_url = rapid_pro_base_url
+        self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        rapid_pro_base_url = configuration_dict["RapidProBaseURL"]
+        rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+
+        rapid_pro_key_remappings = []
+        for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
+            rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
+
+        return cls(rapid_pro_base_url, rapid_pro_token_file_url, rapid_pro_key_remappings)
+
+    @classmethod
+    def from_configuration_file(cls, f):
+        return cls.from_configuration_dict(json.load(f))
+    
+    def validate(self):
+        validators.validate_string(self.rapid_pro_base_url, "rapid_pro_base_url")
+        validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
+        for i, remapping in enumerate(self.rapid_pro_key_remappings):
+            assert isinstance(remapping, RapidProKeyRemapping), \
+                f"self.rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
+            remapping.validate()
+        
+
+class RapidProKeyRemapping(object):
+    def __init__(self, rapid_pro_key, pipeline_key):
+        """
+        :param rapid_pro_key: Name of key in the dataset exported via RapidProTools.
+        :type rapid_pro_key: str
+        :param pipeline_key: Name to use for that key in the rest of the pipeline.
+        :type pipeline_key: str
+        """
+        self.rapid_pro_key = rapid_pro_key
+        self.pipeline_key = pipeline_key
+        
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        rapid_pro_key = configuration_dict["RapidProKey"]
+        pipeline_key = configuration_dict["PipelineKey"]
+        
+        return cls(rapid_pro_key, pipeline_key)
+    
+    def validate(self):
+        validators.validate_string(self.rapid_pro_key, "rapid_pro_key")
+        validators.validate_string(self.pipeline_key, "pipeline_key")
