@@ -35,4 +35,5 @@ RUN mkdir /data
 # Copy the rest of the project
 ADD code_schemes/*.json /app/code_schemes/
 ADD src /app/src
+ADD pipeline_config.json /app
 ADD pipeline.py /app

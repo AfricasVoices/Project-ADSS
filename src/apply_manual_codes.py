@@ -4,7 +4,6 @@ from os import path
 from core_data_modules.cleaners import Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.cleaners.location_tools import SomaliaLocations
-from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
 from core_data_modules.util import TimeUtils
@@ -43,6 +42,27 @@ class ApplyManualCodes(object):
             finally:
                 if f is not None:
                     f.close()
+
+        # At this point, the TracedData objects still contain messages for at most one week each.
+        # Label the weeks for which there is no response as TRUE_MISSING.
+        for td in data:
+            missing_dict = dict()
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
+                if plan.raw_field not in td:
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = [na_label.to_dict()]
+
+                    if plan.binary_code_scheme is not None:
+                        na_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                            Metadata.get_call_location()
+                        )
+                        missing_dict[plan.binary_coded_field] = na_label.to_dict()
+
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
@@ -125,6 +145,19 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
+        # Not everyone will have answered all of the demographic flows.
+        # Label demographic questions which had no responses as TRUE_MISSING.
+        for td in data:
+            missing_dict = dict()
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+                if td.get(plan.raw_field, "") == "":
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = na_label.to_dict()
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
             # Up to 1 location code should have been assigned in Coda. Search for that code,
@@ -136,14 +169,14 @@ class ApplyManualCodes(object):
                 coda_code = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
                 if location_code is not None:
                     if not (coda_code.code_id == location_code.code_id or coda_code.control_code == Codes.NOT_REVIEWED):
-                        location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_INTERNALLY_CONSISTENT)
+                        location_code = CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_INTERNALLY_CONSISTENT)
                 elif coda_code.control_code != Codes.NOT_REVIEWED:
                     location_code = coda_code
 
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.
             if location_code is None:
-                location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_REVIEWED)
+                location_code = CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_REVIEWED)
 
             # If a control code was found, set all other location keys to that control code,
             # otherwise convert the provided location to the other locations in the hierarchy.

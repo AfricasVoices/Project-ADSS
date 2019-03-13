@@ -1,7 +1,7 @@
 import json
 
 from core_data_modules.cleaners import somali, Codes
-from core_data_modules.data_models import Scheme
+from core_data_modules.data_models import Scheme, validators
 from dateutil.parser import isoparse
 
 
@@ -13,6 +13,11 @@ def _open_scheme(filename):
 
 class CodeSchemes(object):
     S02E01_REASONS = _open_scheme("s02e01_reasons.json")
+    S02E02_REASONS = _open_scheme("s02e02_reasons.json")
+    S02E03_REASONS = _open_scheme("s02e03_reasons.json")
+    S02E04_REASONS = _open_scheme("s02e04_reasons.json")
+    S02E05_REASONS = _open_scheme("s02e05_reasons.json")
+    S02E06_REASONS = _open_scheme("s02e06_reasons.json")
 
     SOMALIA_OPERATOR = _open_scheme("somalia_operator.json")
 
@@ -80,7 +85,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e02_run_id",
                    analysis_file_key="rqa_s02e02_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
+                   code_scheme=CodeSchemes.S02E02_REASONS),
 
         CodingPlan(raw_field="rqa_s02e03_raw",
                    coded_field="rqa_s02e03_coded",
@@ -90,7 +95,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e03_run_id",
                    analysis_file_key="rqa_s02e03_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
+                   code_scheme=CodeSchemes.S02E03_REASONS),
 
         CodingPlan(raw_field="rqa_s02e04_raw",
                    coded_field="rqa_s02e04_coded",
@@ -100,7 +105,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e04_run_id",
                    analysis_file_key="rqa_s02e04_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
+                   code_scheme=CodeSchemes.S02E04_REASONS),
 
         CodingPlan(raw_field="rqa_s02e05_raw",
                    coded_field="rqa_s02e05_coded",
@@ -110,7 +115,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e05_run_id",
                    analysis_file_key="rqa_s02e05_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
+                   code_scheme=CodeSchemes.S02E05_REASONS),
 
         CodingPlan(raw_field="rqa_s02e06_raw",
                    coded_field="rqa_s02e06_coded",
@@ -120,7 +125,7 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e06_run_id",
                    analysis_file_key="rqa_s02e06_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E01_REASONS),  # TODO
+                   code_scheme=CodeSchemes.S02E06_REASONS),
     ]
 
     @staticmethod
@@ -242,3 +247,69 @@ class PipelineConfiguration(object):
         #            cleaner=somali.DemographicCleaner.clean_yes_no,
         #            code_scheme=None)  # TODO
     ])
+
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings):
+        """
+        :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
+        :type rapid_pro_domain: str
+        :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
+                                         server.
+        :type rapid_pro_token_file_url: str
+        :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
+        :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        """
+        self.rapid_pro_domain = rapid_pro_domain
+        self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        rapid_pro_domain = configuration_dict["RapidProDomain"]
+        rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+
+        rapid_pro_key_remappings = []
+        for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
+            rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
+
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings)
+
+    @classmethod
+    def from_configuration_file(cls, f):
+        return cls.from_configuration_dict(json.load(f))
+    
+    def validate(self):
+        validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
+        validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
+        for i, remapping in enumerate(self.rapid_pro_key_remappings):
+            assert isinstance(remapping, RapidProKeyRemapping), \
+                f"self.rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
+            remapping.validate()
+        
+
+class RapidProKeyRemapping(object):
+    def __init__(self, rapid_pro_key, pipeline_key):
+        """
+        :param rapid_pro_key: Name of key in the dataset exported via RapidProTools.
+        :type rapid_pro_key: str
+        :param pipeline_key: Name to use for that key in the rest of the pipeline.
+        :type pipeline_key: str
+        """
+        self.rapid_pro_key = rapid_pro_key
+        self.pipeline_key = pipeline_key
+        
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        rapid_pro_key = configuration_dict["RapidProKey"]
+        pipeline_key = configuration_dict["PipelineKey"]
+        
+        return cls(rapid_pro_key, pipeline_key)
+    
+    def validate(self):
+        validators.validate_string(self.rapid_pro_key, "rapid_pro_key")
+        validators.validate_string(self.pipeline_key, "pipeline_key")
