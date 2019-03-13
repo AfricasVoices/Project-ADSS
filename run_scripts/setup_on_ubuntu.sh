@@ -2,6 +2,13 @@
 
 set -e
 
+if [[ $# -ne 0 ]]; then
+    echo "Usage: ./setup_on_ubuntu.sh"
+    echo "Installs the dependencies required in order to run this project onto an Ubuntu machine."
+    echo "Run this script from somewhere within the project repository e.g. from 'run_scripts/'"
+    exit
+fi
+
 # Install Python 3.6
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 sudo -H pip3 install pipenv
