@@ -248,18 +248,24 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
+                 rapid_pro_key_remappings):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
+        :param rapid_pro_test_contact_uuids: Rapid Pro contact UUIDs of test contacts.
+                                             Runs for any of those test contacts will be tagged with {'test_run': True},
+                                             and dropped when the pipeline is in production mode.
+        :type rapid_pro_test_contact_uuids: list of str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         
         self.validate()
