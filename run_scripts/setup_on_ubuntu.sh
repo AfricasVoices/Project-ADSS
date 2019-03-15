@@ -9,6 +9,9 @@ if [[ $# -ne 0 ]]; then
     exit
 fi
 
+DOCKER_VERSION="5:18.09.2~3-0-ubntu-bionic"
+CONTAINERD_VERSION="1.2.2-3"
+
 # Install Python 3.6
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 sudo -H pip3 install pipenv
@@ -25,7 +28,7 @@ sudo add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
-sudo apt install -y docker-ce docker-ce-cli containerd.io
+sudo apt install -y docker-ce="$DOCKER_VERSION" docker-ce-cli="$DOCKER_VERSION" containerd.io="$CONTAINERD_VERSION"
 
 # Start the Docker daemon on boot
 sudo systemctl enable docker
