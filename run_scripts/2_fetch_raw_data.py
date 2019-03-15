@@ -82,7 +82,7 @@ if __name__ == "__main__":
     with open(TEST_CONTACTS_PATH) as f:
         test_contacts = json.load(f)
 
-    rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
+    rapid_pro = RapidProClient(rapid_pro_domain, rapid_pro_token)
     raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
