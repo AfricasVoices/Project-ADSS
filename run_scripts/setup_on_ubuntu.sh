@@ -9,7 +9,7 @@ if [[ $# -ne 0 ]]; then
     exit
 fi
 
-DOCKER_VERSION="5:18.09.2~3-0-ubntu-bionic"
+DOCKER_VERSION="5:18.09.2~3-0~ubuntu-bionic"
 CONTAINERD_VERSION="1.2.2-3"
 
 # Install Python 3.6
