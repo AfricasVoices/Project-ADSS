@@ -274,12 +274,14 @@ class PipelineConfiguration(object):
     def from_configuration_dict(cls, configuration_dict):
         rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+        rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         rapid_pro_key_remappings = []
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
+                   rapid_pro_key_remappings)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -288,6 +290,10 @@ class PipelineConfiguration(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
+        for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
+            validators.validate_string(contact_uuid, f"rapid_pro_test_contact_uuids[{i}]")
 
         validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
         for i, remapping in enumerate(self.rapid_pro_key_remappings):
