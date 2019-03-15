@@ -1,5 +1,6 @@
 import argparse
 import os
+import random
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
@@ -9,6 +10,7 @@ from src import CombineRawDatasets
 from src.analysis_file import AnalysisFile
 from src.apply_manual_codes import ApplyManualCodes
 from src.auto_code_show_messages import AutoCodeShowMessages
+from src.lib import PipelineConfiguration
 from src.lib.auto_code_surveys import AutoCodeSurveys
 from src.production_file import ProductionFile
 from src.translate_rapid_pro_keys import TranslateRapidProKeys
@@ -31,6 +33,8 @@ if __name__ == "__main__":
                              "upload the production CSV to"),
 
     parser.add_argument("user", help="User launching this program")
+    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
+                        help="Path to the pipeline configuration json file"),
 
     parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
                         help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
@@ -94,6 +98,7 @@ if __name__ == "__main__":
         production_csv_drive_path = args.drive_upload[3]
 
     user = args.user
+    pipeline_configuration_file_path = args.pipeline_configuration_file_path
 
     phone_number_uuid_table_path = args.phone_number_uuid_table_path
     s02e01_input_path = args.s02e01_input_path
@@ -115,6 +120,11 @@ if __name__ == "__main__":
 
     message_paths = [s02e01_input_path, s02e02_input_path, s02e03_input_path,
                      s02e04_input_path, s02e05_input_path, s02e06_input_path]
+
+    # Load the pipeline configuration file
+    print("Loading Pipeline Configuration File...")
+    with open(pipeline_configuration_file_path) as f:
+        pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
     # Load phone number <-> UUID table
     print("Loading Phone Number <-> UUID Table...")
@@ -142,7 +152,7 @@ if __name__ == "__main__":
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
     print("Translating Rapid Pro Keys...")
-    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
 
     print("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
@@ -159,6 +169,15 @@ if __name__ == "__main__":
     print("Generating Analysis CSVs...")
     data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
+    print("Writing TracedData to file...")
+    IOUtils.ensure_dirs_exist_for_file(json_output_path)
+    with open(json_output_path, "w") as f:
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
+
+    # Upload to Google Drive, if requested.
+    # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
+    # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
+    # traced data log.
     if drive_upload:
         print("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
@@ -181,11 +200,6 @@ if __name__ == "__main__":
                                               target_file_name=production_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
     else:
-        print("Not uploading to Google Drive")
-
-    print("Writing TracedData to file...")
-    IOUtils.ensure_dirs_exist_for_file(json_output_path)
-    with open(json_output_path, "w") as f:
-        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
+        print("Skipping uploading to Google Drive (because --drive-upload flag was not set)")
 
     print("Python script complete")

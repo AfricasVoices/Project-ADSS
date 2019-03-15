@@ -55,7 +55,7 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_config = json.load(f)
 
-        rapid_pro_base_url = pipeline_config["RapidProBaseURL"]
+        rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
 
     # Download/checkout the appropriate version of RapidProTools
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     with open(TEST_CONTACTS_PATH) as f:
         test_contacts = json.load(f)
-        
+
     rapid_pro = RapidProClient(rapid_pro_base_url, rapid_pro_token)
     raw_contacts = rapid_pro.get_raw_contacts()
 
