@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a3a672345737106dcccd022603a0441600d646d388fa5312d5c861b94df14f53"
+            "sha256": "1ac4c9dfc8593971aeeaf799aeeb625a049d38b09020c51bdfc736e257815315"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "a17f4c9f2ab8e2621085536157122db03abbf5e6"
+            "ref": "2986e313892544855802c16d929db5f376dff3a1"
         },
         "deprecation": {
             "hashes": [
@@ -66,11 +66,11 @@
                 "grpc"
             ],
             "hashes": [
-                "sha256:3157625b4f4f033650c6e674d52fd8a3a8c116b26b39705cddf4ed61621c09ff",
-                "sha256:c6d834143a2bea4de8d1161b5460fd362457db40c55ea9ccbe672e5602e330af"
+                "sha256:25e20c24395439dffcdb6e364cc6adb9b28a9e28d516ef5a51b9266ae0894a44",
+                "sha256:b1fce5000657dfa4d2ed3a7c94addf9c74fc3e632c7b0e8611b0e8519d1e610a"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==1.8.0"
+            "version": "==1.8.1"
         },
         "google-api-python-client": {
             "hashes": [
@@ -179,6 +179,14 @@
             ],
             "version": "==2.8"
         },
+        "iso8601": {
+            "hashes": [
+                "sha256:210e0134677cc0d02f6028087fee1df1e1d76d372ee1db0bf30bf66c5c1c89a3",
+                "sha256:49c4b20e1f38aa5cf109ddcd39647ac419f928512c869dc01d5c7098eddede82",
+                "sha256:bbbae5fb4a7abfe71d4688fd64bff70b91bbd74ef6a99d964bab18f7fdf286dd"
+            ],
+            "version": "==0.1.12"
+        },
         "jsonpickle": {
             "hashes": [
                 "sha256:0231d6f7ebc4723169310141352d9c9b7bbbd6f3be110cf634575d2bf2af91f0",
@@ -286,6 +294,18 @@
             ],
             "index": "pypi",
             "version": "==2018.9"
+        },
+        "rapidpro-python": {
+            "hashes": [
+                "sha256:19dea98782f6055a23816d727073d2024bf8f001f0208fcf7baa87aad86773b7",
+                "sha256:a1d09839051ceb23bf0251fc76b9a5ffbd2a98a59d1470968dd669180c9ff4f1"
+            ],
+            "version": "==2.5.1"
+        },
+        "rapidprotools": {
+            "editable": true,
+            "git": "https://www.github.com/AfricasVoices/RapidProTools",
+            "ref": "dfaa9c2284671e65a08662a77eb819ca5b1d7fa7"
         },
         "requests": {
             "hashes": [
