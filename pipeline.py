@@ -1,6 +1,5 @@
 import argparse
 import os
-import random
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
@@ -172,7 +171,7 @@ if __name__ == "__main__":
     print("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
     with open(json_output_path, "w") as f:
-        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=False)
 
     # Upload to Google Drive, if requested.
     # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
