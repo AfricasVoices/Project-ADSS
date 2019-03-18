@@ -43,5 +43,11 @@
     {"RapidProKey": "Recently_Displaced (Time) - csap_s02_demog", "PipelineKey": "recently_displaced_time"},
     {"RapidProKey": "Hh_Language (Value) - csap_s02_demog", "PipelineKey": "household_language_raw"},
     {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"}
-  ]
+  ],
+  "DriveUploadPaths": {
+    "ProductionPath": "adss_test/csap_s02_messages.csv",
+    "MessagesPath": "adss_test/csap_s02_individuals.csv",
+    "IndividualsPath": "adss_test/csap_s02_production.csv",
+    "TracedDataPath": "adss_test/csap_s02_traced_data.json"
+  }
 }

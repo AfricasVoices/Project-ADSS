@@ -248,7 +248,7 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -257,10 +257,14 @@ class PipelineConfiguration(object):
         :type rapid_pro_token_file_url: str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        :param drive_upload_paths: Paths in a Drive service account's , or None.
+                                   If None, does not upload to Google Drive.
+        :type drive_upload_paths: DriveUploadPaths | None
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        self.drive_upload_paths = drive_upload_paths
         
         self.validate()
 
@@ -273,7 +277,11 @@ class PipelineConfiguration(object):
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings)
+        drive_upload_paths = None
+        if "DriveUploadPaths" in configuration_dict:
+            drive_upload_paths = DriveUploadPaths.from_configuration_dict(configuration_dict["DriveUploadPaths"])
+
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -286,8 +294,13 @@ class PipelineConfiguration(object):
         validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
         for i, remapping in enumerate(self.rapid_pro_key_remappings):
             assert isinstance(remapping, RapidProKeyRemapping), \
-                f"self.rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
+                f"rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
             remapping.validate()
+            
+        if self.drive_upload_paths is not None:
+            assert isinstance(self.drive_upload_paths, DriveUploadPaths), \
+                "drive_upload_paths is not of type DriveUploadPaths"
+            self.drive_upload_paths.validate()
         
 
 class RapidProKeyRemapping(object):
@@ -313,3 +326,42 @@ class RapidProKeyRemapping(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_key, "rapid_pro_key")
         validators.validate_string(self.pipeline_key, "pipeline_key")
+
+
+class DriveUploadPaths(object):
+    def __init__(self, production_path, messages_path, individuals_path, traced_data_path):
+        """
+        :param production_path: Path in the Drive service account's "Shared with Me" directory to upload the production 
+                                CSV to.
+        :type production_path: str
+        :param messages_path: Path in the Drive service account's "Shared with Me" directory to upload the messages
+                              analysis CSV to.
+        :type messages_path: str
+        :param individuals_path: Path in the Drive service account's "Shared with Me" directory to upload the
+                                 individuals analysis CSV to.
+        :type individuals_path: str
+        :param traced_data_path: Path in the Drive service account's "Shared with Me" directory to upload the serialized
+                                 TracedData from this pipeline run to.
+        :type traced_data_path: str
+        """
+        self.production_path = production_path
+        self.messages_path = messages_path
+        self.individuals_path = individuals_path
+        self.traced_data_path = traced_data_path
+
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        production_path = configuration_dict["ProductionPath"]
+        messages_path = configuration_dict["MessagesPath"]
+        individuals_path = configuration_dict["IndividualsPath"]
+        traced_data_path = configuration_dict["TracedDataPath"]
+
+        return cls(production_path, messages_path, individuals_path, traced_data_path)
+
+    def validate(self):
+        validators.validate_string(self.production_path, "production_path")
+        validators.validate_string(self.messages_path, "messages_path")
+        validators.validate_string(self.individuals_path, "individuals_path")
+        validators.validate_string(self.traced_data_path, "traced_data_path")

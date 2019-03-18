@@ -178,28 +178,35 @@ if __name__ == "__main__":
     # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
     # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
     # traced data log.
-    if drive_upload:
+    if pipeline_configuration.drive_upload_paths is not None:
         print("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
 
-        csv_by_message_drive_dir = os.path.dirname(csv_by_message_drive_path)
-        csv_by_message_drive_file_name = os.path.basename(csv_by_message_drive_path)
-        drive_client_wrapper.update_or_create(csv_by_message_output_path, csv_by_message_drive_dir,
-                                              target_file_name=csv_by_message_drive_file_name,
-                                              target_folder_is_shared_with_me=True)
-
-        csv_by_individual_drive_dir = os.path.dirname(csv_by_individual_drive_path)
-        csv_by_individual_drive_file_name = os.path.basename(csv_by_individual_drive_path)
-        drive_client_wrapper.update_or_create(csv_by_individual_output_path, csv_by_individual_drive_dir,
-                                              target_file_name=csv_by_individual_drive_file_name,
-                                              target_folder_is_shared_with_me=True)
-
-        production_csv_drive_dir = os.path.dirname(production_csv_drive_path)
-        production_csv_drive_file_name = os.path.basename(production_csv_drive_path)
+        production_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.production_path)
+        production_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.production_path)
         drive_client_wrapper.update_or_create(production_csv_output_path, production_csv_drive_dir,
                                               target_file_name=production_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
+
+        messages_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.messages_path)
+        messages_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.messages_path)
+        drive_client_wrapper.update_or_create(csv_by_message_output_path, messages_csv_drive_dir,
+                                              target_file_name=messages_csv_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
+
+        individuals_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.individuals_path)
+        individuals_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.individuals_path)
+        drive_client_wrapper.update_or_create(csv_by_individual_output_path, individuals_csv_drive_dir,
+                                              target_file_name=individuals_csv_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
+
+        traced_data_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.traced_data_path)
+        traced_data_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.traced_data_path)
+        drive_client_wrapper.update_or_create(json_output_path, traced_data_drive_dir,
+                                              target_file_name=traced_data_drive_file_name,
+                                              target_folder_is_shared_with_me=True)
     else:
-        print("Skipping uploading to Google Drive (because --drive-upload flag was not set)")
+        print("Skipping uploading to Google Drive (because the pipeline configuration json does not contain the key "
+              "'DriveUploadPaths')")
 
     print("Python script complete")
