@@ -28,11 +28,11 @@ done
 
 
 # Check that the correct number of arguments were provided.
-if [[ $# -ne 17 ]]; then
+if [[ $# -ne 18 ]]; then
     echo "Usage: ./docker-run.sh
     [--profile-cpu <profile-output-path>]
     [--drive-upload <drive-auth-file> <messages-drive-path> <individuals-drive-path> <production-drive-path>]
-    <user> <phone-number-uuid-table-path>
+    <user> <google-cloud-credentials-file-path> <phone-number-uuid-table-path>
     <s02e01-input-path> <s02e02-input-path> <s02e03-input-path> <s02e04-input-path> <s02e05-input-path> <s02e06-input-path>
     <s01-demog-input-path> <s02-demog-input-path> <prev-coded-dir> <json-output-path>
     <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>"
@@ -41,22 +41,23 @@ fi
 
 # Assign the program arguments to bash variables.
 USER=$1
-INPUT_PHONE_UUID_TABLE=$2
-INPUT_S02E01=$3
-INPUT_S02E02=$4
-INPUT_S02E03=$5
-INPUT_S02E04=$6
-INPUT_S02E05=$7
-INPUT_S02E06=$8
-INPUT_S01_DEMOG=$9
-INPUT_S02_DEMOG=${10}
-PREV_CODED_DIR=${11}
-OUTPUT_JSON=${12}
-OUTPUT_ICR_DIR=${13}
-OUTPUT_CODED_DIR=${14}
-OUTPUT_MESSAGES_CSV=${15}
-OUTPUT_INDIVIDUALS_CSV=${16}
-OUTPUT_PRODUCTION_CSV=${17}
+GOOGLE_CLOUD_CREDENTIALS_FILE_PATH=$2
+INPUT_PHONE_UUID_TABLE=$3
+INPUT_S02E01=$4
+INPUT_S02E02=$5
+INPUT_S02E03=$6
+INPUT_S02E04=$7
+INPUT_S02E05=$8
+INPUT_S02E06=$9
+INPUT_S01_DEMOG=${10}
+INPUT_S02_DEMOG=${11}
+PREV_CODED_DIR=${12}
+OUTPUT_JSON=${13}
+OUTPUT_ICR_DIR=${14}
+OUTPUT_CODED_DIR=${15}
+OUTPUT_MESSAGES_CSV=${16}
+OUTPUT_INDIVIDUALS_CSV=${17}
+OUTPUT_PRODUCTION_CSV=${18}
 
 # Build an image for this pipeline stage.
 docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
@@ -73,21 +74,17 @@ if [[ "$PROFILE_CPU" = true ]]; then
     SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
 fi
 if [[ "$DRIVE_UPLOAD" = true ]]; then
-    GSUTIL_CP_CMD="gsutil cp \"$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json &&"
     DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
 fi
-CMD="
-    $GSUTIL_CP_CMD \
-
-    pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
-    \"$USER\" pipeline_config.json /data/phone-number-uuid-table-input.json \
+CMD="pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
+    \"$USER\" pipeline_config.json /auth/google-cloud-credentials.json /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \
     /data/s01-demog-input.json /data/s02-demog-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
 "
-container="$(docker container create ${SYS_PTRACE_CAPABILITY} -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
+container="$(docker container create ${SYS_PTRACE_CAPABILITY} -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
 function finish {
     # Tear down the container when done.
@@ -96,6 +93,7 @@ function finish {
 trap finish EXIT
 
 # Copy input data into the container
+docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/auth/google-cloud-credentials.json"
 docker cp "$INPUT_PHONE_UUID_TABLE" "$container:/data/phone-number-uuid-table-input.json"
 docker cp "$INPUT_S02E01" "$container:/data/s02e01-input.json"
 docker cp "$INPUT_S02E02" "$container:/data/s02e02-input.json"
