@@ -1,4 +1,5 @@
 import json
+from urllib.parse import urlparse
 
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.data_models import Scheme, validators
@@ -248,7 +249,8 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings,
+                 drive_credentials_file_url, drive_upload_paths=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -264,8 +266,9 @@ class PipelineConfiguration(object):
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        self.drive_credentials_file_url = drive_credentials_file_url
         self.drive_upload_paths = drive_upload_paths
-        
+
         self.validate()
 
     @classmethod
@@ -277,11 +280,14 @@ class PipelineConfiguration(object):
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
+        drive_credentials_file_url = configuration_dict["DriveCredentialsFileURL"]
+
         drive_upload_paths = None
         if "DriveUploadPaths" in configuration_dict:
             drive_upload_paths = DriveUploadPaths.from_configuration_dict(configuration_dict["DriveUploadPaths"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_credentials_file_url,
+                   drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -296,12 +302,16 @@ class PipelineConfiguration(object):
             assert isinstance(remapping, RapidProKeyRemapping), \
                 f"rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
             remapping.validate()
-            
+
+        validators.validate_string(self.drive_credentials_file_url, "drive_credentials_file_url")
+        assert urlparse(self.drive_credentials_file_url).scheme == "gs", "DriveCredentialsFileURL needs to be a gs " \
+                                                                         "URL (i.e. of the form gs://bucket-name/file)"
+
         if self.drive_upload_paths is not None:
             assert isinstance(self.drive_upload_paths, DriveUploadPaths), \
                 "drive_upload_paths is not of type DriveUploadPaths"
             self.drive_upload_paths.validate()
-        
+
 
 class RapidProKeyRemapping(object):
     def __init__(self, rapid_pro_key, pipeline_key):
@@ -331,7 +341,7 @@ class RapidProKeyRemapping(object):
 class DriveUploadPaths(object):
     def __init__(self, production_path, messages_path, individuals_path, traced_data_path):
         """
-        :param production_path: Path in the Drive service account's "Shared with Me" directory to upload the production 
+        :param production_path: Path in the Drive service account's "Shared with Me" directory to upload the production
                                 CSV to.
         :type production_path: str
         :param messages_path: Path in the Drive service account's "Shared with Me" directory to upload the messages

@@ -44,6 +44,7 @@
     {"RapidProKey": "Hh_Language (Value) - csap_s02_demog", "PipelineKey": "household_language_raw"},
     {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"}
   ],
+  "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
   "DriveUploadPaths": {
     "ProductionPath": "adss_test/csap_s02_messages.csv",
     "MessagesPath": "adss_test/csap_s02_individuals.csv",
