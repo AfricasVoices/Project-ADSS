@@ -2,7 +2,7 @@ import random
 import time
 from os import path
 
-from core_data_modules.cleaners import somali, Codes
+from core_data_modules.cleaners import somali
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
@@ -64,14 +64,8 @@ class AutoCodeShowMessages(object):
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = []
             for td in not_noise:
-                # This test works because the only codes which have been applied at this point are TRUE_MISSING.
-                # If any other coding is done above, this test will need to change.
-                if plan.coded_field not in td:
+                if plan.raw_field in td:
                     rqa_messages.append(td)
-                else:
-                    assert len(td[plan.coded_field]) == 1
-                    assert td[plan.coded_field][0]["CodeID"] == \
-                        plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING).code_id
 
             icr_messages = ICRTools.generate_sample_for_icr(
                 rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(cls.ICR_SEED))
