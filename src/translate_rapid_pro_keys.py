@@ -1,5 +1,9 @@
+from datetime import datetime
+
+import pytz
 from core_data_modules.traced_data import Metadata
 from core_data_modules.util import TimeUtils
+from dateutil.parser import isoparse
 
 
 class TranslateRapidProKeys(object):
@@ -45,6 +49,49 @@ class TranslateRapidProKeys(object):
                     show_dict["show_id"] = show_id
 
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+    @classmethod
+    def _remap_radio_show_by_time_range(cls, user, data, time_key, show_id_to_remap_to,
+                                        range_start=None, range_end=None, time_to_adjust_to=None):
+        """
+        Remaps radio show messages received in the given time range to another radio show.
+
+        Optionally adjusts the datetime of re-mapped messages to a constant.
+
+        :param user: Identifier of the user running this program, for TracedData Metadata.
+        :type user: str
+        :param data: TracedData objects to set the show ids of.
+        :type data: iterable of TracedData
+        :param time_key: Key in each TracedData of an ISO 8601-formatted datetime string to read the message sent on
+                         time from.
+        :type time_key: str
+        :param show_id_to_remap_to: Show id to assign to messages received within the given time range.
+        :type show_id_to_remap_to: int
+        :param range_start: Start datetime for the time range to remap radio show messages from, inclusive.
+                            If None, defaults to the beginning of time.
+        :type range_start: datetime | None
+        :param range_end: End datetime for the time range to remap radio show messages from, exclusive.
+                          If None, defaults to the end of time.
+        :type range_end: datetime | None
+        :param time_to_adjust_to: Datetime to assign to the 'sent_on' field of re-mapped shows.
+                                  If None, re-mapped shows will not have timestamps re-adjusted.
+        :type time_to_adjust_to: datetime | None
+        """
+        if range_start is None:
+            range_start = pytz.utc.localize(datetime.min)
+        if range_end is None:
+            range_end = pytz.utc.localize(datetime.max)
+
+        for td in data:
+            if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
+                remapped = {
+                    "show_id": show_id_to_remap_to
+                }
+                if time_to_adjust_to is not None:
+                    remapped[time_key] = time_to_adjust_to.isoformat()
+
+                td.append_data(remapped,
+                               Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):
