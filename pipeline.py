@@ -1,6 +1,5 @@
 import argparse
 import os
-import random
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
@@ -125,12 +124,12 @@ if __name__ == "__main__":
                      s02e04_input_path, s02e05_input_path, s02e06_input_path]
 
     # Load the pipeline configuration file
-    print("Loading Pipeline Configuration File...")
+    log.info("Loading Pipeline Configuration File...")
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
     # Load phone number <-> UUID table
-    print("Loading Phone Number <-> UUID Table...")
+    log.info("Loading Phone Number <-> UUID Table...")
     with open(phone_number_uuid_table_path, "r") as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
@@ -154,28 +153,28 @@ if __name__ == "__main__":
         log.debug(f"Loaded {len(s02_demographics)} contacts")
 
     # Add survey data to the messages
-    print("Combining Datasets...")
+    log.info("Combining Datasets...")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
-    print("Translating Rapid Pro Keys...")
+    log.info("Translating Rapid Pro Keys...")
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
 
-    print("Auto Coding Messages...")
+    log.info("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
-    print("Exporting production CSV...")
+    log.info("Exporting production CSV...")
     data = ProductionFile.generate(data, production_csv_output_path)
 
-    print("Auto Coding Surveys...")
+    log.info("Auto Coding Surveys...")
     data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
 
-    print("Applying Manual Codes from Coda...")
+    log.info("Applying Manual Codes from Coda...")
     data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
 
-    print("Generating Analysis CSVs...")
+    log.info("Generating Analysis CSVs...")
     data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
-    print("Writing TracedData to file...")
+    log.info("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
     with open(json_output_path, "w") as f:
         TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
@@ -185,7 +184,7 @@ if __name__ == "__main__":
     # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
     # traced data log.
     if drive_upload:
-        print("Uploading CSVs to Google Drive...")
+        log.info("Uploading CSVs to Google Drive...")
         drive_client_wrapper.init_client(drive_credentials_path)
 
         csv_by_message_drive_dir = os.path.dirname(csv_by_message_drive_path)
@@ -206,6 +205,6 @@ if __name__ == "__main__":
                                               target_file_name=production_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
     else:
-        print("Skipping uploading to Google Drive (because --drive-upload flag was not set)")
+        log.info("Skipping uploading to Google Drive (because --drive-upload flag was not set)")
 
-    print("Python script complete")
+    log.info("Python script complete")
