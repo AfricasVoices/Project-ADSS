@@ -249,8 +249,7 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings,
-                 drive_credentials_file_url, drive_upload_paths=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -259,15 +258,14 @@ class PipelineConfiguration(object):
         :type rapid_pro_token_file_url: str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
-        :param drive_upload_paths: Paths in a Drive service account's , or None.
-                                   If None, does not upload to Google Drive.
-        :type drive_upload_paths: DriveUploadPaths | None
+        :param drive_upload: Configuration for uploading to Google Drive, or None.
+                             If None, does not upload to Google Drive.
+        :type drive_upload: DriveUploadPaths | None
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
-        self.drive_credentials_file_url = drive_credentials_file_url
-        self.drive_upload_paths = drive_upload_paths
+        self.drive_upload = drive_upload
 
         self.validate()
 
@@ -280,14 +278,11 @@ class PipelineConfiguration(object):
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
-        drive_credentials_file_url = configuration_dict["DriveCredentialsFileURL"]
-
         drive_upload_paths = None
-        if "DriveUploadPaths" in configuration_dict:
-            drive_upload_paths = DriveUploadPaths.from_configuration_dict(configuration_dict["DriveUploadPaths"])
+        if "DriveUpload" in configuration_dict:
+            drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_credentials_file_url,
-                   drive_upload_paths)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -303,14 +298,10 @@ class PipelineConfiguration(object):
                 f"rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
             remapping.validate()
 
-        validators.validate_string(self.drive_credentials_file_url, "drive_credentials_file_url")
-        assert urlparse(self.drive_credentials_file_url).scheme == "gs", "DriveCredentialsFileURL needs to be a gs " \
-                                                                         "URL (i.e. of the form gs://bucket-name/file)"
-
-        if self.drive_upload_paths is not None:
-            assert isinstance(self.drive_upload_paths, DriveUploadPaths), \
-                "drive_upload_paths is not of type DriveUploadPaths"
-            self.drive_upload_paths.validate()
+        if self.drive_upload is not None:
+            assert isinstance(self.drive_upload, DriveUpload), \
+                "drive_upload is not of type DriveUpload"
+            self.drive_upload.validate()
 
 
 class RapidProKeyRemapping(object):
@@ -338,40 +329,51 @@ class RapidProKeyRemapping(object):
         validators.validate_string(self.pipeline_key, "pipeline_key")
 
 
-class DriveUploadPaths(object):
-    def __init__(self, production_path, messages_path, individuals_path, traced_data_path):
+class DriveUpload(object):
+    def __init__(self, drive_credentials_file_url, production_upload_path, messages_upload_path,
+                 individuals_upload_path, traced_data_upload_path):
         """
-        :param production_path: Path in the Drive service account's "Shared with Me" directory to upload the production
-                                CSV to.
-        :type production_path: str
-        :param messages_path: Path in the Drive service account's "Shared with Me" directory to upload the messages
-                              analysis CSV to.
-        :type messages_path: str
-        :param individuals_path: Path in the Drive service account's "Shared with Me" directory to upload the
-                                 individuals analysis CSV to.
-        :type individuals_path: str
-        :param traced_data_path: Path in the Drive service account's "Shared with Me" directory to upload the serialized
-                                 TracedData from this pipeline run to.
-        :type traced_data_path: str
+        :param drive_credentials_file_url: GS URL to the private credentials file for the Drive service account to use
+                                           to upload the output files.
+        :type drive_credentials_file_url: str
+        :param production_upload_path: Path in the Drive service account's "Shared with Me" directory to upload the
+                                       production CSV to.
+        :type production_upload_path: str
+        :param messages_upload_path: Path in the Drive service account's "Shared with Me" directory to upload the
+                                     messages analysis CSV to.
+        :type messages_upload_path: str
+        :param individuals_upload_path: Path in the Drive service account's "Shared with Me" directory to upload the
+                                        individuals analysis CSV to.
+        :type individuals_upload_path: str
+        :param traced_data_upload_path: Path in the Drive service account's "Shared with Me" directory to upload the
+                                        serialized TracedData from this pipeline run to.
+        :type traced_data_upload_path: str
         """
-        self.production_path = production_path
-        self.messages_path = messages_path
-        self.individuals_path = individuals_path
-        self.traced_data_path = traced_data_path
+        self.drive_credentials_file_url = drive_credentials_file_url
+        self.production_upload_path = production_upload_path
+        self.messages_upload_path = messages_upload_path
+        self.individuals_upload_path = individuals_upload_path
+        self.traced_data_upload_path = traced_data_upload_path
 
         self.validate()
 
     @classmethod
     def from_configuration_dict(cls, configuration_dict):
-        production_path = configuration_dict["ProductionPath"]
-        messages_path = configuration_dict["MessagesPath"]
-        individuals_path = configuration_dict["IndividualsPath"]
-        traced_data_path = configuration_dict["TracedDataPath"]
+        drive_credentials_file_url = configuration_dict["DriveCredentialsFileURL"]
+        production_upload_path = configuration_dict["ProductionUploadPath"]
+        messages_upload_path = configuration_dict["MessagesUploadPath"]
+        individuals_upload_path = configuration_dict["IndividualsUploadPath"]
+        traced_data_upload_path = configuration_dict["TracedDataUploadPath"]
 
-        return cls(production_path, messages_path, individuals_path, traced_data_path)
+        return cls(drive_credentials_file_url, production_upload_path, messages_upload_path,
+                   individuals_upload_path, traced_data_upload_path)
 
     def validate(self):
-        validators.validate_string(self.production_path, "production_path")
-        validators.validate_string(self.messages_path, "messages_path")
-        validators.validate_string(self.individuals_path, "individuals_path")
-        validators.validate_string(self.traced_data_path, "traced_data_path")
+        validators.validate_string(self.drive_credentials_file_url, "drive_credentials_file_url")
+        assert urlparse(self.drive_credentials_file_url).scheme == "gs", "DriveCredentialsFileURL needs to be a gs " \
+                                                                         "URL (i.e. of the form gs://bucket-name/file)"
+
+        validators.validate_string(self.production_upload_path, "production_upload_path")
+        validators.validate_string(self.messages_upload_path, "messages_upload_path")
+        validators.validate_string(self.individuals_upload_path, "individuals_upload_path")
+        validators.validate_string(self.traced_data_upload_path, "traced_data_upload_path")

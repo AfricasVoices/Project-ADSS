@@ -183,11 +183,11 @@ if __name__ == "__main__":
     # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
     # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
     # traced data log.
-    if pipeline_configuration.drive_upload_paths is not None:
+    if pipeline_configuration.drive_upload is not None:
         print("Uploading CSVs to Google Drive...")
 
         # Fetch the Rapid Pro Token from the Google Cloud Storage URL
-        parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.drive_credentials_file_url)
+        parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.drive_upload.drive_credentials_file_url)
         bucket_name = parsed_rapid_pro_token_file_url.netloc
         blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
@@ -200,26 +200,26 @@ if __name__ == "__main__":
 
         drive_client_wrapper.init_client_from_info(credentials_info)
 
-        production_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.production_path)
-        production_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.production_path)
+        production_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload.production_upload_path)
+        production_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload.production_upload_path)
         drive_client_wrapper.update_or_create(production_csv_output_path, production_csv_drive_dir,
                                               target_file_name=production_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
 
-        messages_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.messages_path)
-        messages_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.messages_path)
+        messages_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload.messages_upload_path)
+        messages_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload.messages_upload_path)
         drive_client_wrapper.update_or_create(csv_by_message_output_path, messages_csv_drive_dir,
                                               target_file_name=messages_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
 
-        individuals_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.individuals_path)
-        individuals_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.individuals_path)
+        individuals_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload.individuals_upload_path)
+        individuals_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload.individuals_upload_path)
         drive_client_wrapper.update_or_create(csv_by_individual_output_path, individuals_csv_drive_dir,
                                               target_file_name=individuals_csv_drive_file_name,
                                               target_folder_is_shared_with_me=True)
 
-        traced_data_drive_dir = os.path.dirname(pipeline_configuration.drive_upload_paths.traced_data_path)
-        traced_data_drive_file_name = os.path.basename(pipeline_configuration.drive_upload_paths.traced_data_path)
+        traced_data_drive_dir = os.path.dirname(pipeline_configuration.drive_upload.traced_data_upload_path)
+        traced_data_drive_file_name = os.path.basename(pipeline_configuration.drive_upload.traced_data_upload_path)
         drive_client_wrapper.update_or_create(json_output_path, traced_data_drive_dir,
                                               target_file_name=traced_data_drive_file_name,
                                               target_folder_is_shared_with_me=True)
