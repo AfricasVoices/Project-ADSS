@@ -6,14 +6,9 @@ from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from storage.google_drive import drive_client_wrapper
 
-from src import CombineRawDatasets
-from src.analysis_file import AnalysisFile
-from src.apply_manual_codes import ApplyManualCodes
-from src.auto_code_show_messages import AutoCodeShowMessages
+from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
+    ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
-from src.lib.auto_code_surveys import AutoCodeSurveys
-from src.production_file import ProductionFile
-from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
