@@ -14,7 +14,7 @@ RUN if [ "$INSTALL_CPU_PROFILER" = "true" ]; then \
     fi
 
 # Make a directory for private credentials files
-RUN mkdir /auth
+RUN mkdir /credentials
 
 # Make a directory for intermediate data
 RUN mkdir /data
