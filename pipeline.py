@@ -1,19 +1,17 @@
 import argparse
+import json
 import os
 import random
+from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from google.cloud import storage
 from storage.google_drive import drive_client_wrapper
 
-from src import CombineRawDatasets
-from src.analysis_file import AnalysisFile
-from src.apply_manual_codes import ApplyManualCodes
-from src.auto_code_show_messages import AutoCodeShowMessages
+from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
+    ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
-from src.lib.auto_code_surveys import AutoCodeSurveys
-from src.production_file import ProductionFile
-from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -35,6 +33,9 @@ if __name__ == "__main__":
     parser.add_argument("user", help="User launching this program")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file"),
+    parser.add_argument("google_cloud_credentials_file_path", metavar="google-cloud-credentials-file-path",
+                        help="Path to a Google Cloud service account credentials file to use to access the "
+                             "credentials bucket")
 
     parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
                         help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
@@ -85,20 +86,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    drive_credentials_path = None
     csv_by_message_drive_path = None
     csv_by_individual_drive_path = None
     production_csv_drive_path = None
 
     drive_upload = args.drive_upload is not None
     if drive_upload:
-        drive_credentials_path = args.drive_upload[0]
         csv_by_message_drive_path = args.drive_upload[1]
         csv_by_individual_drive_path = args.drive_upload[2]
         production_csv_drive_path = args.drive_upload[3]
 
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
+    google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
 
     phone_number_uuid_table_path = args.phone_number_uuid_table_path
     s02e01_input_path = args.s02e01_input_path
@@ -180,8 +180,21 @@ if __name__ == "__main__":
     # traced data log.
     if drive_upload:
         print("Uploading CSVs to Google Drive...")
-        drive_client_wrapper.init_client(drive_credentials_path)
 
+        # Fetch the Rapid Pro Token from the Google Cloud Storage URL
+        parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.drive_credentials_file_url)
+        bucket_name = parsed_rapid_pro_token_file_url.netloc
+        blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
+
+        print(f"Downloading Drive service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
+        storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
+        credentials_bucket = storage_client.bucket(bucket_name)
+        credentials_blob = credentials_bucket.blob(blob_name)
+        credentials_info = json.loads(credentials_blob.download_as_string())
+        print("Downloaded Drive service account credentials")
+
+        drive_client_wrapper.init_client_from_info(credentials_info)
+        
         csv_by_message_drive_dir = os.path.dirname(csv_by_message_drive_path)
         csv_by_message_drive_file_name = os.path.basename(csv_by_message_drive_path)
         drive_client_wrapper.update_or_create(csv_by_message_output_path, csv_by_message_drive_dir,
