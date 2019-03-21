@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME=adss-csap
+IMAGE_NAME=adss
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -63,12 +63,6 @@ OUTPUT_PRODUCTION_CSV=${18}
 docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
-# When run, the container will:
-#  - Copy the service account credentials from the google cloud storage url 'SERVICE_ACCOUNT_CREDENTIALS_URL',
-#    if the --drive-upload flag has been set.
-#    The google cloud storage access is authorised via volume mounting (-v in the docker container create command).
-#  - Run the pipeline.
-# The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
 if [[ "$PROFILE_CPU" = true ]]; then
     PROFILE_CPU_CMD="pyflame -o /data/cpu.prof -t"
     SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
@@ -76,7 +70,7 @@ fi
 if [[ "$DRIVE_UPLOAD" = true ]]; then
     DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
 fi
-CMD="pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
+CMD="pipenv run $PROFILE_CPU_CMD python -u generate_outputs.py $DRIVE_UPLOAD_ARG \
     \"$USER\" pipeline_config.json /credentials/google-cloud-credentials.json /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \

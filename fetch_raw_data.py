@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import subprocess
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
@@ -19,20 +18,18 @@ if __name__ == "__main__":
                              "credentials bucket")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file"),
-    parser.add_argument("rapid_pro_tools_dir", metavar="rapid-pro-tools-dir",
-                        help="Path to a directory to checkout the required version of RapidProTools to")
-    parser.add_argument("root_data_dir", metavar="root-data-dir",
-                        help="Path to the root of the project data directory")
+    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
+                        help="Path to a ")
+    parser.add_argument("raw_data_dir", metavar="raw-data-dir",
+                        help="Path to a directory to save the raw data to")
 
     args = parser.parse_args()
 
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
-    rapid_pro_tools_dir = args.rapid_pro_tools_dir
-    root_data_dir = os.path.abspath(args.root_data_dir)
-
-    uuid_table_path = f"{root_data_dir}/UUIDs/phone_uuids.json"
+    phone_number_uuid_table_path = args.phone_number_uuid_table_path
+    raw_data_dir = args.raw_data_dir
 
     SHOWS = [
         "csap_s02e01_activation",
@@ -49,7 +46,7 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
-    TEST_CONTACTS_PATH = os.path.abspath("./test_contact_rapid_pro_ids.json")
+    TEST_CONTACTS_PATH = os.path.abspath("run_scripts/test_contact_rapid_pro_ids.json")
 
     # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
@@ -57,10 +54,6 @@ if __name__ == "__main__":
 
         rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
-
-    # Download/checkout the appropriate version of RapidProTools
-    exit_code = subprocess.call(["./checkout_rapid_pro_tools.sh", rapid_pro_tools_dir])
-    assert exit_code == 0, f"./checkout_rapid_pro_tools.sh failed with exit_code {exit_code}"
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
     parsed_rapid_pro_token_file_url = urlparse(rapid_pro_token_file_url)
@@ -76,7 +69,7 @@ if __name__ == "__main__":
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
     print("Downloaded Rapid Pro token.")
 
-    with open(uuid_table_path) as f:
+    with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
     with open(TEST_CONTACTS_PATH) as f:
@@ -87,7 +80,7 @@ if __name__ == "__main__":
 
     # Download all the runs for each of the radio shows
     for show in SHOWS:
-        output_file_path = f"{root_data_dir}/Raw Data/{show}.json"
+        output_file_path = f"{raw_data_dir}/{show}.json"
         print(f"Exporting show '{show}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(show)
@@ -96,7 +89,7 @@ if __name__ == "__main__":
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
 
-        with open(uuid_table_path, "w") as f:
+        with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
 
         IOUtils.ensure_dirs_exist_for_file(output_file_path)
@@ -105,7 +98,7 @@ if __name__ == "__main__":
 
     # Download all the runs for each of the surveys
     for survey in SURVEYS:
-        output_file_path = f"{root_data_dir}/Raw Data/{survey}.json"
+        output_file_path = f"{raw_data_dir}/{survey}.json"
         print(f"Exporting survey '{survey}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(survey)
@@ -115,7 +108,7 @@ if __name__ == "__main__":
             user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
         traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
 
-        with open(uuid_table_path, "w") as f:
+        with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
 
         IOUtils.ensure_dirs_exist_for_file(output_file_path)

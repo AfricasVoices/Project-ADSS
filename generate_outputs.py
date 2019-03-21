@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import random
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO

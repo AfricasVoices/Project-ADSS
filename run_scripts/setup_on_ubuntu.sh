@@ -12,7 +12,7 @@ fi
 DOCKER_VERSION="5:18.09.2~3-0~ubuntu-bionic"
 CONTAINERD_VERSION="1.2.2-3"
 
-# Install Python 3.6
+# Install Python 3.6, for use with CodaV2 data tools.
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 sudo -H pip3 install pipenv
 
@@ -43,7 +43,3 @@ export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
     sudo apt update && sudo apt install -y google-cloud-sdk
 mkdir "/home/$USER/.config/gcloud"
-
-# Install project dependencies
-pipenv --three
-pipenv sync

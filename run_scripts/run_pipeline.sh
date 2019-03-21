@@ -24,8 +24,7 @@ DATA_BACKUPS_DIR=${10}
 
 ./1_coda_get.sh "$CODA_PULL_CREDENTIALS_PATH" "$CODA_TOOLS_ROOT" "$DATA_ROOT"
 
-pipenv run python 2_fetch_raw_data.py "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" ../pipeline_config.json \
-    "$RAPID_PRO_TOOLS_ROOT" "$DATA_ROOT"
+./2_fetch_raw_data.sh "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" pipeline_config.json "$DATA_ROOT"
 
 ./3_generate_outputs.sh --drive-upload "$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL" "$DRIVE_UPLOAD_DIR" "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" "$DATA_ROOT"
 

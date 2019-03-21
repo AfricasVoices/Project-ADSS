@@ -38,7 +38,7 @@ mkdir -p "$DATA_ROOT/Coded Coda Files"
 mkdir -p "$DATA_ROOT/Outputs"
 
 cd ..
-./docker-run.sh ${CPU_PROFILE_ARG} ${DRIVE_UPLOAD_ARG} \
+./docker-run-generate-outputs.sh ${CPU_PROFILE_ARG} ${DRIVE_UPLOAD_ARG} \
     "$USER" "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$DATA_ROOT/UUIDs/phone_uuids.json" \
     "$DATA_ROOT/Raw Data/csap_s02e01_activation.json" "$DATA_ROOT/Raw Data/csap_s02e02_activation.json" \
     "$DATA_ROOT/Raw Data/csap_s02e03_activation.json" "$DATA_ROOT/Raw Data/csap_s02e04_activation.json" \
