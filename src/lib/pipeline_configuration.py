@@ -249,13 +249,18 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
+                 rapid_pro_key_remappings, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
+        :param rapid_pro_test_contact_uuids: Rapid Pro contact UUIDs of test contacts.
+                                             Runs for any of those test contacts will be tagged with {'test_run': True},
+                                             and dropped when the pipeline is in production mode.
+        :type rapid_pro_test_contact_uuids: list of str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
         :param drive_upload: Configuration for uploading to Google Drive, or None.
@@ -264,6 +269,7 @@ class PipelineConfiguration(object):
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.drive_upload = drive_upload
 
@@ -273,6 +279,7 @@ class PipelineConfiguration(object):
     def from_configuration_dict(cls, configuration_dict):
         rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+        rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         rapid_pro_key_remappings = []
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
@@ -282,7 +289,8 @@ class PipelineConfiguration(object):
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_key_remappings, drive_upload_paths)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
+                   rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -291,6 +299,10 @@ class PipelineConfiguration(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
+        for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
+            validators.validate_string(contact_uuid, f"rapid_pro_test_contact_uuids[{i}]")
 
         validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
         for i, remapping in enumerate(self.rapid_pro_key_remappings):
