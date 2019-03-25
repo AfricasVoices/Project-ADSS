@@ -3,12 +3,15 @@ import time
 from os import path
 
 from core_data_modules.cleaners import somali
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 
 from src.lib import PipelineConfiguration, MessageFilters, ICRTools
 from src.lib.channels import Channels
+
+log = Logger(__name__)
 
 
 class AutoCodeShowMessages(object):
@@ -47,6 +50,26 @@ class AutoCodeShowMessages(object):
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
+
+        # Compute the number of messages that were the empty string
+        log.debug("Counting the number of empty string messages for each raw field...")
+        raw_fields = []
+        for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+            if plan.raw_field not in raw_fields:
+                raw_fields.append(plan.raw_field)
+
+        for raw_field in raw_fields:
+            total_messages_count = 0
+            empty_string_messages_count = 0
+
+            for td in data:
+                if raw_field in td:
+                    total_messages_count += 1
+                    if td[raw_field] == "":
+                        empty_string_messages_count += 1
+
+            log.debug(f"{raw_field}: {empty_string_messages_count} messages were \"\", out "
+                      f"of {total_messages_count} total")
 
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
