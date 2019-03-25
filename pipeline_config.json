@@ -49,5 +49,12 @@
     {"RapidProKey": "Recently_Displaced (Time) - csap_s02_demog", "PipelineKey": "recently_displaced_time"},
     {"RapidProKey": "Hh_Language (Value) - csap_s02_demog", "PipelineKey": "household_language_raw"},
     {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"}
-  ]
+  ],
+  "DriveUpload": {
+    "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
+    "ProductionUploadPath": "analysis_outputs/csap_s02_messages.csv",
+    "MessagesUploadPath": "analysis_outputs/csap_s02_individuals.csv",
+    "IndividualsUploadPath": "analysis_outputs/csap_s02_production.csv",
+    "TracedDataUploadPath": "analysis_outputs/csap_s02_traced_data.json"
+  }
 }
