@@ -9,14 +9,9 @@ from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
 from storage.google_drive import drive_client_wrapper
 
-from src import CombineRawDatasets
-from src.analysis_file import AnalysisFile
-from src.apply_manual_codes import ApplyManualCodes
-from src.auto_code_show_messages import AutoCodeShowMessages
+from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
+    ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
-from src.lib.auto_code_surveys import AutoCodeSurveys
-from src.production_file import ProductionFile
-from src.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -194,8 +189,8 @@ if __name__ == "__main__":
         print(f"Downloading Drive service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
         storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
         credentials_bucket = storage_client.bucket(bucket_name)
-        credentials_file = credentials_bucket.blob(blob_name)
-        credentials_info = json.loads(credentials_file.download_as_string())
+        credentials_blob = credentials_bucket.blob(blob_name)
+        credentials_info = json.loads(credentials_blob.download_as_string())
         print("Downloaded Drive service account credentials")
 
         drive_client_wrapper.init_client_from_info(credentials_info)

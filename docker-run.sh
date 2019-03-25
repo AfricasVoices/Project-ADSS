@@ -78,7 +78,7 @@ if [[ "$DRIVE_UPLOAD" = true ]]; then
     DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
 fi
 CMD="pipenv run $PROFILE_CPU_CMD python -u pipeline.py $DRIVE_UPLOAD_ARG \
-    \"$USER\" /data/pipeline_configuration.json /auth/google-cloud-credentials.json \
+    \"$USER\" /data/pipeline_configuration.json /credentials/google-cloud-credentials.json \
     /data/phone-number-uuid-table-input.json \
     /data/s02e01-input.json /data/s02e02-input.json /data/s02e03-input.json \
     /data/s02e04-input.json /data/s02e05-input.json /data/s02e06-input.json \
@@ -96,7 +96,7 @@ trap finish EXIT
 
 # Copy input data into the container
 docker cp "$PIPELINE_CONFIGURATION" "$container:/data/pipeline_configuration.json"
-docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/auth/google-cloud-credentials.json"
+docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/credentials/google-cloud-credentials.json"
 docker cp "$INPUT_PHONE_UUID_TABLE" "$container:/data/phone-number-uuid-table-input.json"
 docker cp "$INPUT_S02E01" "$container:/data/s02e01-input.json"
 docker cp "$INPUT_S02E02" "$container:/data/s02e02-input.json"
