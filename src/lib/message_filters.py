@@ -1,4 +1,7 @@
+from core_data_modules.logging import Logger
 from dateutil.parser import isoparse
+
+log = Logger(__name__)
 
 
 # TODO: Move to Core once adapted for and tested on a pipeline that supports multiple radio shows
@@ -6,7 +9,9 @@ class MessageFilters(object):
     # TODO: Log which data is being dropped?
     @staticmethod
     def filter_test_messages(messages, test_run_key="test_run"):
-        return [td for td in messages if not td.get(test_run_key, False)]
+        filtered = [td for td in messages if not td.get(test_run_key, False)]
+        log.info(f"Filtered test messages. Dropped {len(messages) - len(filtered)}/{len(messages)} total.")
+        return filtered
 
     @staticmethod
     def filter_empty_messages(messages, message_keys):

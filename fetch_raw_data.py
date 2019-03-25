@@ -46,14 +46,13 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
-    TEST_CONTACTS_PATH = os.path.abspath("run_scripts/test_contact_rapid_pro_ids.json")
-
     # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
         pipeline_config = json.load(f)
 
         rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
+        rapid_pro_test_contact_uuids = pipeline_config["RapidProTestContactUUIDs"]
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
     parsed_rapid_pro_token_file_url = urlparse(rapid_pro_token_file_url)
@@ -72,9 +71,6 @@ if __name__ == "__main__":
     with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
-    with open(TEST_CONTACTS_PATH) as f:
-        test_contacts = json.load(f)
-
     rapid_pro = RapidProClient(rapid_pro_domain, rapid_pro_token)
     raw_contacts = rapid_pro.get_raw_contacts()
 
@@ -87,7 +83,7 @@ if __name__ == "__main__":
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
         raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
         traced_runs = rapid_pro.convert_runs_to_traced_data(
-            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
+            user, raw_runs, raw_contacts, phone_number_uuid_table, rapid_pro_test_contact_uuids)
 
         with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
@@ -105,7 +101,7 @@ if __name__ == "__main__":
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
         raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
         traced_runs = rapid_pro.convert_runs_to_traced_data(
-            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
+            user, raw_runs, raw_contacts, phone_number_uuid_table, rapid_pro_test_contact_uuids)
         traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
 
         with open(phone_number_uuid_table_path, "w") as f:

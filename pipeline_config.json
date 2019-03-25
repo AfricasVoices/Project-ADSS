@@ -1,6 +1,12 @@
 {
   "RapidProDomain": "textit.in",
   "RapidProTokenFileURL": "gs://avf-credentials/csap-text-it-token.txt",
+  "RapidProTestContactUUIDs": [
+    "6f251195-5889-437a-a8b5-ad74b8e4eb62",
+    "ed65f87f-4805-42ad-9b66-27f34c81c4ff",
+    "e5b3d475-4e73-41a0-80a2-b39b28aad89c",
+    "856a55d8-9159-4970-bd22-ede3ae5f94e0"
+  ],
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},
 
@@ -44,5 +50,11 @@
     {"RapidProKey": "Hh_Language (Value) - csap_s02_demog", "PipelineKey": "household_language_raw"},
     {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"}
   ],
-  "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json"
+  "DriveUpload": {
+    "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
+    "ProductionUploadPath": "analysis_outputs/csap_s02_messages.csv",
+    "MessagesUploadPath": "analysis_outputs/csap_s02_individuals.csv",
+    "IndividualsUploadPath": "analysis_outputs/csap_s02_production.csv",
+    "TracedDataUploadPath": "analysis_outputs/csap_s02_traced_data.json"
+  }
 }
