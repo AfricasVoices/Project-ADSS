@@ -4,6 +4,7 @@ import os
 import random
 from urllib.parse import urlparse
 
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
@@ -12,6 +13,8 @@ from storage.google_drive import drive_client_wrapper
 from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
     ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
+
+log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
@@ -122,7 +125,7 @@ if __name__ == "__main__":
                      s02e04_input_path, s02e05_input_path, s02e06_input_path]
 
     # Load the pipeline configuration file
-    print("Loading Pipeline Configuration File...")
+    log.info("Loading Pipeline Configuration File...")
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
@@ -132,59 +135,62 @@ if __name__ == "__main__":
         bucket_name = parsed_rapid_pro_token_file_url.netloc
         blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
-        print(f"Downloading Drive service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
+        log.info(f"Downloading Drive service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
         storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
         credentials_bucket = storage_client.bucket(bucket_name)
         credentials_blob = credentials_bucket.blob(blob_name)
         credentials_info = json.loads(credentials_blob.download_as_string())
-        print("Downloaded Drive service account credentials")
+        log.info("Downloaded Drive service account credentials")
 
         drive_client_wrapper.init_client_from_info(credentials_info)
 
     # Load phone number <-> UUID table
-    print("Loading Phone Number <-> UUID Table...")
+    log.info("Loading Phone Number <-> UUID Table...")
     with open(phone_number_uuid_table_path, "r") as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
     # Load messages
     messages_datasets = []
     for i, path in enumerate(message_paths):
-        print("Loading Episode {}/{}...".format(i + 1, len(message_paths)))
+        log.info("Loading Episode {}/{}...".format(i + 1, len(message_paths)))
         with open(path, "r") as f:
             messages_datasets.append(TracedDataJsonIO.import_json_to_traced_data_iterable(f))
+        log.debug(f"Loaded {len(messages_datasets[-1])} messages")
 
     # Load surveys
-    print("Loading Demographics 1/2...")
+    log.info("Loading Demographics 1/2...")
     with open(s01_demog_input_path, "r") as f:
         s01_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        log.debug(f"Loaded {len(s01_demographics)} contacts")
 
-    print("Loading Demographics 2/2...")
+    log.info("Loading Demographics 2/2...")
     with open(s02_demog_input_path, "r") as f:
         s02_demographics = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+        log.debug(f"Loaded {len(s02_demographics)} contacts")
 
     # Add survey data to the messages
-    print("Combining Datasets...")
+    log.info("Combining Datasets...")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
-    print("Translating Rapid Pro Keys...")
+    log.info("Translating Rapid Pro Keys...")
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
 
-    print("Auto Coding Messages...")
+    log.info("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
-    print("Exporting production CSV...")
+    log.info("Exporting production CSV...")
     data = ProductionFile.generate(data, production_csv_output_path)
 
-    print("Auto Coding Surveys...")
+    log.info("Auto Coding Surveys...")
     data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
 
-    print("Applying Manual Codes from Coda...")
+    log.info("Applying Manual Codes from Coda...")
     data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
 
-    print("Generating Analysis CSVs...")
+    log.info("Generating Analysis CSVs...")
     data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
-    print("Writing TracedData to file...")
+    log.info("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
     with open(json_output_path, "w") as f:
         TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
@@ -194,7 +200,7 @@ if __name__ == "__main__":
     # after a Drive upload has occurred. Failures could result in inconsistent outputs or outputs with no
     # traced data log.
     if pipeline_configuration.drive_upload is not None:
-        print("Uploading CSVs to Google Drive...")
+        log.info("Uploading CSVs to Google Drive...")
 
         production_csv_drive_dir = os.path.dirname(pipeline_configuration.drive_upload.production_upload_path)
         production_csv_drive_file_name = os.path.basename(pipeline_configuration.drive_upload.production_upload_path)
@@ -220,7 +226,7 @@ if __name__ == "__main__":
                                               target_file_name=traced_data_drive_file_name,
                                               target_folder_is_shared_with_me=True)
     else:
-        print("Skipping uploading to Google Drive (because the pipeline configuration json does not contain the key "
-              "'DriveUploadPaths')")
+        log.info("Skipping uploading to Google Drive (because the pipeline configuration json does not contain the key "
+                 "'DriveUploadPaths')")
 
-    print("Python script complete")
+    log.info("Python script complete")
