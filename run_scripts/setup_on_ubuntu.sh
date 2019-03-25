@@ -35,7 +35,3 @@ sudo systemctl enable docker
 
 # Allow this user to connect to the Docker daemon
 sudo usermod -a -G docker "$USER"
-
-# Install project dependencies
-pipenv --three
-pipenv sync
