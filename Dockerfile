@@ -30,7 +30,5 @@ RUN pipenv sync
 # Copy the rest of the project
 ADD code_schemes/*.json /app/code_schemes/
 ADD src /app/src
-ADD pipeline_config.json /app
 ADD fetch_raw_data.py /app
-ADD run_scripts/test_contact_rapid_pro_ids.json /app/run_scripts/test_contact_rapid_pro_ids.json
 ADD generate_outputs.py /app
