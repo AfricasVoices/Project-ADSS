@@ -2,12 +2,11 @@
 
 set -e
 
-if [[ $# -ne 10 ]]; then
+if [[ $# -ne 8 ]]; then
     echo "Usage: ./run_pipeline.sh"
     echo "  <user> <pipeline-configuration-json>"
     echo "  <coda-pull-credentials-path> <coda-push-credentials-path> <avf-bucket-credentials-path>"
-    echo "  <drive-service-account-credentials-url> <rapid-pro-tools-root> <coda-tools-root>"
-    echo "  <data-root> <data-backup-dir>"
+    echo "  <coda-tools-root> <data-root> <data-backup-dir>"
     echo "Runs the pipeline end-to-end (data fetch, coda fetch, output generation, Drive upload, Coda upload, data backup)"
     exit
 fi
@@ -17,16 +16,13 @@ PIPELINE_CONFIGURATION=$2
 CODA_PULL_CREDENTIALS_PATH=$3
 CODA_PUSH_CREDENTIALS_PATH=$4
 AVF_BUCKET_CREDENTIALS_PATH=$5
-DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL=$6
-RAPID_PRO_TOOLS_ROOT=$7
-CODA_TOOLS_ROOT=$8
-DATA_ROOT=$9
-DATA_BACKUPS_DIR=${10}
+CODA_TOOLS_ROOT=$6
+DATA_ROOT=$7
+DATA_BACKUPS_DIR=$8
 
 ./1_coda_get.sh "$CODA_PULL_CREDENTIALS_PATH" "$CODA_TOOLS_ROOT" "$DATA_ROOT"
 
-pipenv run python 2_fetch_raw_data.py "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" "$PIPELINE_CONFIGURATION" \
-    "$RAPID_PRO_TOOLS_ROOT" "$DATA_ROOT"
+./2_fetch_raw_data.sh "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" "$PIPELINE_CONFIGURATION" "$DATA_ROOT"
 
 ./3_generate_outputs.sh "$USER" "$AVF_BUCKET_CREDENTIALS_PATH" "$PIPELINE_CONFIGURATION" "$DATA_ROOT"
 

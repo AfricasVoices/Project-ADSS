@@ -58,20 +58,15 @@ This stage fetches all the raw data required by the pipeline from Rapid Pro.
 To use, run the following command from the `run_scripts` directory:
 
 ```
-$ pipenv run python 2_fetch_raw_data.py <user> <avf-credentials-service-account-file-path> <pipeline-config-file-path> 
-<rapid-pro-root> <data-root>
+$ ./2_fetch_raw_data.sh <user> <google-cloud-credentials-file-path> <pipeline-configuration> <data-root>
 ```
 
 where:
 - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
    e.g. `user@africasvoices.org` 
-- `avf-credentials-service-account-file-path` is an absolute path to a json file containing the private key credentials
+- `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
   for accessing a cloud storage credentials bucket containing all the other project credentials files.
-- `pipeline-config-file-path ` is an absolute path to the pipeline configuration json file.
-- `rapid-pro-root` is an absolute path to the directory to store a local clone of 
-   [RapidProTools](https://github.com/AfricasVoices/RapidProTools) in.
-   The RapidProTools project hosts the re-usable RapidPro data fetchers.
-   The exact version required by this project is checked out automatically.
+- `pipeline-config-file-path ` is an absolute path to a pipeline configuration json file.
  - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
    Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`.
 
