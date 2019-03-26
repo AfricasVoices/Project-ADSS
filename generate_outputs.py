@@ -192,7 +192,7 @@ if __name__ == "__main__":
     log.info("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
     with open(json_output_path, "w") as f:
-        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=False)
+        TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
 
     # Upload to Google Drive, if requested.
     # Note: This should happen as late as possible in order to reduce the risk of the remainder of the pipeline failing
