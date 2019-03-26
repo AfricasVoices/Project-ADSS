@@ -59,12 +59,13 @@ trap finish EXIT
 docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/credentials/google-cloud-credentials.json"
 docker cp "$PIPELINE_CONFIGURATION" "$container:/data/pipeline-configuration.json"
 docker cp "$PHONE_UUID_TABLE_PATH" "$container:/data/phone-number-uuid-table.json"
+mkdir -p "$RAW_DATA_DIR"
+docker cp "$RAW_DATA_DIR/." "$container:/data/Raw Data/"
 
 # Run the container
 docker start -a -i "$container"
 
 # Copy the output data back out of the container
-mkdir -p "$RAW_DATA_DIR"
 docker cp "$container:/data/Raw Data/." "$RAW_DATA_DIR"
 
 docker cp "$container:/data/phone-number-uuid-table.json" "$PHONE_UUID_TABLE_PATH"
