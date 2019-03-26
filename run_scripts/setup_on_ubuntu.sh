@@ -12,7 +12,7 @@ fi
 DOCKER_VERSION="5:18.09.2~3-0~ubuntu-bionic"
 CONTAINERD_VERSION="1.2.2-3"
 
-# Install Python 3.6
+# Install Python 3.6, for use with CodaV2 data tools.
 sudo apt update && sudo apt install -y python3.6 python3-pip git
 sudo -H pip3 install pipenv
 
@@ -35,7 +35,3 @@ sudo systemctl enable docker
 
 # Allow this user to connect to the Docker daemon
 sudo usermod -a -G docker "$USER"
-
-# Install project dependencies
-pipenv --three
-pipenv sync
