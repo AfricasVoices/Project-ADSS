@@ -19,20 +19,18 @@ if __name__ == "__main__":
                              "credentials bucket")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file"),
-    parser.add_argument("rapid_pro_tools_dir", metavar="rapid-pro-tools-dir",
-                        help="Path to a directory to checkout the required version of RapidProTools to")
-    parser.add_argument("root_data_dir", metavar="root-data-dir",
-                        help="Path to the root of the project data directory")
+    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
+                        help="Path to a ")
+    parser.add_argument("raw_data_dir", metavar="raw-data-dir",
+                        help="Path to a directory to save the raw data to")
 
     args = parser.parse_args()
 
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
-    rapid_pro_tools_dir = args.rapid_pro_tools_dir
-    root_data_dir = os.path.abspath(args.root_data_dir)
-
-    uuid_table_path = f"{root_data_dir}/UUIDs/phone_uuids.json"
+    phone_number_uuid_table_path = args.phone_number_uuid_table_path
+    raw_data_dir = args.raw_data_dir
 
     SHOWS = [
         "csap_s02e01_activation",
@@ -49,14 +47,13 @@ if __name__ == "__main__":
         # TODO: Fetch evaluation flow when it is ready in Rapid Pro
     ]
 
-    TEST_CONTACTS_PATH = os.path.abspath("./test_contact_rapid_pro_ids.json")
-
     # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
         pipeline_config = json.load(f)
 
         rapid_pro_domain = pipeline_config["RapidProDomain"]
         rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
+        rapid_pro_test_contact_uuids = pipeline_config["RapidProTestContactUUIDs"]
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
     parsed_rapid_pro_token_file_url = urlparse(rapid_pro_token_file_url)
@@ -68,23 +65,18 @@ if __name__ == "__main__":
     print(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
     storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
     credentials_bucket = storage_client.bucket(bucket_name)
-    credentials_file = credentials_bucket.blob(blob_name)
-    rapid_pro_token = credentials_file.download_as_string().strip().decode("utf-8")
+    credentials_blob = credentials_bucket.blob(blob_name)
+    rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
     print("Downloaded Rapid Pro token.")
 
-    with open(uuid_table_path) as f:
+    with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
-
-    with open(TEST_CONTACTS_PATH) as f:
-        test_contacts = json.load(f)
-
-    IOUtils.ensure_dirs_exist(f"{root_data_dir}/Raw Data")
 
     rapid_pro = RapidProClient(rapid_pro_domain, rapid_pro_token)
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
-    raw_contacts_path = f"{root_data_dir}/Raw Data/contacts_raw.json"
-    contacts_log_path = f"{root_data_dir}/Raw Data/contacts_log.jsonl"
+    raw_contacts_path = f"{raw_data_dir}/contacts_raw.json"
+    contacts_log_path = f"{raw_data_dir}/contacts_log.jsonl"
     try:
         print(f"Loading raw contacts from file '{raw_contacts_path}'...")
         with open(raw_contacts_path) as f:
@@ -97,9 +89,9 @@ if __name__ == "__main__":
 
     # Download all the runs for each of the radio shows
     for flow in SHOWS + SURVEYS:
-        runs_log_path = f"{root_data_dir}/Raw Data/{flow}_log.jsonl"
-        raw_runs_path = f"{root_data_dir}/Raw Data/{flow}_raw.json"
-        traced_runs_output_path = f"{root_data_dir}/Raw Data/{flow}.json"
+        runs_log_path = f"{raw_data_dir}/{flow}_log.jsonl"
+        raw_runs_path = f"{raw_data_dir}/{flow}_raw.json"
+        traced_runs_output_path = f"{raw_data_dir}/{flow}.json"
         print(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
 
         flow_id = rapid_pro.get_flow_id(flow)
@@ -124,14 +116,14 @@ if __name__ == "__main__":
 
         # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
-            user, raw_runs, raw_contacts, phone_number_uuid_table, test_contacts)
+            user, raw_runs, raw_contacts, phone_number_uuid_table, rapid_pro_test_contact_uuids)
 
         # Save the latest set of raw runs to disk.
         with open(raw_runs_path, "w") as f:
             json.dump([run.serialize() for run in raw_runs], f)
 
         # Save the updated phone number <-> uuid table to disk.
-        with open(uuid_table_path, "w") as f:
+        with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
 
         # Save the traced runs to disk..

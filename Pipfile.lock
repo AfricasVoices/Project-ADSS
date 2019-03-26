@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "06def98ce054133f1b072689a0683801c750e7f0b035f084b7fccad7baf662c7"
+            "sha256": "a3e75765ba55bf08525853a545a86968f06b13ea017c3c1e9c81ae91427ab373"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -66,11 +66,11 @@
                 "grpc"
             ],
             "hashes": [
-                "sha256:3157625b4f4f033650c6e674d52fd8a3a8c116b26b39705cddf4ed61621c09ff",
-                "sha256:c6d834143a2bea4de8d1161b5460fd362457db40c55ea9ccbe672e5602e330af"
+                "sha256:16b14c0492154110d869a08be22d27440010057fd826205303c7edaa1c3cd71e",
+                "sha256:9f8ef10c924d8a9f50d9156eea7cd779929f27aa23b855ad0abe05424553b66f"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==1.8.0"
+            "version": "==1.8.2"
         },
         "google-api-python-client": {
             "hashes": [
@@ -125,9 +125,9 @@
         },
         "googleapis-common-protos": {
             "hashes": [
-                "sha256:d56ca712f67fff216d3be9eeeb8360ca59066d0365ba70b137b9e1801813747e"
+                "sha256:627ec53fab43d06c1b5c950e217fa9819e169daf753111a7f244e94bf8fb3384"
             ],
-            "version": "==1.5.8"
+            "version": "==1.5.9"
         },
         "grpcio": {
             "hashes": [
@@ -233,7 +233,7 @@
         "pipelineinfrastructure": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/PipelineInfrastructure",
-            "ref": "2390ad8af87edca38d71ea5666a8758a0c4c124f"
+            "ref": "08cfb07be4c80656924bceaeeaef15a21ddb7a72"
         },
         "protobuf": {
             "hashes": [
@@ -305,7 +305,7 @@
         "rapidprotools": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/RapidProTools",
-            "ref": "c5ab30a2a5b473b9f125e56ae19e5df0c977739d"
+            "ref": "374ecc02bb9d4f1416a6993ae4250dc0b2d732c2"
         },
         "requests": {
             "hashes": [

@@ -2,13 +2,16 @@ import random
 import time
 from os import path
 
-from core_data_modules.cleaners import somali, Codes
+from core_data_modules.cleaners import somali
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 
 from src.lib import PipelineConfiguration, MessageFilters, ICRTools
 from src.lib.channels import Channels
+
+log = Logger(__name__)
 
 
 class AutoCodeShowMessages(object):
@@ -48,6 +51,26 @@ class AutoCodeShowMessages(object):
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
 
+        # Compute the number of messages that were the empty string
+        log.debug("Counting the number of empty string messages for each raw field...")
+        raw_fields = []
+        for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+            if plan.raw_field not in raw_fields:
+                raw_fields.append(plan.raw_field)
+
+        for raw_field in raw_fields:
+            total_messages_count = 0
+            empty_string_messages_count = 0
+
+            for td in data:
+                if raw_field in td:
+                    total_messages_count += 1
+                    if td[raw_field] == "":
+                        empty_string_messages_count += 1
+
+            log.debug(f"{raw_field}: {empty_string_messages_count} messages were \"\", out "
+                      f"of {total_messages_count} total")
+
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
@@ -64,14 +87,8 @@ class AutoCodeShowMessages(object):
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = []
             for td in not_noise:
-                # This test works because the only codes which have been applied at this point are TRUE_MISSING.
-                # If any other coding is done above, this test will need to change.
-                if plan.coded_field not in td:
+                if plan.raw_field in td:
                     rqa_messages.append(td)
-                else:
-                    assert len(td[plan.coded_field]) == 1
-                    assert td[plan.coded_field][0]["CodeID"] == \
-                        plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING).code_id
 
             icr_messages = ICRTools.generate_sample_for_icr(
                 rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(cls.ICR_SEED))
