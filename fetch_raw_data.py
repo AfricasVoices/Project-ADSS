@@ -1,9 +1,11 @@
 import argparse
+import json
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from core_data_modules.util import IOUtils
 from google.cloud import storage
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from rapid_pro_tools.rapid_pro_client import RapidProClient
 
 from src.lib import PipelineConfiguration
@@ -52,8 +54,6 @@ if __name__ == "__main__":
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
     parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.rapid_pro_token_file_url)
-    assert parsed_rapid_pro_token_file_url.scheme == "gs", "RapidProTokenFileURL needs to be a gs URL " \
-                                                           "(i.e. of the form gs://bucket-name/file)"
     bucket_name = parsed_rapid_pro_token_file_url.netloc
     blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
@@ -63,11 +63,25 @@ if __name__ == "__main__":
     credentials_blob = credentials_bucket.blob(blob_name)
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
     print("Downloaded Rapid Pro token.")
-
-    with open(phone_number_uuid_table_path) as f:
-        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
-
     rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
+
+    parsed_firebase_credentials_file_url = urlparse(
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url)
+    bucket_name = parsed_firebase_credentials_file_url.netloc
+    blob_name = parsed_firebase_credentials_file_url.path.lstrip("/")
+
+    print(f"Downloading Firebase UUID table service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
+    storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
+    credentials_bucket = storage_client.bucket(bucket_name)
+    credentials_blob = credentials_bucket.blob(blob_name)
+    credentials_info = json.loads(credentials_blob.download_as_string())
+    print("Downloaded Firebase UUID table service account credentials.")
+    phone_number_uuid_table = FirestoreUuidTable(
+        pipeline_configuration.phone_number_uuid_table.table_name,
+        credentials_info,
+        "avf-phone-uuid-"
+    )
+
     raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
@@ -80,9 +94,6 @@ if __name__ == "__main__":
         raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, pipeline_configuration.rapid_pro_test_contact_uuids)
-
-        with open(phone_number_uuid_table_path, "w") as f:
-            phone_number_uuid_table.dump(f)
 
         IOUtils.ensure_dirs_exist_for_file(output_file_path)
         with open(output_file_path, "w") as f:
@@ -99,9 +110,6 @@ if __name__ == "__main__":
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, pipeline_configuration.rapid_pro_test_contact_uuids)
         traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
-
-        with open(phone_number_uuid_table_path, "w") as f:
-            phone_number_uuid_table.dump(f)
 
         IOUtils.ensure_dirs_exist_for_file(output_file_path)
         with open(output_file_path, "w") as f:

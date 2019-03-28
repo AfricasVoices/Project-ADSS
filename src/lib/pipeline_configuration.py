@@ -250,7 +250,7 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                 rapid_pro_key_remappings, drive_upload=None):
+                 phone_number_uuid_table, rapid_pro_key_remappings, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -270,6 +270,7 @@ class PipelineConfiguration(object):
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
+        self.phone_number_uuid_table = phone_number_uuid_table
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.drive_upload = drive_upload
 
@@ -281,6 +282,8 @@ class PipelineConfiguration(object):
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
+        phone_number_uuid_table = PhoneNumberUuidTable.from_configuration_dict(configuration_dict["PhoneNumberUuidTable"])
+
         rapid_pro_key_remappings = []
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
@@ -290,7 +293,7 @@ class PipelineConfiguration(object):
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                   rapid_pro_key_remappings, drive_upload_paths)
+                   phone_number_uuid_table, rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -314,6 +317,19 @@ class PipelineConfiguration(object):
             assert isinstance(self.drive_upload, DriveUpload), \
                 "drive_upload is not of type DriveUpload"
             self.drive_upload.validate()
+
+
+class PhoneNumberUuidTable(object):
+    def __init__(self, firebase_credentials_file_url, table_name):
+        self.firebase_credentials_file_url = firebase_credentials_file_url
+        self.table_name = table_name
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        firebase_credentials_file_url = configuration_dict["FirebaseCredentialsFileURL"]
+        table_name = configuration_dict["TableName"]
+
+        return cls(firebase_credentials_file_url, table_name)
 
 
 class RapidProKeyRemapping(object):
