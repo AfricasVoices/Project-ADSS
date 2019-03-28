@@ -20,8 +20,6 @@ if __name__ == "__main__":
                              "credentials bucket")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file"),
-    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
-                        help="Path to a ")
     parser.add_argument("raw_data_dir", metavar="raw-data-dir",
                         help="Path to a directory to save the raw data to")
 
@@ -30,7 +28,6 @@ if __name__ == "__main__":
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
-    phone_number_uuid_table_path = args.phone_number_uuid_table_path
     raw_data_dir = args.raw_data_dir
 
     SHOWS = [
