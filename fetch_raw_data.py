@@ -109,7 +109,6 @@ if __name__ == "__main__":
         raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts)
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, pipeline_configuration.rapid_pro_test_contact_uuids)
-        traced_runs = rapid_pro.coalesce_traced_runs_by_key(user, traced_runs, "avf_phone_id")
 
         IOUtils.ensure_dirs_exist_for_file(output_file_path)
         with open(output_file_path, "w") as f:
