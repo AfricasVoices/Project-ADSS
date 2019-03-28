@@ -1,12 +1,11 @@
 import argparse
 import json
-from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import IOUtils
-from google.cloud import storage
 from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from rapid_pro_tools.rapid_pro_client import RapidProClient
+from storage.google_cloud import google_cloud_utils
 
 from src.lib import PipelineConfiguration
 
@@ -49,36 +48,23 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
-    # Fetch the Rapid Pro Token from the Google Cloud Storage URL
-    parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.rapid_pro_token_file_url)
-    bucket_name = parsed_rapid_pro_token_file_url.netloc
-    blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
+    print("Downloading Rapid Pro access token...")
+    rapid_pro_token = google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path, pipeline_configuration.rapid_pro_token_file_url).strip()
 
-    print(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
-    storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
-    credentials_bucket = storage_client.bucket(bucket_name)
-    credentials_blob = credentials_bucket.blob(blob_name)
-    rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
-    print("Downloaded Rapid Pro token.")
-    rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
+    print("Downloading Firestore Uuid Table credentials...")
+    firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path,
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
+    ))
 
-    parsed_firebase_credentials_file_url = urlparse(
-        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url)
-    bucket_name = parsed_firebase_credentials_file_url.netloc
-    blob_name = parsed_firebase_credentials_file_url.path.lstrip("/")
-
-    print(f"Downloading Firebase UUID table service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
-    storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
-    credentials_bucket = storage_client.bucket(bucket_name)
-    credentials_blob = credentials_bucket.blob(blob_name)
-    credentials_info = json.loads(credentials_blob.download_as_string())
-    print("Downloaded Firebase UUID table service account credentials.")
     phone_number_uuid_table = FirestoreUuidTable(
         pipeline_configuration.phone_number_uuid_table.table_name,
-        credentials_info,
+        firestore_uuid_table_credentials,
         "avf-phone-uuid-"
     )
 
+    rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
     raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
