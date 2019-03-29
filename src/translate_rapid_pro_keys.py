@@ -7,27 +7,17 @@ from dateutil.parser import isoparse
 
 
 class TranslateRapidProKeys(object):
-    # TODO: Move the constants in this file to configuration json
-    SHOW_ID_MAP = {
-        "Rqa_S02E01 (Value) - csap_s02e01_activation": 1,
-        "Rqa_S02E02 (Value) - csap_s02e02_activation": 2,
-        "Rqa_S02E03 (Value) - csap_s02e03_activation": 3,
-        "Rqa_S02E04 (Value) - csap_s02e04_activation": 4,
-        "Rqa_S02E05 (Value) - csap_s02e05_activation": 5,
-        "Rqa_S02E06 (Value) - csap_s02e06_activation": 6
-    }
-
-    RAW_ID_MAP = {
-        1: "rqa_s02e01_raw",
-        2: "rqa_s02e02_raw",
-        3: "rqa_s02e03_raw",
-        4: "rqa_s02e04_raw",
-        5: "rqa_s02e05_raw",
-        6: "rqa_s02e06_raw"
+    SHOW_MAP = {
+        "Rqa_S02E01 (Value) - csap_s02e01_activation": "rqa_s02e01_raw",
+        "Rqa_S02E02 (Value) - csap_s02e02_activation": "rqa_s02e02_raw",
+        "Rqa_S02E03 (Value) - csap_s02e03_activation": "rqa_s02e03_raw",
+        "Rqa_S02E04 (Value) - csap_s02e04_activation": "rqa_s02e04_raw",
+        "Rqa_S02E05 (Value) - csap_s02e05_activation": "rqa_s02e05_raw",
+        "Rqa_S02E06 (Value) - csap_s02e06_activation": "rqa_s02e06_raw",
     }
 
     @classmethod
-    def set_show_ids(cls, user, data, show_id_map):
+    def set_show_ids(cls, user, data, show_map):
         """
         Sets a show_id for each message, using the presence of Rapid Pro value keys to determine which show each message
         belongs to.
@@ -36,17 +26,17 @@ class TranslateRapidProKeys(object):
         :type user: str
         :param data: TracedData objects to set the show ids of.
         :type data: iterable of TracedData
-        :param show_id_map: Dictionary of Rapid Pro value key to show id.
-        :type show_id_map: dict of str -> int
+        :param show_map: Dictionary of Rapid Pro value key to pipeline key.
+        :type show_map: dict of str -> str
         """
         for td in data:
             show_dict = dict()
 
-            for message_key, show_id in show_id_map.items():
-                if message_key in td:
+            for rapid_pro_key, pipeline_key in show_map.items():
+                if rapid_pro_key in td:
                     assert "rqa_message" not in show_dict
-                    show_dict["rqa_message"] = td[message_key]
-                    show_dict["show_id"] = show_id
+                    show_dict["rqa_message"] = td[rapid_pro_key]
+                    show_dict["show_id"] = pipeline_key
 
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
@@ -134,7 +124,7 @@ class TranslateRapidProKeys(object):
             td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
-    def set_rqa_raw_keys_from_show_ids(cls, user, data, raw_id_map):
+    def set_rqa_raw_keys_from_show_ids(cls, user, data):
         """
         Despite the earlier phases of this pipeline stage using a common 'rqa_message' field and then a 'show_id'
         field to identify which radio show a message belonged to, the rest of the pipeline still uses the presence
@@ -147,14 +137,11 @@ class TranslateRapidProKeys(object):
         :type user: str
         :param data: TracedData objects to set raw radio show message fields for.
         :type data: iterable of TracedData
-        :param raw_id_map: Dictionary of show id to the rqa message key to assign each td[rqa_message} to.
-        :type raw_id_map: dict of int -> str
         """
         for td in data:
-            for show_id, message_key in raw_id_map.items():
-                if "rqa_message" in td and td.get("show_id") == show_id:
-                    td.append_data({message_key: td["rqa_message"]},
-                                   Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+            if "show_id" in td:
+                td.append_data({td["show_id"]: td["rqa_message"]},
+                               Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
     def translate_rapid_pro_keys(cls, user, data, pipeline_configuration, coda_input_dir):
@@ -168,7 +155,7 @@ class TranslateRapidProKeys(object):
         # Set a show id field for each message, using the presence of Rapid Pro value keys in the TracedData.
         # Show ids are necessary in order to be able to remap radio shows and key names separately (because data
         # can't be 'deleted' from TracedData).
-        cls.set_show_ids(user, data, cls.SHOW_ID_MAP)
+        cls.set_show_ids(user, data, cls.SHOW_MAP)
 
         # Move rqa messages which ended up in the wrong flow to the correct one.
         cls.remap_radio_shows(user, data, coda_input_dir)
@@ -177,6 +164,6 @@ class TranslateRapidProKeys(object):
         cls.remap_key_names(user, data, pipeline_configuration)
 
         # Convert from the new show id format to the raw field format still used by the rest of the pipeline.
-        cls.set_rqa_raw_keys_from_show_ids(user, data, cls.RAW_ID_MAP)
+        cls.set_rqa_raw_keys_from_show_ids(user, data)
 
         return data
