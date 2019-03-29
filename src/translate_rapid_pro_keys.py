@@ -7,6 +7,8 @@ from dateutil.parser import isoparse
 
 
 class TranslateRapidProKeys(object):
+    # Map from Rapid Pro Key to Pipeline Key
+    # TODO: Move to Pipeline Configuration JSON
     SHOW_MAP = {
         "Rqa_S02E01 (Value) - csap_s02e01_activation": "rqa_s02e01_raw",
         "Rqa_S02E02 (Value) - csap_s02e02_activation": "rqa_s02e02_raw",
@@ -19,8 +21,8 @@ class TranslateRapidProKeys(object):
     @classmethod
     def set_show_ids(cls, user, data, show_map):
         """
-        Sets a show_id for each message, using the presence of Rapid Pro value keys to determine which show each message
-        belongs to.
+        Sets a show pipeline key for each message, using the presence of Rapid Pro value keys to determine which
+        show each message belongs to.
 
         :param user: Identifier of the user running this program, for TracedData Metadata.
         :type user: str
@@ -36,12 +38,12 @@ class TranslateRapidProKeys(object):
                 if rapid_pro_key in td:
                     assert "rqa_message" not in show_dict
                     show_dict["rqa_message"] = td[rapid_pro_key]
-                    show_dict["show_id"] = pipeline_key
+                    show_dict["show_pipeline_key"] = pipeline_key
 
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
-    def _remap_radio_show_by_time_range(cls, user, data, time_key, show_id_to_remap_to,
+    def _remap_radio_show_by_time_range(cls, user, data, time_key, show_pipeline_key_to_remap_to,
                                         range_start=None, range_end=None, time_to_adjust_to=None):
         """
         Remaps radio show messages received in the given time range to another radio show.
@@ -55,8 +57,8 @@ class TranslateRapidProKeys(object):
         :param time_key: Key in each TracedData of an ISO 8601-formatted datetime string to read the message sent on
                          time from.
         :type time_key: str
-        :param show_id_to_remap_to: Show id to assign to messages received within the given time range.
-        :type show_id_to_remap_to: int
+        :param show_pipeline_key_to_remap_to: Pipeline key to assign to messages received within the given time range.
+        :type show_pipeline_key_to_remap_to: str
         :param range_start: Start datetime for the time range to remap radio show messages from, inclusive.
                             If None, defaults to the beginning of time.
         :type range_start: datetime | None
@@ -75,7 +77,7 @@ class TranslateRapidProKeys(object):
         for td in data:
             if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
                 remapped = {
-                    "show_id": show_id_to_remap_to
+                    "show_pipeline_key": show_pipeline_key_to_remap_to
                 }
                 if time_to_adjust_to is not None:
                     remapped[time_key] = time_to_adjust_to.isoformat()
@@ -126,10 +128,10 @@ class TranslateRapidProKeys(object):
     @classmethod
     def set_rqa_raw_keys_from_show_ids(cls, user, data):
         """
-        Despite the earlier phases of this pipeline stage using a common 'rqa_message' field and then a 'show_id'
-        field to identify which radio show a message belonged to, the rest of the pipeline still uses the presence
-        of a raw field for each show to determine which show a message belongs to. This function translates from
-        the new 'show_id' method back to the old 'raw field presence` method.
+        Despite the earlier phases of this pipeline stage using a common 'rqa_message' field and then a
+        'show_pipeline_key' field to identify which radio show a message belonged to, the rest of the pipeline still
+        uses the presence of a raw field for each show to determine which show a message belongs to.
+        This function translates from the new 'show_id' method back to the old 'raw field presence` method.
         
         TODO: Update the rest of the pipeline to use show_ids, and/or perform remapping before combining the datasets.
 
@@ -139,8 +141,8 @@ class TranslateRapidProKeys(object):
         :type data: iterable of TracedData
         """
         for td in data:
-            if "show_id" in td:
-                td.append_data({td["show_id"]: td["rqa_message"]},
+            if "show_pipeline_key" in td:
+                td.append_data({td["show_pipeline_key"]: td["rqa_message"]},
                                Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
@@ -152,8 +154,8 @@ class TranslateRapidProKeys(object):
         TODO: Break this function such that the show remapping phase happens in one class, and the Rapid Pro remapping
               in another?
         """
-        # Set a show id field for each message, using the presence of Rapid Pro value keys in the TracedData.
-        # Show ids are necessary in order to be able to remap radio shows and key names separately (because data
+        # Set the show pipeline key for each message, using the presence of Rapid Pro value keys in the TracedData.
+        # These are necessary in order to be able to remap radio shows and key names separately (because data
         # can't be 'deleted' from TracedData).
         cls.set_show_ids(user, data, cls.SHOW_MAP)
 
@@ -163,7 +165,7 @@ class TranslateRapidProKeys(object):
         # Remap the keys used by Rapid Pro to more usable key names that will be used by the rest of the pipeline.
         cls.remap_key_names(user, data, pipeline_configuration)
 
-        # Convert from the new show id format to the raw field format still used by the rest of the pipeline.
+        # Convert from the new show key format to the raw field format still used by the rest of the pipeline.
         cls.set_rqa_raw_keys_from_show_ids(user, data)
 
         return data
