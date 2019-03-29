@@ -7,6 +7,10 @@
     "e5b3d475-4e73-41a0-80a2-b39b28aad89c",
     "856a55d8-9159-4970-bd22-ede3ae5f94e0"
   ],
+  "PhoneNumberUuidTable": {
+    "FirebaseCredentialsFileURL": "gs://avf-credentials/avf-id-infrastructure-firebase-adminsdk-6xps8-b9173f2bfd.json",
+    "TableName": "ADSS"
+  },
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},
 
