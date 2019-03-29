@@ -37,7 +37,7 @@ class AutoCodeSurveys(object):
 
         # Set operator from phone number
         for td in data:
-            operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.get_phone(td["uid"]))
+            operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.uuid_to_data(td["uid"]))
             if operator_clean == Codes.NOT_CODED:
                 label = CleaningUtils.make_label_from_cleaner_code(
                     CodeSchemes.SOMALIA_OPERATOR, CodeSchemes.SOMALIA_OPERATOR.get_code_with_control_code(Codes.NOT_CODED),

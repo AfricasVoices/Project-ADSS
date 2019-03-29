@@ -5,8 +5,10 @@ from urllib.parse import urlparse
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from core_data_modules.util import IOUtils
 from google.cloud import storage
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
+from storage.google_cloud import google_cloud_utils
 from storage.google_drive import drive_client_wrapper
 
 from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
@@ -128,6 +130,17 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
+    # TODO: comment
+    firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path,
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
+    ))
+    phone_number_uuid_table = FirestoreUuidTable(
+        pipeline_configuration.phone_number_uuid_table.table_name,
+        firestore_uuid_table_credentials,
+        "avf-phone-uuid-"
+    )
+
     if pipeline_configuration.drive_upload is not None:
         # Fetch the Rapid Pro Token from the Google Cloud Storage URL
         parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.drive_upload.drive_credentials_file_url)
@@ -144,9 +157,9 @@ if __name__ == "__main__":
         drive_client_wrapper.init_client_from_info(credentials_info)
 
     # Load phone number <-> UUID table
-    log.info("Loading Phone Number <-> UUID Table...")
-    with open(phone_number_uuid_table_path, "r") as f:
-        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
+    # log.info("Loading Phone Number <-> UUID Table...")
+    # with open(phone_number_uuid_table_path, "r") as f:
+    #     phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
     # Load messages
     messages_datasets = []
