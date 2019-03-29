@@ -40,7 +40,7 @@ mkdir -p "$DATA_ROOT/Outputs"
 
 cd ..
 ./docker-run-generate-outputs.sh ${CPU_PROFILE_ARG} ${DRIVE_UPLOAD_ARG} \
-    "$USER" "$PIPELINE_CONFIGURATION" "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$DATA_ROOT/UUIDs/phone_uuids.json" \
+    "$USER" "$PIPELINE_CONFIGURATION" "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" \
     "$DATA_ROOT/Raw Data/csap_s02e01_activation.json" "$DATA_ROOT/Raw Data/csap_s02e02_activation.json" \
     "$DATA_ROOT/Raw Data/csap_s02e03_activation.json" "$DATA_ROOT/Raw Data/csap_s02e04_activation.json" \
     "$DATA_ROOT/Raw Data/csap_s02e05_activation.json" "$DATA_ROOT/Raw Data/csap_s02e06_activation.json" \

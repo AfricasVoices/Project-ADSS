@@ -41,9 +41,6 @@ if __name__ == "__main__":
                         help="Path to a Google Cloud service account credentials file to use to access the "
                              "credentials bucket")
 
-    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
-                        help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
-                             "datasets")
     parser.add_argument("s02e01_input_path", metavar="s02e01-input-path",
                         help="Path to the episode 1 raw messages JSON file, containing a list of serialized TracedData "
                              "objects")
@@ -104,7 +101,6 @@ if __name__ == "__main__":
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
 
-    phone_number_uuid_table_path = args.phone_number_uuid_table_path
     s02e01_input_path = args.s02e01_input_path
     s02e02_input_path = args.s02e02_input_path
     s02e03_input_path = args.s02e03_input_path
@@ -130,7 +126,7 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
-    # TODO: comment
+    log.info("Downloading Firestore Uuid Table credentials...")
     firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
         google_cloud_credentials_file_path,
         pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
@@ -155,11 +151,6 @@ if __name__ == "__main__":
         log.info("Downloaded Drive service account credentials")
 
         drive_client_wrapper.init_client_from_info(credentials_info)
-
-    # Load phone number <-> UUID table
-    # log.info("Loading Phone Number <-> UUID Table...")
-    # with open(phone_number_uuid_table_path, "r") as f:
-    #     phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
     # Load messages
     messages_datasets = []
