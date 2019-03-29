@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 CoreDataModules = {editable = true,ref = "v0.9.0",git = "https://www.github.com/AfricasVoices/CoreDataModules"}
 PipelineInfrastructure = {editable = true,git = "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",ref = "ba01789880c99657c60170e5ed42c22fd6e1e65d"}
-RapidProTools = {editable = true,git = "https://www.github.com/AfricasVoices/RapidProTools",ref = "0d616c579cdaf747566c95404b39dd8581e0f302"}
+RapidProTools = {editable = true,git = "https://www.github.com/AfricasVoices/RapidProTools",ref = "14f159ba2e2fc42568dbee1cf9e27bdf7f26d155"}
 pytz = "*"
 python-dateutil = ">=2.8.0"  # Need this minimum so that isoparse handles T24:00:00 correctly.
 google-cloud-storage = "*"
