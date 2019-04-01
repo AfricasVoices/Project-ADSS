@@ -4,6 +4,230 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-83ad8522",
+      "CodeType": "Normal",
+      "DisplayText": "stable government",
+      "NumericValue": 1,
+      "StringValue": "stable_government",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8a59637d",
+      "CodeType": "Normal",
+      "DisplayText": "government and citizen to work together",
+      "NumericValue": 2,
+      "StringValue": "government_and_citizen_to_work_together",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cb8775af",
+      "CodeType": "Normal",
+      "DisplayText": "get rid of corruption",
+      "NumericValue": 3,
+      "StringValue": "get_rid_of_corruption",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-745ea32e",
+      "CodeType": "Normal",
+      "DisplayText": "peace and security",
+      "NumericValue": 4,
+      "StringValue": "peace_and_security",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5995ccf2",
+      "CodeType": "Normal",
+      "DisplayText": "creation of committee",
+      "NumericValue": 5,
+      "StringValue": "creation_of_committee",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-07528a44",
+      "CodeType": "Normal",
+      "DisplayText": "community participation (generic)",
+      "NumericValue": 6,
+      "StringValue": "community_participation_generic",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7decd30a",
+      "CodeType": "Normal",
+      "DisplayText": "community-led fundraising",
+      "NumericValue": 7,
+      "StringValue": "community_led_fundraising",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-48214922",
+      "CodeType": "Normal",
+      "DisplayText": "community support to IDPs",
+      "NumericValue": 8,
+      "StringValue": "community_support_to_IDPs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4c3a664f",
+      "CodeType": "Normal",
+      "DisplayText": "job creation",
+      "NumericValue": 9,
+      "StringValue": "job_creation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-2ba69d32",
+      "CodeType": "Normal",
+      "DisplayText": "skills training",
+      "NumericValue": 10,
+      "StringValue": "skills_training",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-21f04173",
+      "CodeType": "Normal",
+      "DisplayText": "food assistance",
+      "NumericValue": 11,
+      "StringValue": "food_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4eed4d85",
+      "CodeType": "Normal",
+      "DisplayText": "financial assistance",
+      "NumericValue": 12,
+      "StringValue": "financial_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-92421200",
+      "CodeType": "Normal",
+      "DisplayText": "health",
+      "NumericValue": 13,
+      "StringValue": "health",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5944107a",
+      "CodeType": "Normal",
+      "DisplayText": "education",
+      "NumericValue": 14,
+      "StringValue": "education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-44dc32cc",
+      "CodeType": "Normal",
+      "DisplayText": "access to water",
+      "NumericValue": 15,
+      "StringValue": "access_to_water",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7377dc1c",
+      "CodeType": "Normal",
+      "DisplayText": "establishing boreholes",
+      "NumericValue": 16,
+      "StringValue": "establishing_boreholes",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-919c34a4",
+      "CodeType": "Normal",
+      "DisplayText": "buy them land",
+      "NumericValue": 17,
+      "StringValue": "buy_them_land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-9a3a7e09",
+      "CodeType": "Normal",
+      "DisplayText": "provide the IDPs with land for farming",
+      "NumericValue": 18,
+      "StringValue": "provide_the_IDPs_with_land_for_farming",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-3adb777a",
+      "CodeType": "Normal",
+      "DisplayText": "provision of housing",
+      "NumericValue": 19,
+      "StringValue": "provision_of_housing",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-089e9ac1",
+      "CodeType": "Normal",
+      "DisplayText": "support from NGOs",
+      "NumericValue": 20,
+      "StringValue": "support_from_NGOs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0d3d789d",
+      "CodeType": "Normal",
+      "DisplayText": "encampment of IDPs",
+      "NumericValue": 21,
+      "StringValue": "encampment_of_IDPs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8580eaac",
+      "CodeType": "Normal",
+      "DisplayText": "return IDPs to area of origin",
+      "NumericValue": 22,
+      "StringValue": "return_IDPs_to_area_of_origin",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8936e8ca",
+      "CodeType": "Normal",
+      "DisplayText": "reintegrate into the society",
+      "NumericValue": 23,
+      "StringValue": "reintegrate_into_the_society",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7fa6a73a",
+      "CodeType": "Normal",
+      "DisplayText": "stop aid dependency",
+      "NumericValue": 24,
+      "StringValue": "stop_aid_dependency",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-60a5588a",
+      "CodeType": "Normal",
+      "DisplayText": "return to farming",
+      "NumericValue": 25,
+      "StringValue": "return_to_farming",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-22103764",
+      "CodeType": "Normal",
+      "DisplayText": "give assistance to start farming again",
+      "NumericValue": 26,
+      "StringValue": "give_assistance_to_start_farming_again",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-62cf91a7",
+      "CodeType": "Normal",
+      "DisplayText": "adherence to religion",
+      "NumericValue": 27,
+      "StringValue": "adherence_to_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-a5f66f43",
+      "CodeType": "Normal",
+      "DisplayText": "awareness creation on environment",
+      "NumericValue": 28,
+      "StringValue": "awareness_creation_on_environment",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
