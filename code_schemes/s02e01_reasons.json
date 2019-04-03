@@ -4,6 +4,150 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-0d48a48c",
+      "CodeType": "Normal",
+      "DisplayText": "good governance",
+      "NumericValue": 1,
+      "StringValue": "good_governance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5ecc373f",
+      "CodeType": "Normal",
+      "DisplayText": "peace and security",
+      "NumericValue": 2,
+      "StringValue": "peace_and_security",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cf0f5639",
+      "CodeType": "Normal",
+      "DisplayText": "community participation",
+      "NumericValue": 3,
+      "StringValue": "community_participation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-109b1baf",
+      "CodeType": "Normal",
+      "DisplayText": "crowd funding",
+      "NumericValue": 4,
+      "StringValue": "crowd_funding",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d8328362",
+      "CodeType": "Normal",
+      "DisplayText": "employment",
+      "NumericValue": 5,
+      "StringValue": "employment",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0206708a",
+      "CodeType": "Normal",
+      "DisplayText": "life-saving assistance",
+      "NumericValue": 6,
+      "StringValue": "life_saving_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6143bdc3",
+      "CodeType": "Normal",
+      "DisplayText": "provision of basic services (health, education, food)",
+      "NumericValue": 7,
+      "StringValue": "provision_of_basic_services",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6603b975",
+      "CodeType": "Normal",
+      "DisplayText": "access to water",
+      "NumericValue": 8,
+      "StringValue": "access_to_water",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7c1afd7e",
+      "CodeType": "Normal",
+      "DisplayText": "provision of land",
+      "NumericValue": 9,
+      "StringValue": "provision_of_land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f890e8e2",
+      "CodeType": "Normal",
+      "DisplayText": "provision of housing",
+      "NumericValue": 10,
+      "StringValue": "provision_of_housing",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f659885d",
+      "CodeType": "Normal",
+      "DisplayText": "support from NGOs",
+      "NumericValue": 11,
+      "StringValue": "support_from_NGOs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b0b10887",
+      "CodeType": "Normal",
+      "DisplayText": "encampment of IDPs",
+      "NumericValue": 12,
+      "StringValue": "encampment_of_IDPs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-68e20ccb",
+      "CodeType": "Normal",
+      "DisplayText": "return IDPs to area of origin",
+      "NumericValue": 13,
+      "StringValue": "return_IDPs_to_area_of_origin",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-38adb752",
+      "CodeType": "Normal",
+      "DisplayText": "reintegrate into the society",
+      "NumericValue": 14,
+      "StringValue": "reintegrate_into_the_society",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-74bddd96",
+      "CodeType": "Normal",
+      "DisplayText": "stop aid dependency",
+      "NumericValue": 15,
+      "StringValue": "stop_aid_dependency",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-db9bb7a5",
+      "CodeType": "Normal",
+      "DisplayText": "support to farming",
+      "NumericValue": 16,
+      "StringValue": "support_to_farming",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-52eca197",
+      "CodeType": "Normal",
+      "DisplayText": "adherence to religion",
+      "NumericValue": 17,
+      "StringValue": "adherence_to_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7c81eb86",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 18,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
