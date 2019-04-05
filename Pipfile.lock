@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "39ee91e836cb2f28faf9122e193a5379fc689f437ffa71d5ab59ca1ffb6c6c01"
+            "sha256": "a6a63d9dff25d88f903586853bdde19471d0fab9cf1c7771e79838155c8e2742"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "afcf5e46b984781c1d698348c10030270dfcb21b"
+            "ref": "ab40531ee6da6c05a5c25cb3d80449e623432f5c"
         },
         "deprecation": {
             "hashes": [
@@ -102,11 +102,11 @@
         },
         "google-cloud-firestore": {
             "hashes": [
-                "sha256:2d8f50209a43bf1b17ffa5432b8e3f84904dce81115f92ef99672d8e137272c9",
-                "sha256:5349d1a112dc8ff1b96d400a04ab18949503b542c72f526847e2066eef6cbc25"
+                "sha256:f1887a5ef1666f637864f517d36699d5d13552e94c53e5f007f797337d4d3633",
+                "sha256:f56bb7ca146927aa2a9ed8e342855f783c1006eaea1c27ebb7bb7bd0edac961e"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==0.31.0"
+            "version": "==0.32.0"
         },
         "google-cloud-storage": {
             "hashes": [
