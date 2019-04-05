@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3b45e3e9cc809c1858cd3e51a40d18784fa4716aefeb4bfa099a604b3c6ff2f1"
+            "sha256": "50364466686937730a0054ff37cf6a0309f9f2f48f4096f45ee783e69200ec3a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -102,11 +102,11 @@
         },
         "google-cloud-firestore": {
             "hashes": [
-                "sha256:2d8f50209a43bf1b17ffa5432b8e3f84904dce81115f92ef99672d8e137272c9",
-                "sha256:5349d1a112dc8ff1b96d400a04ab18949503b542c72f526847e2066eef6cbc25"
+                "sha256:f1887a5ef1666f637864f517d36699d5d13552e94c53e5f007f797337d4d3633",
+                "sha256:f56bb7ca146927aa2a9ed8e342855f783c1006eaea1c27ebb7bb7bd0edac961e"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==0.31.0"
+            "version": "==0.32.0"
         },
         "google-cloud-storage": {
             "hashes": [
@@ -233,7 +233,7 @@
         "pipelineinfrastructure": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",
-            "ref": "ba01789880c99657c60170e5ed42c22fd6e1e65d"
+            "ref": "23a82c37d29b127650ec67595cc047ca4eee0734"
         },
         "protobuf": {
             "hashes": [

@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 CoreDataModules = {editable = true,git = "https://www.github.com/AfricasVoices/CoreDataModules",ref = "0fe77558f18385fd14daed8be9641b71babd98f7"}
-PipelineInfrastructure = {editable = true,git = "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",ref = "ba01789880c99657c60170e5ed42c22fd6e1e65d"}
+PipelineInfrastructure = {editable = true,git = "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",ref = "23a82c37d29b127650ec67595cc047ca4eee0734"}
 RapidProTools = {editable = true,git = "https://www.github.com/AfricasVoices/RapidProTools",ref = "14f159ba2e2fc42568dbee1cf9e27bdf7f26d155"}
 pytz = "*"
 python-dateutil = ">=2.8.0"  # Need this minimum so that isoparse handles T24:00:00 correctly.
