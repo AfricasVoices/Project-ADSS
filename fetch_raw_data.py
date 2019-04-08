@@ -1,6 +1,5 @@
 import argparse
 import json
-import os
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
@@ -42,8 +41,8 @@ if __name__ == "__main__":
 
     SURVEYS = [
         "csap_demog",
-        "csap_s02_demog"
-        # TODO: Fetch evaluation flow when it is ready in Rapid Pro
+        "csap_s02_demog",
+        "csap s02 evaluation"
     ]
 
     # Read the settings from the configuration file
