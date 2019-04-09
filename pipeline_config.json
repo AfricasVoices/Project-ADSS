@@ -68,5 +68,6 @@
     "MessagesUploadPath": "analysis_outputs/csap_s02_individuals.csv",
     "IndividualsUploadPath": "analysis_outputs/csap_s02_production.csv",
     "TracedDataUploadPath": "analysis_outputs/csap_s02_traced_data.json"
-  }
+  },
+  "FlowDefinitionsUploadURLPrefix": "gs://avf-flow-definitions-test/ADSS-test-"
 }

@@ -250,7 +250,8 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings, drive_upload=None):
+                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
+                 drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -267,6 +268,10 @@ class PipelineConfiguration(object):
         :type rapid_pro_test_contact_uuids: list of str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        :param flow_definitions_upload_url_prefix: The prefix of the GS URL to uploads serialised flow definitions to.
+                                                   This prefix will be appended with the current datetime and the 
+                                                   ".json" file extension.
+        :type flow_definitions_upload_url_prefix: str
         :param drive_upload: Configuration for uploading to Google Drive, or None.
                              If None, does not upload to Google Drive.
         :type drive_upload: DriveUploadPaths | None
@@ -278,6 +283,7 @@ class PipelineConfiguration(object):
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.drive_upload = drive_upload
+        self.flow_definitions_upload_url_prefix = flow_definitions_upload_url_prefix
 
         self.validate()
 
@@ -297,8 +303,11 @@ class PipelineConfiguration(object):
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
+        flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
+
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings, drive_upload_paths)
+                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
+                   drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -330,6 +339,8 @@ class PipelineConfiguration(object):
             assert isinstance(self.drive_upload, DriveUpload), \
                 "drive_upload is not of type DriveUpload"
             self.drive_upload.validate()
+
+        validators.validate_string(self.flow_definitions_upload_url_prefix, "flow_definitions_upload_url_prefix")
 
 
 class RapidProKeyRemapping(object):
