@@ -257,6 +257,10 @@ class PipelineConfiguration(object):
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
+        :param activation_flow_names: The names of the RapidPro flows that contain the radio show responses.
+        :type: activation_flow_names: list of str
+        :param survey_flow_names: The names of the RapidPro flows that contain the survey responses.
+        :type: survey_flow_names: list of str
         :param rapid_pro_test_contact_uuids: Rapid Pro contact UUIDs of test contacts.
                                              Runs for any of those test contacts will be tagged with {'test_run': True},
                                              and dropped when the pipeline is in production mode.
@@ -303,6 +307,14 @@ class PipelineConfiguration(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.activation_flow_names, "activation_flow_names")
+        for i, activation_flow_name in enumerate(self.activation_flow_names):
+            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}")
+
+        validators.validate_list(self.survey_flow_names, "survey_flow_names")
+        for i, survey_flow_name in enumerate(self.survey_flow_names):
+            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}")
 
         validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
