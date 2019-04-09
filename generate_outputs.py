@@ -111,11 +111,11 @@ if __name__ == "__main__":
 
         drive_client_wrapper.init_client_from_info(credentials_info)
 
-    # Load phone number <-> UUID table
     log.info("Loading Phone Number <-> UUID Table...")
     with open(phone_number_uuid_table_path, "r") as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
+    log.info("Loading messages datasets:")
     messages_datasets = []
     for i, activation_flow_name in enumerate(pipeline_configuration.activation_flow_names):
         raw_activation_path = f"{raw_data_dir}/{activation_flow_name}.json"
@@ -125,7 +125,7 @@ if __name__ == "__main__":
         log.debug(f"Loaded {len(messages)} messages")
         messages_datasets.append(messages)
 
-    # Load surveys
+    log.info("Loading surveys datasets:")
     surveys_datasets = []
     for i, survey_flow_name in enumerate(pipeline_configuration.survey_flow_names):
         raw_survey_path = f"{raw_data_dir}/{survey_flow_name}.json"
