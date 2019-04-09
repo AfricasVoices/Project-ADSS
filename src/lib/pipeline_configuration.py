@@ -249,8 +249,8 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                 rapid_pro_key_remappings, drive_upload=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -269,6 +269,8 @@ class PipelineConfiguration(object):
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.activation_flow_names = activation_flow_names
+        self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.drive_upload = drive_upload
@@ -279,6 +281,8 @@ class PipelineConfiguration(object):
     def from_configuration_dict(cls, configuration_dict):
         rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+        activation_flow_names = configuration_dict["ActivationFlowNames"]
+        survey_flow_names = configuration_dict["SurveyFlowNames"]
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         rapid_pro_key_remappings = []
@@ -289,8 +293,8 @@ class PipelineConfiguration(object):
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                   rapid_pro_key_remappings, drive_upload_paths)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
