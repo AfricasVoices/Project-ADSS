@@ -1,8 +1,4 @@
 import argparse
-<<<<<<< HEAD
-import json
-=======
->>>>>>> flow-names-in-config
 from urllib.parse import urlparse
 
 from core_data_modules.traced_data.io import TracedDataJsonIO
