@@ -1,10 +1,10 @@
 {
-  "SchemeID": "Scheme-e1aa9330",
-  "Name": "Recently Displaced",
+  "SchemeID": "Scheme-9f528b96",
+  "Name": "Useful Info",
   "Version": "0.0.0.1",
   "Codes": [
     {
-      "CodeID": "code-2b565901",
+      "CodeID": "code-90dc40cd",
       "CodeType": "Normal",
       "DisplayText": "yes",
       "NumericValue": 1,
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "CodeID": "code-d67739e0",
+      "CodeID": "code-f34223f9",
       "CodeType": "Normal",
       "DisplayText": "no",
       "Shortcut": "n",
