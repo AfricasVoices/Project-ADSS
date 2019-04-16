@@ -17,8 +17,11 @@ class CodeSchemes(object):
     S02E02_REASONS = _open_scheme("s02e02_reasons.json")
     S02E03_REASONS = _open_scheme("s02e03_reasons.json")
     S02E04_REASONS = _open_scheme("s02e04_reasons.json")
+    S02E04_YES_NO_AMB = _open_scheme("s02e04_yes_no_amb.json")
     S02E05_REASONS = _open_scheme("s02e05_reasons.json")
+    S02E05_YES_NO_AMB = _open_scheme("s02e05_yes_no_amb.json")
     S02E06_REASONS = _open_scheme("s02e06_reasons.json")
+    S02E06_YES_NO_AMB = _open_scheme("s02e06_yes_no_amb.json")
 
     SOMALIA_OPERATOR = _open_scheme("somalia_operator.json")
 
@@ -106,7 +109,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e04_run_id",
                    analysis_file_key="rqa_s02e04_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E04_REASONS),
+                   code_scheme=CodeSchemes.S02E04_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E04_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e04_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e04_yes_no_amb"),
 
         CodingPlan(raw_field="rqa_s02e05_raw",
                    coded_field="rqa_s02e05_coded",
@@ -116,7 +122,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e05_run_id",
                    analysis_file_key="rqa_s02e05_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E05_REASONS),
+                   code_scheme=CodeSchemes.S02E05_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E05_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e05_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e05_yes_no_amb"),
 
         CodingPlan(raw_field="rqa_s02e06_raw",
                    coded_field="rqa_s02e06_coded",
@@ -126,7 +135,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e06_run_id",
                    analysis_file_key="rqa_s02e06_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E06_REASONS),
+                   code_scheme=CodeSchemes.S02E06_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E06_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e06_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e06_yes_no_amb")
     ]
 
     @staticmethod
