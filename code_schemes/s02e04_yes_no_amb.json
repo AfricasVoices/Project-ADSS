@@ -1,10 +1,10 @@
 {
-  "SchemeID": "Scheme-767e190c",
-  "Name": "S02E05 Yes/No",
+  "SchemeID": "Scheme-50cd0609",
+  "Name": "S02E04 Yes/No/Amb",
   "Version": "0.0.0.1",
   "Codes": [
     {
-      "CodeID": "code-04d5c964",
+      "CodeID": "code-d249be81",
       "CodeType": "Normal",
       "DisplayText": "yes",
       "NumericValue": 1,
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "CodeID": "code-3d56d4d0",
+      "CodeID": "code-fd45407d",
       "CodeType": "Normal",
       "DisplayText": "no",
       "Shortcut": "n",
@@ -25,6 +25,18 @@
       "VisibleInCoda": true,
       "MatchValues": [
         "no"
+      ]
+    },
+    {
+      "CodeID": "code-95b27579",
+      "CodeType": "Normal",
+      "DisplayText": "ambivalent",
+      "Shortcut": "a",
+      "NumericValue": 3,
+      "StringValue": "ambivalent",
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "ambivalent"
       ]
     },
     {
