@@ -12,24 +12,13 @@ from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSu
     ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
 
+Logger.set_project_name("ADSS")
 log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
                                      # Support \n and long lines
                                      formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument("--drive-upload", nargs=4,
-                        metavar=("drive-credentials-path", "csv-by-message-drive-path",
-                                 "csv-by-individual-drive-path", "production-csv-drive-path"),
-                        help="Upload message csv, individual csv, and production csv to Drive. Parameters:\n"
-                             "  drive-credentials-path: Path to a G Suite service account JSON file\n"
-                             "  csv-by-message-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the messages CSV to\n"
-                             "  csv-by-individual-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the individuals CSV to\n"
-                             "  production-csv-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the production CSV to"),
 
     parser.add_argument("user", help="User launching this program")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
@@ -90,12 +79,6 @@ if __name__ == "__main__":
     csv_by_message_drive_path = None
     csv_by_individual_drive_path = None
     production_csv_drive_path = None
-
-    drive_upload = args.drive_upload is not None
-    if drive_upload:
-        csv_by_message_drive_path = args.drive_upload[1]
-        csv_by_individual_drive_path = args.drive_upload[2]
-        production_csv_drive_path = args.drive_upload[3]
 
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
@@ -159,6 +142,8 @@ if __name__ == "__main__":
 
     # Add survey data to the messages
     log.info("Combining Datasets...")
+    s01_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s01_demographics, "avf_phone_id")
+    s02_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s02_demographics, "avf_phone_id")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
     log.info("Translating Rapid Pro Keys...")
