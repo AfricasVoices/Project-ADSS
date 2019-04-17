@@ -1,36 +1,24 @@
 import argparse
 import json
 import os
-from urllib.parse import urlparse
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
-from google.cloud import storage
+from storage.google_cloud import google_cloud_utils
 from storage.google_drive import drive_client_wrapper
 
 from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
     ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
 
+Logger.set_project_name("ADSS")
 log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline",
                                      # Support \n and long lines
                                      formatter_class=argparse.RawTextHelpFormatter)
-
-    parser.add_argument("--drive-upload", nargs=4,
-                        metavar=("drive-credentials-path", "csv-by-message-drive-path",
-                                 "csv-by-individual-drive-path", "production-csv-drive-path"),
-                        help="Upload message csv, individual csv, and production csv to Drive. Parameters:\n"
-                             "  drive-credentials-path: Path to a G Suite service account JSON file\n"
-                             "  csv-by-message-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the messages CSV to\n"
-                             "  csv-by-individual-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the individuals CSV to\n"
-                             "  production-csv-drive-path: 'Path' to a file in the service account's Drive to "
-                             "upload the production CSV to"),
 
     parser.add_argument("user", help="User launching this program")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
@@ -92,12 +80,6 @@ if __name__ == "__main__":
     csv_by_individual_drive_path = None
     production_csv_drive_path = None
 
-    drive_upload = args.drive_upload is not None
-    if drive_upload:
-        csv_by_message_drive_path = args.drive_upload[1]
-        csv_by_individual_drive_path = args.drive_upload[2]
-        production_csv_drive_path = args.drive_upload[3]
-
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
@@ -129,18 +111,9 @@ if __name__ == "__main__":
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
     if pipeline_configuration.drive_upload is not None:
-        # Fetch the Rapid Pro Token from the Google Cloud Storage URL
-        parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.drive_upload.drive_credentials_file_url)
-        bucket_name = parsed_rapid_pro_token_file_url.netloc
-        blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
-
-        log.info(f"Downloading Drive service account credentials from file '{blob_name}' in bucket '{bucket_name}'...")
-        storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
-        credentials_bucket = storage_client.bucket(bucket_name)
-        credentials_blob = credentials_bucket.blob(blob_name)
-        credentials_info = json.loads(credentials_blob.download_as_string())
-        log.info("Downloaded Drive service account credentials")
-
+        log.info(f"Downloading Google Drive service account credentials...")
+        credentials_info = json.loads(google_cloud_utils.download_blob_to_string(
+            google_cloud_credentials_file_path, pipeline_configuration.drive_upload.drive_credentials_file_url))
         drive_client_wrapper.init_client_from_info(credentials_info)
 
     # Load phone number <-> UUID table
@@ -169,6 +142,8 @@ if __name__ == "__main__":
 
     # Add survey data to the messages
     log.info("Combining Datasets...")
+    s01_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s01_demographics, "avf_phone_id")
+    s02_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s02_demographics, "avf_phone_id")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
     log.info("Translating Rapid Pro Keys...")

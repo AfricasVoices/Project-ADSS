@@ -4,6 +4,110 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-43210f02",
+      "CodeType": "Normal",
+      "DisplayText": "lack of proper governance",
+      "NumericValue": 1,
+      "StringValue": "lack_of_proper_governance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4fde4dba",
+      "CodeType": "Normal",
+      "DisplayText": "weak justice system",
+      "NumericValue": 2,
+      "StringValue": "weak_justice_system",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e058a8e3",
+      "CodeType": "Normal",
+      "DisplayText": "corruption",
+      "NumericValue": 3,
+      "StringValue": "corruption",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-92251da8",
+      "CodeType": "Normal",
+      "DisplayText": "lack of documentation for land tenure",
+      "NumericValue": 4,
+      "StringValue": "lack_of_documentation_for_land_tenure",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d255c6b7",
+      "CodeType": "Normal",
+      "DisplayText": "people settling on land that is not theirs",
+      "NumericValue": 5,
+      "StringValue": "people_settling_on_land_that_is_not_theirs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-13a5b26b",
+      "CodeType": "Normal",
+      "DisplayText": "increased competition over land",
+      "NumericValue": 6,
+      "StringValue": "increased_competition_over_land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-463ea1a4",
+      "CodeType": "Normal",
+      "DisplayText": "people being displaced to cities",
+      "NumericValue": 7,
+      "StringValue": "people_being_displaced_to_cities",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5e1f3262",
+      "CodeType": "Normal",
+      "DisplayText": "tribalism",
+      "NumericValue": 8,
+      "StringValue": "tribalism",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-44c7b6cd",
+      "CodeType": "Normal",
+      "DisplayText": "access to information",
+      "NumericValue": 9,
+      "StringValue": "access_to_information",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-87ccb7ae",
+      "CodeType": "Normal",
+      "DisplayText": "poverty",
+      "NumericValue": 10,
+      "StringValue": "poverty",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-58d18ba7",
+      "CodeType": "Normal",
+      "DisplayText": "no land allocated for the displaced",
+      "NumericValue": 11,
+      "StringValue": "no_land_allocated_for_the_displaced",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-950a5da0",
+      "CodeType": "Normal",
+      "DisplayText": "adherence to religion",
+      "NumericValue": 12,
+      "StringValue": "adherence_to_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-02582fbb",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 13,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",

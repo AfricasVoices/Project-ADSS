@@ -52,9 +52,9 @@
   ],
   "DriveUpload": {
     "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
-    "ProductionUploadPath": "adss_analysis_outputs/csap_s02_messages.csv",
-    "MessagesUploadPath": "adss_analysis_outputs/csap_s02_individuals.csv",
-    "IndividualsUploadPath": "adss_analysis_outputs/csap_s02_production.csv",
+    "ProductionUploadPath": "adss_analysis_outputs/csap_s02_production.csv",
+    "MessagesUploadPath": "adss_analysis_outputs/csap_s02_messages.csv",
+    "IndividualsUploadPath": "adss_analysis_outputs/csap_s02_individuals.csv",
     "TracedDataUploadPath": "adss_analysis_outputs/csap_s02_traced_data.json"
   }
 }
