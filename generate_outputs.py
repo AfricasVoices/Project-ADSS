@@ -138,7 +138,7 @@ if __name__ == "__main__":
     # Add survey data to the messages
     log.info("Combining Datasets...")
     coalesced_surveys_datasets = []
-    for dataset in coalesced_surveys_datasets:
+    for dataset in surveys_datasets:
         coalesced_surveys_datasets.append(CombineRawDatasets.coalesce_traced_runs_by_key(user, dataset, "avf_phone_id"))
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, coalesced_surveys_datasets)
 
