@@ -170,6 +170,8 @@ if __name__ == "__main__":
 
     # Add survey data to the messages
     log.info("Combining Datasets...")
+    s01_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s01_demographics, "avf_phone_id")
+    s02_demographics = CombineRawDatasets.coalesce_traced_runs_by_key(user, s02_demographics, "avf_phone_id")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [s01_demographics, s02_demographics])
 
     log.info("Translating Rapid Pro Keys...")
