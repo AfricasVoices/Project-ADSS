@@ -13,6 +13,7 @@ from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSu
     ProductionFile, TranslateRapidProKeys
 from src.lib import PipelineConfiguration
 
+Logger.set_project_name("ADSS")
 log = Logger(__name__)
 
 if __name__ == "__main__":
