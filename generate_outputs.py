@@ -4,7 +4,8 @@ import os
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from core_data_modules.util import IOUtils
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from storage.google_cloud import google_cloud_utils
 from storage.google_drive import drive_client_wrapper
 
