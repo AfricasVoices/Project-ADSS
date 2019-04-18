@@ -1,6 +1,18 @@
 {
   "RapidProDomain": "textit.in",
   "RapidProTokenFileURL": "gs://avf-credentials/csap-text-it-token.txt",
+  "ActivationFlowNames": [
+    "csap_s02e01_activation",
+    "csap_s02e02_activation",
+    "csap_s02e03_activation",
+    "csap_s02e04_activation",
+    "csap_s02e05_activation",
+    "csap_s02e06_activation"
+  ],
+  "SurveyFlowNames": [
+    "csap_demog",
+    "csap_s02_demog"
+  ],
   "RapidProTestContactUUIDs": [
     "6f251195-5889-437a-a8b5-ad74b8e4eb62",
     "ed65f87f-4805-42ad-9b66-27f34c81c4ff",

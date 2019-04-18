@@ -35,10 +35,7 @@ mkdir -p "$DATA_ROOT/Outputs"
 cd ..
 ./docker-run-generate-outputs.sh ${CPU_PROFILE_ARG} \
     "$USER" "$PIPELINE_CONFIGURATION" "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$DATA_ROOT/UUIDs/phone_uuids.json" \
-    "$DATA_ROOT/Raw Data/csap_s02e01_activation.json" "$DATA_ROOT/Raw Data/csap_s02e02_activation.json" \
-    "$DATA_ROOT/Raw Data/csap_s02e03_activation.json" "$DATA_ROOT/Raw Data/csap_s02e04_activation.json" \
-    "$DATA_ROOT/Raw Data/csap_s02e05_activation.json" "$DATA_ROOT/Raw Data/csap_s02e06_activation.json" \
-    "$DATA_ROOT/Raw Data/csap_demog.json" "$DATA_ROOT/Raw Data/csap_s02_demog.json" "$DATA_ROOT/Coded Coda Files/" \
+    "$DATA_ROOT/Raw Data" "$DATA_ROOT/Coded Coda Files/" \
     "$DATA_ROOT/Outputs/traced_data.json" \
     "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
     "$DATA_ROOT/Outputs/csap_s02_messages.csv" "$DATA_ROOT/Outputs/csap_s02_individuals.csv" \
