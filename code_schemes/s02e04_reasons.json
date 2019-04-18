@@ -4,6 +4,110 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-bf2667dd",
+      "CodeType": "Normal",
+      "DisplayText": "youth are the pillar of the society",
+      "NumericValue": 1,
+      "StringValue": "youth_are_the_pillar_of_the_society",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-aa5428ad",
+      "CodeType": "Normal",
+      "DisplayText": "youth are a majority of the population",
+      "NumericValue": 2,
+      "StringValue": "youth_are_a_majority_of_the_population",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-2f889ee5",
+      "CodeType": "Normal",
+      "DisplayText": "youth are capable",
+      "NumericValue": 3,
+      "StringValue": "youth_are_capable",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-75474947",
+      "CodeType": "Normal",
+      "DisplayText": "youth are the future",
+      "NumericValue": 4,
+      "StringValue": "youth_are_the_future",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-970c7634",
+      "CodeType": "Normal",
+      "DisplayText": "youth are citizens of the country",
+      "NumericValue": 5,
+      "StringValue": "youth_are_citizens_of_the_country",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-a1dd4a2d",
+      "CodeType": "Normal",
+      "DisplayText": "yes other",
+      "NumericValue": 6,
+      "StringValue": "yes_other",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-9c000954",
+      "CodeType": "Normal",
+      "DisplayText": "youth are immature",
+      "NumericValue": 7,
+      "StringValue": "youth_are_immature",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b7eb04ee",
+      "CodeType": "Normal",
+      "DisplayText": "substance abuse among youth",
+      "NumericValue": 8,
+      "StringValue": "substance_abuse_among_youth",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-aa6ed277",
+      "CodeType": "Normal",
+      "DisplayText": "decision making is for leaders and elders",
+      "NumericValue": 9,
+      "StringValue": "decision_making_is_for_leaders_and_elders",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e62f324f",
+      "CodeType": "Normal",
+      "DisplayText": "youth are incapable",
+      "NumericValue": 10,
+      "StringValue": "youth_are_incapable",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0b43260d",
+      "CodeType": "Normal",
+      "DisplayText": "youth are discriminated against",
+      "NumericValue": 11,
+      "StringValue": "youth_are_discriminated_against",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8a6ea051",
+      "CodeType": "Normal",
+      "DisplayText": "youth are part of the problem",
+      "NumericValue": 12,
+      "StringValue": "youth_are_part_of_the_problem",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f7aa17e6",
+      "CodeType": "Normal",
+      "DisplayText": "no other",
+      "NumericValue": 13,
+      "StringValue": "no_other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
