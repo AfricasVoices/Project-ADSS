@@ -249,14 +249,18 @@ class PipelineConfiguration(object):
         #            code_scheme=None)  # TODO
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                 phone_number_uuid_table, rapid_pro_key_remappings, drive_upload=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                 rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
+        :param activation_flow_names: The names of the RapidPro flows that contain the radio show responses.
+        :type: activation_flow_names: list of str
+        :param survey_flow_names: The names of the RapidPro flows that contain the survey responses.
+        :type: survey_flow_names: list of str
         :param rapid_pro_test_contact_uuids: Rapid Pro contact UUIDs of test contacts.
                                              Runs for any of those test contacts will be tagged with {'test_run': True},
                                              and dropped when the pipeline is in production mode.
@@ -271,6 +275,8 @@ class PipelineConfiguration(object):
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.activation_flow_names = activation_flow_names
+        self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.phone_number_uuid_table = phone_number_uuid_table
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
@@ -282,6 +288,8 @@ class PipelineConfiguration(object):
     def from_configuration_dict(cls, configuration_dict):
         rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+        activation_flow_names = configuration_dict["ActivationFlowNames"]
+        survey_flow_names = configuration_dict["SurveyFlowNames"]
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         phone_number_uuid_table = PhoneNumberUuidTable.from_configuration_dict(configuration_dict["PhoneNumberUuidTable"])
@@ -294,8 +302,8 @@ class PipelineConfiguration(object):
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                   phone_number_uuid_table, rapid_pro_key_remappings, drive_upload_paths)
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                   rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -304,6 +312,14 @@ class PipelineConfiguration(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.activation_flow_names, "activation_flow_names")
+        for i, activation_flow_name in enumerate(self.activation_flow_names):
+            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}")
+
+        validators.validate_list(self.survey_flow_names, "survey_flow_names")
+        for i, survey_flow_name in enumerate(self.survey_flow_names):
+            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}")
 
         validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):

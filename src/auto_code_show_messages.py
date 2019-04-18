@@ -24,6 +24,21 @@ class AutoCodeShowMessages(object):
     ICR_MESSAGES_COUNT = 200
     ICR_SEED = 0
 
+    @staticmethod
+    def log_empty_string_stats(data, raw_fields):
+        for raw_field in raw_fields:
+            total_messages_count = 0
+            empty_string_messages_count = 0
+
+            for td in data:
+                if raw_field in td:
+                    total_messages_count += 1
+                    if td[raw_field] == "":
+                        empty_string_messages_count += 1
+
+            log.debug(f"{raw_field}: {empty_string_messages_count} messages were \"\", out "
+                      f"of {total_messages_count} total")
+
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
@@ -51,25 +66,24 @@ class AutoCodeShowMessages(object):
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
 
-        # Compute the number of messages that were the empty string
-        log.debug("Counting the number of empty string messages for each raw field...")
-        raw_fields = []
-        for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-            if plan.raw_field not in raw_fields:
-                raw_fields.append(plan.raw_field)
+        # Compute the number of RQA messages that were the empty string
+        log.debug("Counting the number of empty string messages for each raw radio show field...")
+        raw_rqa_fields = []
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
+            if plan.raw_field not in raw_rqa_fields:
+                raw_rqa_fields.append(plan.raw_field)
+        cls.log_empty_string_stats(data, raw_rqa_fields)
 
-        for raw_field in raw_fields:
-            total_messages_count = 0
-            empty_string_messages_count = 0
-
-            for td in data:
-                if raw_field in td:
-                    total_messages_count += 1
-                    if td[raw_field] == "":
-                        empty_string_messages_count += 1
-
-            log.debug(f"{raw_field}: {empty_string_messages_count} messages were \"\", out "
-                      f"of {total_messages_count} total")
+        # Compute the number of survey messages that were the empty string
+        log.debug("Counting the number of empty string messages for each survey field...")
+        raw_survey_fields = []
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+            if plan.raw_field not in raw_survey_fields:
+                raw_survey_fields.append(plan.raw_field)
+        survey_data = dict()
+        for td in data:
+            survey_data[td["uid"]] = td
+        cls.log_empty_string_stats(survey_data.values(), raw_survey_fields)
 
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)

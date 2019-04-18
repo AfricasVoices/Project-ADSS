@@ -4,6 +4,102 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-62b92ecc",
+      "CodeType": "Normal",
+      "DisplayText": "part of the society",
+      "NumericValue": 1,
+      "StringValue": "part_of_the_society",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8fc7fea2",
+      "CodeType": "Normal",
+      "DisplayText": "majority of the population",
+      "NumericValue": 2,
+      "StringValue": "majority_of_the_population",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-97ec0590",
+      "CodeType": "Normal",
+      "DisplayText": "religion",
+      "NumericValue": 3,
+      "StringValue": "religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e81e9a47",
+      "CodeType": "Normal",
+      "DisplayText": "it is their right",
+      "NumericValue": 4,
+      "StringValue": "it_is_their_right",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cf7ec90f",
+      "CodeType": "Normal",
+      "DisplayText": "have knowledge",
+      "NumericValue": 5,
+      "StringValue": "have_knowledge",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-93d84cac",
+      "CodeType": "Normal",
+      "DisplayText": "yes other",
+      "NumericValue": 6,
+      "StringValue": "yes_other",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-99d9ffe0",
+      "CodeType": "Normal",
+      "DisplayText": "not part of the society",
+      "NumericValue": 7,
+      "StringValue": "not_part_of_the_society",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4871ea43",
+      "CodeType": "Normal",
+      "DisplayText": "the IDPs isolate themselves",
+      "NumericValue": 8,
+      "StringValue": "the_IDPs_isolate_themselves",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-290266e8",
+      "CodeType": "Normal",
+      "DisplayText": "they are discriminated",
+      "NumericValue": 9,
+      "StringValue": "they_are_discriminated",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-c4dd61da",
+      "CodeType": "Normal",
+      "DisplayText": "lack knowledge",
+      "NumericValue": 10,
+      "StringValue": "lack_knowledge",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-dfd561f8",
+      "CodeType": "Normal",
+      "DisplayText": "not a priority for IDPs",
+      "NumericValue": 11,
+      "StringValue": "not_a_priority_for_IDPs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d4788cb8",
+      "CodeType": "Normal",
+      "DisplayText": "no other",
+      "NumericValue": 12,
+      "StringValue": "no_other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",

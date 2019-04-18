@@ -29,22 +29,7 @@ if __name__ == "__main__":
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
     raw_data_dir = args.raw_data_dir
 
-    SHOWS = [
-        "csap_s02e01_activation",
-        "csap_s02e02_activation",
-        "csap_s02e03_activation",
-        "csap_s02e04_activation",
-        "csap_s02e05_activation",
-        "csap_s02e06_activation"
-    ]
-
-    SURVEYS = [
-        "csap_demog",
-        "csap_s02_demog"
-        # TODO: Fetch evaluation flow when it is ready in Rapid Pro
-    ]
-
-    print("Loading Pipeline Configuration File...")
+    # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
@@ -68,7 +53,7 @@ if __name__ == "__main__":
     raw_contacts = rapid_pro.get_raw_contacts()
 
     # Download all the runs for each of the radio shows
-    for show in SHOWS:
+    for show in pipeline_configuration.activation_flow_names:
         output_file_path = f"{raw_data_dir}/{show}.json"
         print(f"Exporting show '{show}' to '{output_file_path}'...")
 
@@ -83,7 +68,7 @@ if __name__ == "__main__":
             TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
 
     # Download all the runs for each of the surveys
-    for survey in SURVEYS:
+    for survey in pipeline_configuration.survey_flow_names:
         output_file_path = f"{raw_data_dir}/{survey}.json"
         print(f"Exporting survey '{survey}' to '{output_file_path}'...")
 

@@ -4,6 +4,134 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-b584e265",
+      "CodeType": "Normal",
+      "DisplayText": "good governance",
+      "NumericValue": 1,
+      "StringValue": "good_governance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-ae0f6ae6",
+      "CodeType": "Normal",
+      "DisplayText": "farming",
+      "NumericValue": 2,
+      "StringValue": "farming",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-830fa9bc",
+      "CodeType": "Normal",
+      "DisplayText": "job creation",
+      "NumericValue": 3,
+      "StringValue": "job_creation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6469c9d5",
+      "CodeType": "Normal",
+      "DisplayText": "skill development",
+      "NumericValue": 4,
+      "StringValue": "skill_development",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d1cada80",
+      "CodeType": "Normal",
+      "DisplayText": "financial support",
+      "NumericValue": 5,
+      "StringValue": "financial_support",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-35923e70",
+      "CodeType": "Normal",
+      "DisplayText": "community collaboration",
+      "NumericValue": 6,
+      "StringValue": "community_collaboration",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-73770b2a",
+      "CodeType": "Normal",
+      "DisplayText": "awareness creation",
+      "NumericValue": 7,
+      "StringValue": "awareness_creation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7c0f710f",
+      "CodeType": "Normal",
+      "DisplayText": "peace",
+      "NumericValue": 8,
+      "StringValue": "peace",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-97b51013",
+      "CodeType": "Normal",
+      "DisplayText": "provision of basic needs (food, water, health)",
+      "NumericValue": 9,
+      "StringValue": "provision_of_basic_needs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4c37973b",
+      "CodeType": "Normal",
+      "DisplayText": "adherence to religion",
+      "NumericValue": 10,
+      "StringValue": "adherence_to_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0721b1a8",
+      "CodeType": "Normal",
+      "DisplayText": "reduce cost of living",
+      "NumericValue": 11,
+      "StringValue": "reduce_cost_of_living",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-710e2833",
+      "CodeType": "Normal",
+      "DisplayText": "access to education",
+      "NumericValue": 12,
+      "StringValue": "access_to_education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-41c45bc5",
+      "CodeType": "Normal",
+      "DisplayText": "stop aid dependency",
+      "NumericValue": 13,
+      "StringValue": "stop_aid_dependency",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0d9cc000",
+      "CodeType": "Normal",
+      "DisplayText": "support from NGOs",
+      "NumericValue": 14,
+      "StringValue": "support_from_NGOs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b04ed17c",
+      "CodeType": "Normal",
+      "DisplayText": "better road networks",
+      "NumericValue": 15,
+      "StringValue": "better_road_networks",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5e081357",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 16,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",

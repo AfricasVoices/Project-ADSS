@@ -4,6 +4,134 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-e1ea4047",
+      "CodeType": "Normal",
+      "DisplayText": "provide education for the most vulnerable",
+      "NumericValue": 1,
+      "StringValue": "provide_education_for_the_most_vulnerable",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4f1ef238",
+      "CodeType": "Normal",
+      "DisplayText": "education support from NGOs is beneficial",
+      "NumericValue": 2,
+      "StringValue": "education_support_from_NGOs_is_beneficial",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-9875f4aa",
+      "CodeType": "Normal",
+      "DisplayText": "education is important",
+      "NumericValue": 3,
+      "StringValue": "education_is_important",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-1dc73f4c",
+      "CodeType": "Normal",
+      "DisplayText": "provision of quality education",
+      "NumericValue": 4,
+      "StringValue": "provision_of_quality_education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-ea46c4f0",
+      "CodeType": "Normal",
+      "DisplayText": "weak governance",
+      "NumericValue": 5,
+      "StringValue": "weak_governance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-57c1d050",
+      "CodeType": "Normal",
+      "DisplayText": "yes other",
+      "NumericValue": 6,
+      "StringValue": "yes_other",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b133813d",
+      "CodeType": "Normal",
+      "DisplayText": "lacks quality",
+      "NumericValue": 7,
+      "StringValue": "lacks_quality",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d6251764",
+      "CodeType": "Normal",
+      "DisplayText": "education services not sufficient",
+      "NumericValue": 8,
+      "StringValue": "education_services_not_sufficient",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-25023496",
+      "CodeType": "Normal",
+      "DisplayText": "creates aid dependency",
+      "NumericValue": 9,
+      "StringValue": "creates_aid_dependency",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4e07d46f",
+      "CodeType": "Normal",
+      "DisplayText": "erodes culture and religion",
+      "NumericValue": 10,
+      "StringValue": "erodes_culture_and_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6e07f810",
+      "CodeType": "Normal",
+      "DisplayText": "corruption",
+      "NumericValue": 11,
+      "StringValue": "corruption",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-306ab775",
+      "CodeType": "Normal",
+      "DisplayText": "aid agencies unjust",
+      "NumericValue": 12,
+      "StringValue": "aid_agencies_unjust",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-23de44bd",
+      "CodeType": "Normal",
+      "DisplayText": "lack of monitoring",
+      "NumericValue": 13,
+      "StringValue": "lack_of_monitoring",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-242c1552",
+      "CodeType": "Normal",
+      "DisplayText": "not sustainable",
+      "NumericValue": 14,
+      "StringValue": "not_sustainable",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7b71b1c5",
+      "CodeType": "Normal",
+      "DisplayText": "not aware of education services provided by aid organisations",
+      "NumericValue": 15,
+      "StringValue": "not_aware_of_education_services_provided_by_aid_organisations",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-47120d85",
+      "CodeType": "Normal",
+      "DisplayText": "no other",
+      "NumericValue": 16,
+      "StringValue": "no_other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
