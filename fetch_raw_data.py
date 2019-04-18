@@ -87,14 +87,14 @@ if __name__ == "__main__":
                     raw_runs = [Run.deserialize(run_json) for run_json in json.load(f)]
                 print(f"Loaded {len(raw_runs)} runs")
                 raw_runs = rapid_pro.update_raw_runs_with_latest_modified(
-                    flow_id, raw_runs, raw_export_log=raw_export_log_file)
+                    flow_id, raw_runs, raw_export_log_file=raw_export_log_file)
             except FileNotFoundError:
                 print(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
-                raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log=raw_export_log_file)
+                raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log_file=raw_export_log_file)
 
         # Fetch the latest contacts from Rapid Pro.
         with open(contacts_log_path, "a") as f:
-            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
+            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log_file=f)
 
         # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
