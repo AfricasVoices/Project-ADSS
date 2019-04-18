@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME=adss-fetch-raw-data
+IMAGE_NAME=adss
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
