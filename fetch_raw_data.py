@@ -1,12 +1,16 @@
 import argparse
 from urllib.parse import urlparse
 
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
 from rapid_pro_tools.rapid_pro_client import RapidProClient
 
 from src.lib import PipelineConfiguration
+
+Logger.set_project_name("ADSS")
+log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -42,12 +46,12 @@ if __name__ == "__main__":
     bucket_name = parsed_rapid_pro_token_file_url.netloc
     blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
-    print(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
+    log.info(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
     storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
     credentials_bucket = storage_client.bucket(bucket_name)
     credentials_blob = credentials_bucket.blob(blob_name)
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
-    print("Downloaded Rapid Pro token.")
+    log.info("Downloaded Rapid Pro token.")
 
     with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
@@ -58,7 +62,7 @@ if __name__ == "__main__":
     # Download all the runs for each of the radio shows
     for show in pipeline_configuration.activation_flow_names:
         output_file_path = f"{raw_data_dir}/{show}.json"
-        print(f"Exporting show '{show}' to '{output_file_path}'...")
+        log.info(f"Exporting show '{show}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(show)
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
@@ -76,7 +80,7 @@ if __name__ == "__main__":
     # Download all the runs for each of the surveys
     for survey in pipeline_configuration.survey_flow_names:
         output_file_path = f"{raw_data_dir}/{survey}.json"
-        print(f"Exporting survey '{survey}' to '{output_file_path}'...")
+        log.info(f"Exporting survey '{survey}' to '{output_file_path}'...")
 
         flow_id = rapid_pro.get_flow_id(survey)
         raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id)
