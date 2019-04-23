@@ -33,8 +33,9 @@ class CodeSchemes(object):
     RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
     HOUSEHOLD_LANGUAGE = _open_scheme("household_language.json")
 
-    # REPEATED = _open_scheme("repeated.json")
-    # INVOLVED = _open_scheme("involved.json")
+    POSITIVE_IMPACT = _open_scheme("positive_impact.json")
+    USEFUL_INFO = _open_scheme("useful_info.json")
+    INVOLVEMENT = _open_scheme("involvement.json")
 
     WS_CORRECT_DATASET = _open_scheme("ws_correct_dataset.json")
 
@@ -232,21 +233,29 @@ class PipelineConfiguration(object):
                    cleaner=None,
                    code_scheme=CodeSchemes.HOUSEHOLD_LANGUAGE),
 
-        # CodingPlan(raw_field="repeated_raw",
-        #            coded_field="repeated_coded",
-        #            time_field="repeated_time",
-        #            coda_filename="repeated.json",
-        #            analysis_file_key="repeated",
-        #            cleaner=somali.DemographicCleaner.clean_yes_no,
-        #            code_scheme=None),  # TODO
-        #
-        # CodingPlan(raw_field="involved_raw",
-        #            coded_field="involved_coded",
-        #            time_field="involved_time",
-        #            coda_filename="involved.json",
-        #            analysis_file_key="involved",
-        #            cleaner=somali.DemographicCleaner.clean_yes_no,
-        #            code_scheme=None)  # TODO
+        CodingPlan(raw_field="positive_impact_raw",
+                   coded_field="positive_impact_coded",
+                   time_field="positive_impact_time",
+                   coda_filename="positive_impact.json",
+                   analysis_file_key="positive_impact",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.POSITIVE_IMPACT),
+
+        CodingPlan(raw_field="useful_info_raw",
+                   coded_field="useful_info_coded",
+                   time_field="useful_info_time",
+                   coda_filename="useful_info.json",
+                   analysis_file_key="useful_info",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.USEFUL_INFO),
+
+        CodingPlan(raw_field="involvement_raw",
+                   coded_field="involvement_coded",
+                   time_field="involvement_time",
+                   coda_filename="involvement.json",
+                   analysis_file_key="involvement",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.INVOLVEMENT),
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,

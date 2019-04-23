@@ -29,6 +29,10 @@ DATASETS=(
     "idp_camp"
     "recently_displaced"
     "household_language"
+
+    "positive_impact"
+    "useful_info"
+    "involvement"
 )
 
 cd "$CODA_V2_ROOT/data_tools"
