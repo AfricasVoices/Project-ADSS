@@ -7,6 +7,7 @@ from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata, TracedData
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, TimeUtils, SHAUtils
+from dateutil.parser import isoparse
 
 log = Logger(__name__)
 
@@ -28,7 +29,6 @@ if __name__ == "__main__":
     user = args.user
     recovered_csv_input_path = args.recovered_csv_input_path
     phone_number_uuid_table_path = args.phone_number_uuid_table_path
-    dataset_id = args.dataset_id
     traced_data_output_path = args.traced_data_output_path
 
     log.info(f"Reading recovered data from '{recovered_csv_input_path}'...")
@@ -56,6 +56,7 @@ if __name__ == "__main__":
         }
 
         data.append(TracedData(d, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())))
+    data.sort(key=lambda td: isoparse(td["received_on"]))
     log.info("Converted the recovered messages to TracedData...")
 
     log.info(f"Updating the phone number <-> uuid table at '{phone_number_uuid_table_path}' "

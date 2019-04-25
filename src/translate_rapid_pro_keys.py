@@ -16,6 +16,7 @@ class TranslateRapidProKeys(object):
         "Rqa_S02E04 (Value) - csap_s02e04_activation": "rqa_s02e04_raw",
         "Rqa_S02E05 (Value) - csap_s02e05_activation": "rqa_s02e05_raw",
         "Rqa_S02E06 (Value) - csap_s02e06_activation": "rqa_s02e06_raw",
+        "message": "recovered_raw",
     }
 
     @classmethod
@@ -98,8 +99,17 @@ class TranslateRapidProKeys(object):
         :param coda_input_dir: Directory to read coded coda files from.
         :type coda_input_dir: str
         """
-        # No implementation needed yet, because no flow is yet to go wrong in production.
-        pass
+        # Correct week 1 and 2 messages recovered from the Hormud/Shaqadoon SSL certificate expiration issue
+        cls._remap_radio_show_by_time_range(
+            user, data, "rqa_s02e01_raw",
+            isoparse("2019-02-19T13:48:00+03:00"),
+            isoparse("2019-02-23T24:00:00+03:00")
+        )
+        cls._remap_radio_show_by_time_range(
+            user, data, "rqa_s02e02_raw",
+            isoparse("2019-02-24T00:00:00+03:00"),
+            isoparse("2019-02-24T17:24:00+03:00")
+        )
 
     @classmethod
     def remap_key_names(cls, user, data, pipeline_configuration):
