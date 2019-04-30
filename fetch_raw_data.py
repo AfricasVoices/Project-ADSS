@@ -2,6 +2,7 @@ import argparse
 import json
 from urllib.parse import urlparse
 
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
@@ -9,6 +10,9 @@ from rapid_pro_tools.rapid_pro_client import RapidProClient
 from temba_client.v2 import Contact, Run
 
 from src.lib import PipelineConfiguration
+
+Logger.set_project_name("ADSS")
+log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -44,12 +48,12 @@ if __name__ == "__main__":
     bucket_name = parsed_rapid_pro_token_file_url.netloc
     blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
-    print(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
+    log.info(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
     storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
     credentials_bucket = storage_client.bucket(bucket_name)
     credentials_blob = credentials_bucket.blob(blob_name)
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
-    print("Downloaded Rapid Pro token.")
+    log.info("Downloaded Rapid Pro token.")
 
     with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
@@ -74,7 +78,7 @@ if __name__ == "__main__":
         runs_log_path = f"{raw_data_dir}/{flow}_log.jsonl"
         raw_runs_path = f"{raw_data_dir}/{flow}_raw.json"
         traced_runs_output_path = f"{raw_data_dir}/{flow}.json"
-        print(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
+        log.info(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
 
         flow_id = rapid_pro.get_flow_id(flow)
 
@@ -82,14 +86,14 @@ if __name__ == "__main__":
         # If there is no previous export for this flow, fetch all the runs from Rapid Pro.
         with open(runs_log_path, "a") as raw_export_log_file:
             try:
-                print(f"Loading raw runs from file '{raw_runs_path}'...")
+                log.info(f"Loading raw runs from file '{raw_runs_path}'...")
                 with open(raw_runs_path) as f:
                     raw_runs = [Run.deserialize(run_json) for run_json in json.load(f)]
-                print(f"Loaded {len(raw_runs)} runs")
+                log.info(f"Loaded {len(raw_runs)} runs")
                 raw_runs = rapid_pro.update_raw_runs_with_latest_modified(
                     flow_id, raw_runs, raw_export_log_file=raw_export_log_file)
             except FileNotFoundError:
-                print(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
+                log.info(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
                 raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log_file=raw_export_log_file)
 
         # Fetch the latest contacts from Rapid Pro.
@@ -115,6 +119,6 @@ if __name__ == "__main__":
 
     # Save the latest raw contacts to disk.
     with open(raw_contacts_path, "w") as f:
-        print(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
+        log.info(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
         json.dump([contact.serialize() for contact in raw_contacts], f)
-        print(f"Saved {len(raw_contacts)} contacts")
+        log.info(f"Saved {len(raw_contacts)} contacts")
