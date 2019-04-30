@@ -11,7 +11,8 @@
   ],
   "SurveyFlowNames": [
     "csap_demog",
-    "csap_s02_demog"
+    "csap_s02_demog",
+    "csap s02 evaluation"
   ],
   "RapidProTestContactUUIDs": [
     "6f251195-5889-437a-a8b5-ad74b8e4eb62",
@@ -64,7 +65,14 @@
     {"RapidProKey": "Recently_Displaced (Value) - csap_s02_demog", "PipelineKey": "recently_displaced_raw"},
     {"RapidProKey": "Recently_Displaced (Time) - csap_s02_demog", "PipelineKey": "recently_displaced_time"},
     {"RapidProKey": "Hh_Language (Value) - csap_s02_demog", "PipelineKey": "household_language_raw"},
-    {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"}
+    {"RapidProKey": "Hh_Language (Time) - csap_s02_demog", "PipelineKey": "household_language_time"},
+
+    {"RapidProKey": "Positive_Impact (Value) - csap s02 evaluation", "PipelineKey": "positive_impact_raw"},
+    {"RapidProKey": "Positive_Impact (Time) - csap s02 evaluation", "PipelineKey": "positive_impact_time"},
+    {"RapidProKey": "Csap_Useful_Info (Value) - csap s02 evaluation", "PipelineKey": "useful_info_raw"},
+    {"RapidProKey": "Csap_Useful_Info (Time) - csap s02 evaluation", "PipelineKey": "useful_info_time"},
+    {"RapidProKey": "Csap_Involvement (Value) - csap s02 evaluation", "PipelineKey": "involvement_raw"},
+    {"RapidProKey": "Csap_Involvement (Time) - csap s02 evaluation", "PipelineKey": "involvement_time"}
   ],
   "DriveUpload": {
     "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
@@ -72,5 +80,6 @@
     "MessagesUploadPath": "adss_analysis_outputs/csap_s02_messages.csv",
     "IndividualsUploadPath": "adss_analysis_outputs/csap_s02_individuals.csv",
     "TracedDataUploadPath": "adss_analysis_outputs/csap_s02_traced_data.json"
-  }
+  },
+  "FlowDefinitionsUploadURLPrefix": "gs://avf-flow-definitions-test/ADSS-test-"
 }
