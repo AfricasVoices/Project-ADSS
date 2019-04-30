@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f546fc70515e342708480f921262ebe436b21daa7643d4c12badc4ab9d54ee08"
+            "sha256": "db0144bff0b36f65fa9954dcb517a45262ca63cd7cc8932b560bb55916a1af5b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "a1466eac2b6d0e2977f107b49d69d661fb3f8252"
+            "ref": "9c5fe22293b7d6431f1fb8907f77925e47b85ec8"
         },
         "deprecation": {
             "hashes": [
@@ -66,11 +66,11 @@
                 "grpc"
             ],
             "hashes": [
-                "sha256:5dcf8895690b4b95c1d96f77a314fcc5674a5e2db925343b3f67df3f0882967e",
-                "sha256:fc1fea74bd863fb71486066e0c6b3a4dad26fb70ec61a0edcada8637feb77c68"
+                "sha256:9e6f4daf193be1c0230fc7a539058f7681c0a9741a02292614d0c9e3e091f4fc",
+                "sha256:c69bad1ae3e193764028f5ec58049d1d8ef81efd0320cf110c712cd1292daeab"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==1.9.0"
+            "version": "==1.10.0"
         },
         "google-api-python-client": {
             "hashes": [
