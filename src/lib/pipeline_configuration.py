@@ -68,9 +68,6 @@ class CodingPlan(object):
 class PipelineConfiguration(object):
     DEV_MODE = False
     
-    PROJECT_START_DATE = isoparse("2019-02-17T00:00:00+03:00")
-    PROJECT_END_DATE = isoparse("2019-03-30T24:00:00+03:00")
-
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s02e01_raw",
                    coded_field="rqa_s02e01_coded",
@@ -271,8 +268,9 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
-                 drive_upload=None):
+                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                 project_start_date, project_end_date,
+                 flow_definitions_upload_url_prefix, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -289,6 +287,12 @@ class PipelineConfiguration(object):
         :type rapid_pro_test_contact_uuids: list of str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        :param project_start_date: When data collection started - all activation messages received before this date
+                                   time will be dropped.
+        :type project_start_date: datetime.datetime
+        :param project_end_date: When data collection stopped - all activation messages received on or after this date
+                                 time will be dropped.
+        :type project_end_date: datetime.datetime
         :param flow_definitions_upload_url_prefix: The prefix of the GS URL to uploads serialised flow definitions to.
                                                    This prefix will be appended with the current datetime and the 
                                                    ".json" file extension.
@@ -303,6 +307,8 @@ class PipelineConfiguration(object):
         self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        self.project_start_date = project_start_date
+        self.project_end_date = project_end_date
         self.drive_upload = drive_upload
         self.flow_definitions_upload_url_prefix = flow_definitions_upload_url_prefix
 
@@ -320,6 +326,9 @@ class PipelineConfiguration(object):
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
+        project_start_date = isoparse(configuration_dict["ProjectStartDate"])
+        project_end_date = isoparse(configuration_dict["ProjectEndDate"])
+
         drive_upload_paths = None
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
@@ -327,8 +336,8 @@ class PipelineConfiguration(object):
         flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
-                   drive_upload_paths)
+                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                   project_start_date, project_end_date, flow_definitions_upload_url_prefix, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -355,6 +364,9 @@ class PipelineConfiguration(object):
             assert isinstance(remapping, RapidProKeyRemapping), \
                 f"rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
             remapping.validate()
+
+        validators.validate_datetime(self.project_start_date, "project_start_date")
+        validators.validate_datetime(self.project_end_date, "project_end_date")
 
         if self.drive_upload is not None:
             assert isinstance(self.drive_upload, DriveUpload), \
