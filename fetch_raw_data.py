@@ -38,6 +38,7 @@ if __name__ == "__main__":
     raw_data_dir = args.raw_data_dir
 
     # Read the settings from the configuration file
+    log.info("Loading Pipeline Configuration File...")
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
@@ -55,8 +56,10 @@ if __name__ == "__main__":
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
     log.info("Downloaded Rapid Pro token.")
 
+    log.info("Loading Phone Number <-> UUID Table...")
     with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
+    log.info(f"Loaded {len(phone_number_uuid_table.numbers())} phone number <-> uuid mappings")
 
     rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
 
