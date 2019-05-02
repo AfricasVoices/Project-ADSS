@@ -81,7 +81,7 @@ if __name__ == "__main__":
         runs_log_path = f"{raw_data_dir}/{flow}_log.jsonl"
         raw_runs_path = f"{raw_data_dir}/{flow}_raw.json"
         traced_runs_output_path = f"{raw_data_dir}/{flow}.json"
-        log.info(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
+        log.info(f"Exporting flow '{flow}' to '{traced_runs_output_path}'...")
 
         flow_id = rapid_pro.get_flow_id(flow)
 
