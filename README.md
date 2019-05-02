@@ -15,16 +15,42 @@ Development requires the following additional tools:
  - git
 
 ## Usage
-Running the pipeline requires 
-(1) optionally downloading coded data from Coda, 
-(2) fetching all the relevant data from Rapid Pro, 
-(3) processing the raw data to produce the outputs required for coding and then for analysis, and
-(4) uploading new data to Coda for manual verification and coding.
+A pipeline run consists of the following four steps, executed in sequence:
+(1) Download coded data from Coda (optional), 
+(2) Fetch all the relevant data from Rapid Pro, 
+(3) Process the raw data to produce the outputs required for coding and then for analysis, and
+(4) Upload the new data to Coda for manual verification and coding.
 
 To simplify the configuration and execution of these stages, this project includes a `run_scripts`
 directory, which contains shell scripts for driving each of those stages. 
-More detailed descriptions of the functions of each of those stages, and instructions for using
-the run scripts, are provided below. 
+
+To run the entire pipeline, see [Run All Pipeline Stages](#run-all-pipeline-stages).
+
+To run the above stages individually, see [these sections](#1-download-coded-data-from-coda)
+
+### Run All Pipeline Stages
+To run all the pipeline stages at once, and create a compressed backup of the data directory after the run,
+run the following command from the `run_scripts` directory:
+
+```
+$ ./run_pipeline.sh <user> <pipeline-configuration-file-path> <coda-pull-auth-file> <coda-push-auth-file> <google-cloud-credentials-file-path> <coda-tools-root> <data-root> <data-backup-dir>
+```
+
+where:
+- `user` is the identifier of the person running the script, for use in the TracedData Metadata 
+  e.g. `user@africasvoices.org` 
+- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `coda-pull-auth-file` is an absolute path to the private credentials file for the Coda instance to download manually coded datasets from.
+- `coda-push-auth-file` is an absolute path to the private credentials file for the Coda instance to upload datasets to be manually coded to.
+- `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
+  for accessing a cloud storage credentials bucket containing all the other project credentials files.
+- `coda-tools-root` is an absolute path to a local directory containing a clone of the 
+  [CodaV2](https://github.com/AfricasVoices/CodaV2) repository.
+  If the given directory does not exist, the latest version of the Coda V2 repository will be cloned and set up 
+  in that location automatically.
+- `data-root` is an absolute path to the directory in which all pipeline data should be stored.
+- `data-backup-dir` is a directory which the `data-root` directory will be backed-up to after the rest of the
+  pipeline stages have completed. The data is gzipped and given the name `data-<utc-date-time-now>-<git-HEAD-hash>`
 
 ### 1. Download Coded Data from Coda
 This stage downloads coded datasets for this project from Coda (and is optional if manual coding hasn't started yet).
