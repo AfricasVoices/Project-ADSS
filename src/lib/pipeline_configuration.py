@@ -17,8 +17,11 @@ class CodeSchemes(object):
     S02E02_REASONS = _open_scheme("s02e02_reasons.json")
     S02E03_REASONS = _open_scheme("s02e03_reasons.json")
     S02E04_REASONS = _open_scheme("s02e04_reasons.json")
+    S02E04_YES_NO_AMB = _open_scheme("s02e04_yes_no_amb.json")
     S02E05_REASONS = _open_scheme("s02e05_reasons.json")
+    S02E05_YES_NO_AMB = _open_scheme("s02e05_yes_no_amb.json")
     S02E06_REASONS = _open_scheme("s02e06_reasons.json")
+    S02E06_YES_NO_AMB = _open_scheme("s02e06_yes_no_amb.json")
 
     SOMALIA_OPERATOR = _open_scheme("somalia_operator.json")
 
@@ -33,8 +36,9 @@ class CodeSchemes(object):
     RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
     HOUSEHOLD_LANGUAGE = _open_scheme("household_language.json")
 
-    # REPEATED = _open_scheme("repeated.json")
-    # INVOLVED = _open_scheme("involved.json")
+    POSITIVE_IMPACT = _open_scheme("positive_impact.json")
+    USEFUL_INFO = _open_scheme("useful_info.json")
+    INVOLVEMENT = _open_scheme("involvement.json")
 
     WS_CORRECT_DATASET = _open_scheme("ws_correct_dataset.json")
 
@@ -106,7 +110,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e04_run_id",
                    analysis_file_key="rqa_s02e04_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E04_REASONS),
+                   code_scheme=CodeSchemes.S02E04_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E04_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e04_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e04_yes_no_amb"),
 
         CodingPlan(raw_field="rqa_s02e05_raw",
                    coded_field="rqa_s02e05_coded",
@@ -116,7 +123,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e05_run_id",
                    analysis_file_key="rqa_s02e05_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E05_REASONS),
+                   code_scheme=CodeSchemes.S02E05_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E05_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e05_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e05_yes_no_amb"),
 
         CodingPlan(raw_field="rqa_s02e06_raw",
                    coded_field="rqa_s02e06_coded",
@@ -126,7 +136,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s02e06_run_id",
                    analysis_file_key="rqa_s02e06_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S02E06_REASONS),
+                   code_scheme=CodeSchemes.S02E06_REASONS,
+                   binary_code_scheme=CodeSchemes.S02E06_YES_NO_AMB,
+                   binary_coded_field="rqa_s02e06_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s02e06_yes_no_amb")
     ]
 
     @staticmethod
@@ -232,46 +245,66 @@ class PipelineConfiguration(object):
                    cleaner=None,
                    code_scheme=CodeSchemes.HOUSEHOLD_LANGUAGE),
 
-        # CodingPlan(raw_field="repeated_raw",
-        #            coded_field="repeated_coded",
-        #            time_field="repeated_time",
-        #            coda_filename="repeated.json",
-        #            analysis_file_key="repeated",
-        #            cleaner=somali.DemographicCleaner.clean_yes_no,
-        #            code_scheme=None),  # TODO
-        #
-        # CodingPlan(raw_field="involved_raw",
-        #            coded_field="involved_coded",
-        #            time_field="involved_time",
-        #            coda_filename="involved.json",
-        #            analysis_file_key="involved",
-        #            cleaner=somali.DemographicCleaner.clean_yes_no,
-        #            code_scheme=None)  # TODO
+        CodingPlan(raw_field="positive_impact_raw",
+                   coded_field="positive_impact_coded",
+                   time_field="positive_impact_time",
+                   coda_filename="positive_impact.json",
+                   analysis_file_key="positive_impact",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.POSITIVE_IMPACT),
+
+        CodingPlan(raw_field="useful_info_raw",
+                   coded_field="useful_info_coded",
+                   time_field="useful_info_time",
+                   coda_filename="useful_info.json",
+                   analysis_file_key="useful_info",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.USEFUL_INFO),
+
+        CodingPlan(raw_field="involvement_raw",
+                   coded_field="involvement_coded",
+                   time_field="involvement_time",
+                   coda_filename="involvement.json",
+                   analysis_file_key="involvement",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.INVOLVEMENT),
     ])
 
-    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                 rapid_pro_key_remappings, drive_upload=None):
+    def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
+                 drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
         :param rapid_pro_token_file_url: GS URL of a text file containing the authorisation token for the Rapid Pro
                                          server.
         :type rapid_pro_token_file_url: str
+        :param activation_flow_names: The names of the RapidPro flows that contain the radio show responses.
+        :type: activation_flow_names: list of str
+        :param survey_flow_names: The names of the RapidPro flows that contain the survey responses.
+        :type: survey_flow_names: list of str
         :param rapid_pro_test_contact_uuids: Rapid Pro contact UUIDs of test contacts.
                                              Runs for any of those test contacts will be tagged with {'test_run': True},
                                              and dropped when the pipeline is in production mode.
         :type rapid_pro_test_contact_uuids: list of str
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        :param flow_definitions_upload_url_prefix: The prefix of the GS URL to uploads serialised flow definitions to.
+                                                   This prefix will be appended with the current datetime and the 
+                                                   ".json" file extension.
+        :type flow_definitions_upload_url_prefix: str
         :param drive_upload: Configuration for uploading to Google Drive, or None.
                              If None, does not upload to Google Drive.
         :type drive_upload: DriveUploadPaths | None
         """
         self.rapid_pro_domain = rapid_pro_domain
         self.rapid_pro_token_file_url = rapid_pro_token_file_url
+        self.activation_flow_names = activation_flow_names
+        self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.drive_upload = drive_upload
+        self.flow_definitions_upload_url_prefix = flow_definitions_upload_url_prefix
 
         self.validate()
 
@@ -279,6 +312,8 @@ class PipelineConfiguration(object):
     def from_configuration_dict(cls, configuration_dict):
         rapid_pro_domain = configuration_dict["RapidProDomain"]
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
+        activation_flow_names = configuration_dict["ActivationFlowNames"]
+        survey_flow_names = configuration_dict["SurveyFlowNames"]
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         rapid_pro_key_remappings = []
@@ -289,8 +324,11 @@ class PipelineConfiguration(object):
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
 
-        return cls(rapid_pro_domain, rapid_pro_token_file_url, rapid_pro_test_contact_uuids,
-                   rapid_pro_key_remappings, drive_upload_paths)
+        flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
+
+        return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
+                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
+                   drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -299,6 +337,14 @@ class PipelineConfiguration(object):
     def validate(self):
         validators.validate_string(self.rapid_pro_domain, "rapid_pro_domain")
         validators.validate_string(self.rapid_pro_token_file_url, "rapid_pro_token_file_url")
+
+        validators.validate_list(self.activation_flow_names, "activation_flow_names")
+        for i, activation_flow_name in enumerate(self.activation_flow_names):
+            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}")
+
+        validators.validate_list(self.survey_flow_names, "survey_flow_names")
+        for i, survey_flow_name in enumerate(self.survey_flow_names):
+            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}")
 
         validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
@@ -314,6 +360,8 @@ class PipelineConfiguration(object):
             assert isinstance(self.drive_upload, DriveUpload), \
                 "drive_upload is not of type DriveUpload"
             self.drive_upload.validate()
+
+        validators.validate_string(self.flow_definitions_upload_url_prefix, "flow_definitions_upload_url_prefix")
 
 
 class RapidProKeyRemapping(object):

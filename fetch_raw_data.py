@@ -1,13 +1,17 @@
 import argparse
-import json
-import os
 from urllib.parse import urlparse
 
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import PhoneNumberUuidTable, IOUtils
 from google.cloud import storage
 from rapid_pro_tools.rapid_pro_client import RapidProClient
 from temba_client.v2 import Contact, Run
+
+from src.lib import PipelineConfiguration
+
+Logger.set_project_name("ADSS")
+log = Logger(__name__)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
@@ -32,47 +36,28 @@ if __name__ == "__main__":
     phone_number_uuid_table_path = args.phone_number_uuid_table_path
     raw_data_dir = args.raw_data_dir
 
-    SHOWS = [
-        "csap_s02e01_activation",
-        "csap_s02e02_activation",
-        "csap_s02e03_activation",
-        "csap_s02e04_activation",
-        "csap_s02e05_activation",
-        "csap_s02e06_activation"
-    ]
-
-    SURVEYS = [
-        "csap_demog",
-        "csap_s02_demog"
-        # TODO: Fetch evaluation flow when it is ready in Rapid Pro
-    ]
-
     # Read the settings from the configuration file
     with open(pipeline_configuration_file_path) as f:
-        pipeline_config = json.load(f)
-
-        rapid_pro_domain = pipeline_config["RapidProDomain"]
-        rapid_pro_token_file_url = pipeline_config["RapidProTokenFileURL"]
-        rapid_pro_test_contact_uuids = pipeline_config["RapidProTestContactUUIDs"]
+        pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
     # Fetch the Rapid Pro Token from the Google Cloud Storage URL
-    parsed_rapid_pro_token_file_url = urlparse(rapid_pro_token_file_url)
+    parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.rapid_pro_token_file_url)
     assert parsed_rapid_pro_token_file_url.scheme == "gs", "RapidProTokenFileURL needs to be a gs URL " \
                                                            "(i.e. of the form gs://bucket-name/file)"
     bucket_name = parsed_rapid_pro_token_file_url.netloc
     blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
 
-    print(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
+    log.info(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
     storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
     credentials_bucket = storage_client.bucket(bucket_name)
     credentials_blob = credentials_bucket.blob(blob_name)
     rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
-    print("Downloaded Rapid Pro token.")
+    log.info("Downloaded Rapid Pro token.")
 
     with open(phone_number_uuid_table_path) as f:
         phone_number_uuid_table = PhoneNumberUuidTable.load(f)
 
-    rapid_pro = RapidProClient(rapid_pro_domain, rapid_pro_token)
+    rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
 
     # Load the previous export of contacts if it exists, otherwise fetch all contacts from Rapid Pro.
     raw_contacts_path = f"{raw_data_dir}/contacts_raw.json"
@@ -116,7 +101,7 @@ if __name__ == "__main__":
 
         # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
-            user, raw_runs, raw_contacts, phone_number_uuid_table, rapid_pro_test_contact_uuids)
+            user, raw_runs, raw_contacts, phone_number_uuid_table, pipeline_configuration.rapid_pro_test_contact_uuids)
 
         # Save the latest set of raw runs to disk.
         with open(raw_runs_path, "w") as f:
