@@ -16,29 +16,17 @@ Development requires the following additional tools:
 
 ## Usage
 Running the pipeline requires 
-(1) creating a phone number <-> UUID table to support de-identification of respondents, 
-(2) optionally downloading coded data from Coda, 
-(3) fetching all the relevant data from Rapid Pro, 
-(4) processing the raw data to produce the outputs required for coding and then for analysis, and
-(5) uploading new data to Coda for manual verification and coding.
+(1) optionally downloading coded data from Coda, 
+(2) fetching all the relevant data from Rapid Pro, 
+(3) processing the raw data to produce the outputs required for coding and then for analysis, and
+(4) uploading new data to Coda for manual verification and coding.
 
 To simplify the configuration and execution of these stages, this project includes a `run_scripts`
 directory, which contains shell scripts for driving each of those stages. 
 More detailed descriptions of the functions of each of those stages, and instructions for using
 the run scripts, are provided below. 
 
-### 1. Phone Number <-> UUID Table
-When running the pipeline for the first time, create an empty phone number <-> UUID table by running the following 
-command in the `run_scripts` directory:
-
-```
-$ ./0_create_uuid_table.sh <data-root> 
-```
-
-where `data-root` is an absolute path to the directory in which all pipeline data should be stored. 
-The UUID table will be saved to a file in the directory `<data-root>/UUIDs`.
-
-### 2. Download Coded Data from Coda
+### 1. Download Coded Data from Coda
 This stage downloads coded datasets for this project from Coda (and is optional if manual coding hasn't started yet).
 To use, run the following command from the `run_scripts` directory: 
 
@@ -55,7 +43,7 @@ where:
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Downloaded Coda files are saved to `<data-root>/Coded Coda Files/<dataset>.json`.
 
-### 3. Fetch Raw Data
+### 2. Fetch Raw Data
 This stage fetches all the raw data required by the pipeline from Rapid Pro.
 To use, run the following command from the `run_scripts` directory:
 
@@ -72,7 +60,7 @@ where:
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`.
 
-### 4. Generate Outputs
+### 3. Generate Outputs
 This stage processes the raw data to produce outputs for ICR, Coda, and messages/individuals/production
 CSVs for final analysis.
 To use, run the following command from the `run_scripts` directory:
@@ -99,7 +87,7 @@ pipeline configuration json file), this stage outputs the following files to `<d
  - For each week of radio shows, a random sample of 200 messages that weren't classified as noise, for use in ICR (`ICR/`)
  - Coda V2 messages files for each dataset (`Coda Files/<dataset>.json`). To upload these to Coda, see the next step.
 
-### 5. Upload Auto-Coded Data to Coda
+### 4. Upload Auto-Coded Data to Coda
 This stage uploads messages to Coda for manual coding and verification.
 Messages which have already been uploaded will not be added again or overwritten.
 To use, run the following command from the `run_scripts` directory:
