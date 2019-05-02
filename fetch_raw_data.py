@@ -113,7 +113,7 @@ if __name__ == "__main__":
             json.dump([run.serialize() for run in raw_runs], raw_runs_file)
         log.info(f"Saved {len(raw_runs)} raw runs")
 
-        log.info(f"Saving the update phone number <-> uuid table to {phone_number_uuid_table_path}...")
+        log.info(f"Saving the updated phone number <-> uuid table to {phone_number_uuid_table_path}...")
         with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
         log.info(f"Saved the phone number <-> uuid table ({len(phone_number_uuid_table.numbers())} mappings)")
