@@ -1,4 +1,5 @@
 import argparse
+import json
 from urllib.parse import urlparse
 
 from core_data_modules.logging import Logger
@@ -63,21 +64,21 @@ if __name__ == "__main__":
     raw_contacts_path = f"{raw_data_dir}/contacts_raw.json"
     contacts_log_path = f"{raw_data_dir}/contacts_log.jsonl"
     try:
-        print(f"Loading raw contacts from file '{raw_contacts_path}'...")
+        log.info(f"Loading raw contacts from file '{raw_contacts_path}'...")
         with open(raw_contacts_path) as f:
             raw_contacts = [Contact.deserialize(contact_json) for contact_json in json.load(f)]
-        print(f"Loaded {len(raw_contacts)} contacts")
+        log.info(f"Loaded {len(raw_contacts)} contacts")
     except FileNotFoundError:
-        print(f"File '{raw_contacts_path}' not found, will fetch all contacts from the Rapid Pro server")
+        log.info(f"File '{raw_contacts_path}' not found, will fetch all contacts from the Rapid Pro server")
         with open(contacts_log_path, "a") as f:
-            raw_contacts = rapid_pro.get_raw_contacts(raw_export_log=f)
+            raw_contacts = rapid_pro.get_raw_contacts(raw_export_log_file=f)
 
     # Download all the runs for each of the radio shows
-    for flow in SHOWS + SURVEYS:
+    for flow in pipeline_configuration.activation_flow_names + pipeline_configuration.survey_flow_names:
         runs_log_path = f"{raw_data_dir}/{flow}_log.jsonl"
         raw_runs_path = f"{raw_data_dir}/{flow}_raw.json"
         traced_runs_output_path = f"{raw_data_dir}/{flow}.json"
-        print(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
+        log.info(f"Exporting show '{flow}' to '{traced_runs_output_path}'...")
 
         flow_id = rapid_pro.get_flow_id(flow)
 
@@ -85,19 +86,19 @@ if __name__ == "__main__":
         # If there is no previous export for this flow, fetch all the runs from Rapid Pro.
         with open(runs_log_path, "a") as raw_export_log_file:
             try:
-                print(f"Loading raw runs from file '{raw_runs_path}'...")
+                log.info(f"Loading raw runs from file '{raw_runs_path}'...")
                 with open(raw_runs_path) as f:
                     raw_runs = [Run.deserialize(run_json) for run_json in json.load(f)]
-                print(f"Loaded {len(raw_runs)} runs")
+                log.info(f"Loaded {len(raw_runs)} runs")
                 raw_runs = rapid_pro.update_raw_runs_with_latest_modified(
-                    flow_id, raw_runs, raw_export_log=raw_export_log_file)
+                    flow_id, raw_runs, raw_export_log_file=raw_export_log_file)
             except FileNotFoundError:
-                print(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
-                raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log=raw_export_log_file)
+                log.info(f"File '{raw_runs_path}' not found, will fetch all runs from the Rapid Pro server for flow '{flow}'")
+                raw_runs = rapid_pro.get_raw_runs_for_flow_id(flow_id, raw_export_log_file=raw_export_log_file)
 
         # Fetch the latest contacts from Rapid Pro.
         with open(contacts_log_path, "a") as f:
-            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log=f)
+            raw_contacts = rapid_pro.update_raw_contacts_with_latest_modified(raw_contacts, raw_export_log_file=f)
 
         # Convert the runs to TracedData.
         traced_runs = rapid_pro.convert_runs_to_traced_data(
@@ -118,6 +119,6 @@ if __name__ == "__main__":
 
     # Save the latest raw contacts to disk.
     with open(raw_contacts_path, "w") as f:
-        print(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
+        log.info(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
         json.dump([contact.serialize() for contact in raw_contacts], f)
-        print(f"Saved {len(raw_contacts)} contacts")
+        log.info(f"Saved {len(raw_contacts)} contacts")
