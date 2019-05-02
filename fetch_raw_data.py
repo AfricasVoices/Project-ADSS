@@ -107,21 +107,23 @@ if __name__ == "__main__":
         traced_runs = rapid_pro.convert_runs_to_traced_data(
             user, raw_runs, raw_contacts, phone_number_uuid_table, pipeline_configuration.rapid_pro_test_contact_uuids)
 
-        # Save the latest set of raw runs to disk.
+        log.info(f"Saving {len(raw_runs)} raw runs to {raw_runs_path}...")
         with open(raw_runs_path, "w") as f:
             json.dump([run.serialize() for run in raw_runs], f)
+        log.info(f"Saved {len(raw_runs)} raw runs")
 
-        # Save the updated phone number <-> uuid table to disk.
+        log.info(f"Saving the update phone number <-> uuid table to {phone_number_uuid_table_path}...")
         with open(phone_number_uuid_table_path, "w") as f:
             phone_number_uuid_table.dump(f)
+        log.info(f"Saved the phone number <-> uuid table ({len(phone_number_uuid_table.numbers())} mappings)")
 
-        # Save the traced runs to disk..
+        log.info(f"Saving {len(traced_runs)} traced runs to {traced_runs_output_path}...")
         IOUtils.ensure_dirs_exist_for_file(traced_runs_output_path)
         with open(traced_runs_output_path, "w") as f:
             TracedDataJsonIO.export_traced_data_iterable_to_json(traced_runs, f, pretty_print=True)
+        log.info(f"Saved {len(traced_runs)} traced runs")
 
-    # Save the latest raw contacts to disk.
+    log.info(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
     with open(raw_contacts_path, "w") as f:
-        log.info(f"Saving {len(raw_contacts)} raw contacts to file '{raw_contacts_path}'...")
         json.dump([contact.serialize() for contact in raw_contacts], f)
-        log.info(f"Saved {len(raw_contacts)} contacts")
+    log.info(f"Saved {len(raw_contacts)} contacts")
