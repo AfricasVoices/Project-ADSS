@@ -7,7 +7,7 @@ import pytz
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata, TracedData
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, TimeUtils, SHAUtils
+from core_data_modules.util import PhoneNumberUuidTable, TimeUtils, SHAUtils, IOUtils
 from storage.google_cloud import google_cloud_utils
 
 from src.lib import PipelineConfiguration
@@ -80,6 +80,7 @@ if __name__ == "__main__":
 
         traced_data_output_path = f"{raw_data_dir}/{recovery_csv_url.split('/')[-1].split('.')[0]}.json"
         log.info(f"Exporting {len(data)} TracedData items to {traced_data_output_path}...")
+        IOUtils.ensure_dirs_exist_for_file(traced_data_output_path)
         with open(traced_data_output_path, "w") as f:
             TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
         log.info(f"Exported TracedData")
