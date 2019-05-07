@@ -4,6 +4,9 @@ FROM python:3.6-slim
 RUN apt-get update && apt-get install -y git
 RUN pip install pipenv
 
+# Install R tools
+RUN apt-get update && apt-get install -y r-base
+
 # Install pyflame (for statistical profiling) if this script is run with PROFILE_CPU flag
 ARG INSTALL_CPU_PROFILER="false"
 RUN if [ "$INSTALL_CPU_PROFILER" = "true" ]; then \
