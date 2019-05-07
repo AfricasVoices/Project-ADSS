@@ -70,7 +70,7 @@ if __name__ == "__main__":
             }
 
             data.append(TracedData(d, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())))
-        log.info("Converted the recovered messages to TracedData...")
+        log.info("Converted the recovered messages to TracedData")
 
         log.info(f"Updating the phone number <-> uuid table at '{phone_number_uuid_table_path}' "
                  f"with {len(phone_number_uuid_table.numbers())} phone number <-> uuid mappings...")
