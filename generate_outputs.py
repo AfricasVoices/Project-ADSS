@@ -21,11 +21,11 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("user", help="User launching this program")
-    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
-                        help="Path to the pipeline configuration json file"),
     parser.add_argument("google_cloud_credentials_file_path", metavar="google-cloud-credentials-file-path",
                         help="Path to a Google Cloud service account credentials file to use to access the "
                              "credentials bucket")
+    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
+                        help="Path to the pipeline configuration json file")
 
     parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
                         help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
