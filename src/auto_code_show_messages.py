@@ -40,10 +40,13 @@ class AutoCodeShowMessages(object):
                       f"of {total_messages_count} total")
 
     @classmethod
-    def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
+    def auto_code_show_messages(cls, user, data, pipeline_configuration, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        if not PipelineConfiguration.DEV_MODE:
+        if pipeline_configuration.filter_test_messages:
             data = MessageFilters.filter_test_messages(data)
+        else:
+            log.debug("Not filtering out test messages (because the pipeline configuration json key "
+                      "'FilterTestMessages' was set to false)")
 
         # Filter for runs which don't contain a response to any week's question
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
