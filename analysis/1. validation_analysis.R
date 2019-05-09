@@ -1,14 +1,25 @@
+library(docopt)
+
 rm(list = ls())
-args = commandArgs(trailingOnly=TRUE)
 
-# TODO: Switch to use opt-parse?
-if (length(args) != 3) {
-  stop("not enough args!", call.=FALSE)
-}
+doc <-
+"Validates an individuals dataset.
 
-working_dir = args[1]
-individuals_csv_path = args[2]
-output_dir = args[3]
+Usage:
+  validate_analysis.R [-h] <working-dir> <individuals-csv-path> <cleaned-csvs-output-dir>
+
+Positional arguments:
+  working-dir              Working directory to run the R interpreter in.
+  individuals-csv-path     Path to the individuals CSV to validate.
+  cleaned-csvs-output-dir  Path to a directory to write cleaned CSVs to.
+
+Optional arguments:
+  -h --help     Show this message and exit."
+
+arguments <- docopt(doc)
+working_dir = arguments$"working-dir"
+individuals_csv_path = arguments$"individuals-csv-path"
+cleaned_csvs_output_dir = arguments$"cleaned-csvs-output-dir"
 
 setwd(working_dir)
 data1=read.csv(individuals_csv_path)
@@ -622,14 +633,14 @@ unique_uids_across_wk1_6=na.omit(unique(c(as.character(cleaned_wk1_dataset$uid),
 merged_cleaned_data=data[(as.character(data$uid) %in% as.character(unique_uids_across_wk1_6)),]
 
 ####Exporting cleaned datasets:
-dir.create(output_dir, showWarnings = FALSE)
-write.csv(cleaned_wk1_dataset, file=file.path(output_dir, "cleaned_wk1_dataset.csv"))
-write.csv(cleaned_wk2_dataset, file=file.path(output_dir, "cleaned_wk2_dataset.csv"))
-write.csv(cleaned_wk3_dataset, file=file.path(output_dir, "cleaned_wk3_dataset.csv"))
-write.csv(cleaned_wk4_dataset, file=file.path(output_dir, "cleaned_wk4_dataset.csv"))
-write.csv(cleaned_wk5_dataset, file=file.path(output_dir, "cleaned_wk5_dataset.csv"))
-write.csv(cleaned_wk6_dataset, file=file.path(output_dir, "cleaned_wk6_dataset.csv"))
-write.csv(merged_cleaned_data, file=file.path(output_dir, "merged_cleaned_data.csv"))
+dir.create(cleaned_csvs_output_dir, showWarnings = FALSE)
+write.csv(cleaned_wk1_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk1_dataset.csv"))
+write.csv(cleaned_wk2_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk2_dataset.csv"))
+write.csv(cleaned_wk3_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk3_dataset.csv"))
+write.csv(cleaned_wk4_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk4_dataset.csv"))
+write.csv(cleaned_wk5_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk5_dataset.csv"))
+write.csv(cleaned_wk6_dataset, file=file.path(cleaned_csvs_output_dir, "cleaned_wk6_dataset.csv"))
+write.csv(merged_cleaned_data, file=file.path(cleaned_csvs_output_dir, "merged_cleaned_data.csv"))
 
 ####-----------------------END-------------------------------########################
 
