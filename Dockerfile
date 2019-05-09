@@ -7,9 +7,8 @@ RUN pip install pipenv
 # Install R tools (r-base + packrat)
 RUN apt-get update && apt-get install -y gnupg
 RUN apt-key adv --keyserver keys.gnupg.net --recv-key 'E19F5F87128899B192B1A2C2AD5F960A256A04AF'
-RUN echo "deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/" >>/etc/apt/sources.list
-RUN apt-get update && apt-get install -y r-base
-RUN R --version
+RUN echo 'deb http://cloud.r-project.org/bin/linux/debian stretch-cran35/' >>/etc/apt/sources.list
+RUN apt-get update && apt-get install -y r-base wget
 RUN printf '\nlocal({\nr <- getOption("repos")\nr["CRAN"] <- "https://cloud.r-project.org"\noptions(repos = r)\n})\n' >>/etc/R/Rprofile.site
 RUN echo 'install.packages("packrat")' | R -q --no-save
 
@@ -27,6 +26,9 @@ RUN mkdir /credentials
 
 # Make a directory for intermediate data
 RUN mkdir /data
+
+# Set the working directory
+WORKDIR /app
 
 # Install project dependencies.
 ADD analysis/packrat/init.R /app/analysis/packrat/
