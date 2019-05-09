@@ -101,12 +101,12 @@ class TranslateRapidProKeys(object):
         """
         # Correct week 1 and 2 messages recovered from the Hormud/Shaqadoon SSL certificate expiration issue
         cls._remap_radio_show_by_time_range(
-            user, data, "rqa_s02e01_raw",
+            user, data, "sent_on", "rqa_s02e01_raw",
             isoparse("2019-02-19T13:48:00+03:00"),
             isoparse("2019-02-23T24:00:00+03:00")
         )
         cls._remap_radio_show_by_time_range(
-            user, data, "rqa_s02e02_raw",
+            user, data, "sent_on", "rqa_s02e02_raw",
             isoparse("2019-02-24T00:00:00+03:00"),
             isoparse("2019-02-24T17:24:00+03:00")
         )
