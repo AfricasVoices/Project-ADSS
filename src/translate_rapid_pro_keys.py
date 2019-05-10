@@ -1,9 +1,12 @@
 from datetime import datetime
 
 import pytz
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata
 from core_data_modules.util import TimeUtils
 from dateutil.parser import isoparse
+
+log = Logger(__name__)
 
 
 class TranslateRapidProKeys(object):
@@ -75,8 +78,14 @@ class TranslateRapidProKeys(object):
         if range_end is None:
             range_end = pytz.utc.localize(datetime.max)
 
+        log.info(f"Remapping messages in time range {range_start.isoformat()} to {range_end.isoformat()} "
+                 f"to show {show_pipeline_key_to_remap_to}...")
+
+        remapped_count = 0
         for td in data:
             if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
+                remapped_count += 1
+
                 remapped = {
                     "show_pipeline_key": show_pipeline_key_to_remap_to
                 }
@@ -85,6 +94,8 @@ class TranslateRapidProKeys(object):
 
                 td.append_data(remapped,
                                Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+        log.info(f"Remapped {remapped_count} messages to show {show_pipeline_key_to_remap_to}")
 
     @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):

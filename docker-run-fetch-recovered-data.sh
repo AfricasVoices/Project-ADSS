@@ -20,11 +20,10 @@ done
 
 
 # Check that the correct number of arguments were provided.
-if [[ $# -ne 5 ]]; then
+if [[ $# -ne 4 ]]; then
     echo "Usage: ./docker-run.sh
     [--profile-cpu <profile-output-path>]
-    <user> <google-cloud-credentials-file-path> <pipeline-configuration-file-path>
-    <phone-number-uuid-table-path> <raw-data-dir>"
+    <user> <google-cloud-credentials-file-path> <pipeline-configuration-file-path> <raw-data-dir>"
     exit
 fi
 
@@ -32,8 +31,7 @@ fi
 USER=$1
 PIPELINE_CONFIGURATION=$2
 GOOGLE_CLOUD_CREDENTIALS_FILE_PATH=$3
-PHONE_UUID_TABLE=$4
-OUTPUT_RAW_DATA_DIR=$5
+OUTPUT_RAW_DATA_DIR=$4
 
 # Build an image for this pipeline stage.
 docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
@@ -44,8 +42,7 @@ if [[ "$PROFILE_CPU" = true ]]; then
     SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
 fi
 CMD="pipenv run $PROFILE_CPU_CMD python -u fetch_recovered_data.py \
-    \"$USER\" /data/pipeline_configuration.json /credentials/google-cloud-credentials.json \
-    /data/phone-number-uuid-table-input.json /data/Raw\ Data
+    \"$USER\" /data/pipeline_configuration.json /credentials/google-cloud-credentials.json /data/Raw\ Data
 "
 container="$(docker container create ${SYS_PTRACE_CAPABILITY} -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
@@ -58,7 +55,6 @@ trap finish EXIT
 # Copy input data into the container
 docker cp "$PIPELINE_CONFIGURATION" "$container:/data/pipeline_configuration.json"
 docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/credentials/google-cloud-credentials.json"
-docker cp "$PHONE_UUID_TABLE" "$container:/data/phone-number-uuid-table-input.json"
 
 # Run the container
 docker start -a -i "$container"
