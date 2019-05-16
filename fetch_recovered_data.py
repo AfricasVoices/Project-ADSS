@@ -54,6 +54,10 @@ if __name__ == "__main__":
             parsed_raw_date = datetime.strptime(raw_date, "%m/%d/%y %H:%M")
             localized_date = pytz.timezone("Africa/Mogadishu").localize(parsed_raw_date)
 
+            assert row["Mobile No"].startswith("avf-phone-uuid-"), \
+                f"The 'Mobile No' column for '{recovery_csv_url} contains an item that has not been de-identified " \
+                f"into Africa's Voices Foundation's de-identification format. This may be done with de_identify_csv.py."
+
             d = {
                 "avf_phone_id": row["Mobile No"],
                 "message": row["Message Content"],
