@@ -19,8 +19,9 @@ Running the pipeline requires
 (1) creating a phone number <-> UUID table to support de-identification of respondents, 
 (2) optionally downloading coded data from Coda, 
 (3) fetching all the relevant data from Rapid Pro, 
-(4) processing the raw data to produce the outputs required for coding and then for analysis, and
-(5) uploading new data to Coda for manual verification and coding.
+(4) processing the raw data to produce the outputs required for coding and then for analysis
+(5) uploading new data to Coda for manual verification and coding, and
+(6) optionally backing-up the project data root.
 
 To simplify the configuration and execution of these stages, this project includes a `run_scripts`
 directory, which contains shell scripts for driving each of those stages. 
@@ -115,6 +116,21 @@ where:
   data_tools directory (which contains the `get.py` script).
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Downloaded Coda files are saved to `<data-root>/Coded Coda Files/<dataset>.json`.
+
+### 6. Back-up the Data Directory
+This stage makes a backup of the project data directory by creating a compressed, versioned, time-stamped copy at the
+requested location.
+To use, run the following command from the `run_scripts` directory:
+
+```
+$ ./5_backup_data_root.sh <data-root> <data-backups-dir>
+```
+
+where:
+- `data-root` is an absolute path to the directory to back-up.
+- `data-backups-dir` is a directory which the `data-root` directory will be backed-up to.
+  The data is gzipped and given the name `data-<utc-date-time-now>-<git-HEAD-hash>`.
+
 
 ## Development
 
