@@ -270,7 +270,7 @@ class PipelineConfiguration(object):
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
                  rapid_pro_test_contact_uuids, rapid_pro_key_remappings, filter_test_messages,
-                 flow_definitions_upload_url_prefix, drive_upload=None):
+                 flow_definitions_upload_url_prefix, recovery_csv_urls=None, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -293,6 +293,8 @@ class PipelineConfiguration(object):
                                                    This prefix will be appended with the current datetime and the 
                                                    ".json" file extension.
         :type flow_definitions_upload_url_prefix: str
+          :param recovery_csv_urls: GS URLs to CSVs in Shaqadoon's recovery format, or None.
+        :type recovery_csv_urls: list of str | None
         :param drive_upload: Configuration for uploading to Google Drive, or None.
                              If None, does not upload to Google Drive.
         :type drive_upload: DriveUploadPaths | None
@@ -302,6 +304,7 @@ class PipelineConfiguration(object):
         self.activation_flow_names = activation_flow_names
         self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
+        self.recovery_csv_urls = recovery_csv_urls
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.filter_test_messages = filter_test_messages
         self.drive_upload = drive_upload
@@ -315,6 +318,7 @@ class PipelineConfiguration(object):
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
         activation_flow_names = configuration_dict["ActivationFlowNames"]
         survey_flow_names = configuration_dict["SurveyFlowNames"]
+        recovery_csv_urls = configuration_dict.get("RecoveryCSVURLs")
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         rapid_pro_key_remappings = []
@@ -331,7 +335,7 @@ class PipelineConfiguration(object):
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
                    rapid_pro_test_contact_uuids, rapid_pro_key_remappings, filter_test_messages,
-                   flow_definitions_upload_url_prefix, drive_upload_paths)
+                   flow_definitions_upload_url_prefix, recovery_csv_urls, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -343,11 +347,16 @@ class PipelineConfiguration(object):
 
         validators.validate_list(self.activation_flow_names, "activation_flow_names")
         for i, activation_flow_name in enumerate(self.activation_flow_names):
-            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}")
+            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}]")
 
         validators.validate_list(self.survey_flow_names, "survey_flow_names")
         for i, survey_flow_name in enumerate(self.survey_flow_names):
-            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}")
+            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}]")
+
+        if self.recovery_csv_urls is not None:
+            validators.validate_list(self.recovery_csv_urls, "recovery_csv_urls")
+            for i, recovery_csv_url in enumerate(self.recovery_csv_urls):
+                validators.validate_string(recovery_csv_url, f"recovery_csv_urls[{i}]")
 
         validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
