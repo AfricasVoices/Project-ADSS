@@ -49,8 +49,10 @@ $ ./1_coda_get.sh <coda-auth-file> <coda-tools-root> <data-root>
 
 where:
 - `coda-auth-file` is an absolute path to the private credentials file for the Coda instance to download coded datasets from.
-- `coda-tools-root` is an absolute path to [CodaV2](https://github.com/AfricasVoices/CodaV2) repository's 
-  data_tools directory (which contains the `get.py` script).
+- `coda-tools-root` is an absolute path to a local directory containing a clone of the 
+  [CodaV2](https://github.com/AfricasVoices/CodaV2) repository.
+  If the given directory does not exist, the latest version of the Coda V2 repository will be cloned and set up 
+  in that location automatically.
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Downloaded Coda files are saved to `<data-root>/Coded Coda Files/<dataset>.json`.
 
@@ -59,17 +61,17 @@ This stage fetches all the raw data required by the pipeline from Rapid Pro.
 To use, run the following command from the `run_scripts` directory:
 
 ```
-$ ./2_fetch_raw_data.sh <user> <google-cloud-credentials-file-path> <pipeline-configuration> <data-root>
+$ ./2_fetch_raw_data.sh <user> <google-cloud-credentials-file-path> <pipeline-configuration-file-path> <data-root>
 ```
 
 where:
 - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
-   e.g. `user@africasvoices.org` 
+  e.g. `user@africasvoices.org` 
 - `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
   for accessing a cloud storage credentials bucket containing all the other project credentials files.
-- `pipeline-config-file-path ` is an absolute path to a pipeline configuration json file.
- - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
-   Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`.
+- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `data-root` is an absolute path to the directory in which all pipeline data should be stored.
+  Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`.
 
 ### 4. Generate Outputs
 This stage processes the raw data to produce outputs for ICR, Coda, and messages/individuals/production
@@ -77,25 +79,22 @@ CSVs for final analysis.
 To use, run the following command from the `run_scripts` directory:
 
 ```
-$ ./3_generate_outputs.sh [--drive-upload <drive-service-account-credentials-url> <drive-upload-dir>] <user> <data-root>
+$ ./3_generate_outputs.sh <user> <google-cloud-credentials-file-path> <pipeline-configuration-file-path> <data-root>
 ```
 
 where:
- - `--drive-upload` is an optional flag for uploading the messages, individuals, and production CSVs to Drive.
-   If this flag set, pass the arguments:
-  - `drive-service-account-credentials-url`, a gs URL to the private credentials file of a Google Drive service account.
-    This service account will be used to upload outputted data for analysis to a directory on Google Drive.
-  - `drive-upload-dir`, the path to a directory in Google Drive to upload the messages, individuals, and production 
-    CSVs to. Before files can be uploaded to a directory, the directory must be shared with the service account's 
-    email address (which can be found in the `client_email` field of the service account's credentials file).
- - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
-   e.g. `user@africasvoices.org`.
- - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
-   All output files will be saved in `<data-root>/Outputs`.
+- `user` is the identifier of the person running the script, for use in the TracedData Metadata 
+  e.g. `user@africasvoices.org`.
+- `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
+  for accessing a cloud storage credentials bucket containing all the other project credentials files.
+- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `data-root` is an absolute path to the directory in which all pipeline data should be stored.
+  All output files will be saved in `<data-root>/Outputs`.
    
-As well as uploading the messages, individuals, and production CSVs to Drive, this stage outputs the following to
-`<data-root>/Outputs`:
- - Local copies of the messages, individuals, and production CSVs (`csap_mes.csv`, `csap_ind.csv`, `csap_prod.csv`)
+As well as uploading the messages, individuals, and production CSVs to Drive (if configured in the 
+pipeline configuration json file), this stage outputs the following files to `<data-root>/Outputs`:
+ - Local copies of the messages, individuals, and production CSVs (`csap_s02_messages.csv`, `csap_s02_individuals.csv`, 
+   `csap_s02_production.csv`)
  - A serialized export of the list of TracedData objects representing all the data that was exported for analysis 
    (`traced_data.json`)
  - For each week of radio shows, a random sample of 200 messages that weren't classified as noise, for use in ICR (`ICR/`)
@@ -112,8 +111,10 @@ $ ./4_coda_add.sh <coda-auth-file> <coda-tools-root> <data-root>
 
 where:
 - `coda-auth-file` is an absolute path to the private credentials file for the Coda instance to download coded datasets from.
-- `coda-tools-root` is an absolute path to [CodaV2](https://github.com/AfricasVoices/CodaV2) repository's 
-  data_tools directory (which contains the `get.py` script).
+- `coda-tools-root` is an absolute path to a local directory containing a clone of the 
+  [CodaV2](https://github.com/AfricasVoices/CodaV2) repository.
+  If the given directory does not exist, the latest version of the Coda V2 repository will be cloned and set up 
+  in that location automatically.
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Downloaded Coda files are saved to `<data-root>/Coded Coda Files/<dataset>.json`.
 
