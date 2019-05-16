@@ -27,8 +27,8 @@ if [[ $# -ne 2 ]]; then
 fi
 
 # Assign the program arguments to bash variables.
-GOOGLE_CLOUD_CREDENTIALS_FILE_PATH=$1
-PIPELINE_CONFIGURATION=$2
+INPUT_GOOGLE_CLOUD_CREDENTIALS=$1
+INPUT_PIPELINE_CONFIGURATION=$2
 
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
@@ -50,8 +50,8 @@ function finish {
 trap finish EXIT
 
 # Copy input data into the container
-docker cp "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$container:/credentials/google-cloud-credentials.json"
-docker cp "$PIPELINE_CONFIGURATION" "$container:/data/pipeline-configuration.json"
+docker cp "$INPUT_GOOGLE_CLOUD_CREDENTIALS" "$container:/credentials/google-cloud-credentials.json"
+docker cp "$INPUT_PIPELINE_CONFIGURATION" "$container:/data/pipeline-configuration.json"
 
 # Run the container
 docker start -a -i "$container"
