@@ -66,8 +66,6 @@ class CodingPlan(object):
 
 
 class PipelineConfiguration(object):
-    DEV_MODE = False
-    
     PROJECT_START_DATE = isoparse("2019-02-17T00:00:00+03:00")
     PROJECT_END_DATE = isoparse("2019-03-30T24:00:00+03:00")
 
@@ -271,8 +269,8 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                 rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
-                 drive_upload=None):
+                 rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, filter_test_messages,
+                 flow_definitions_upload_url_prefix, recovery_csv_urls=None, drive_upload=None):
         """
         :param rapid_pro_domain: URL of the Rapid Pro server to download data from.
         :type rapid_pro_domain: str
@@ -291,10 +289,14 @@ class PipelineConfiguration(object):
         :type phone_number_uuid_table: PhoneNumberUuidTable
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
+        :param filter_test_messages: Whether to filter out messages sent from the rapid_pro_test_contact_uuids
+        :type filter_test_messages: bool
         :param flow_definitions_upload_url_prefix: The prefix of the GS URL to uploads serialised flow definitions to.
                                                    This prefix will be appended with the current datetime and the
                                                    ".json" file extension.
         :type flow_definitions_upload_url_prefix: str
+        :param recovery_csv_urls: GS URLs to CSVs in Shaqadoon's recovery format, or None.
+        :type recovery_csv_urls: list of str | None
         :param drive_upload: Configuration for uploading to Google Drive, or None.
                              If None, does not upload to Google Drive.
         :type drive_upload: DriveUploadPaths | None
@@ -305,7 +307,9 @@ class PipelineConfiguration(object):
         self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
         self.phone_number_uuid_table = phone_number_uuid_table
+        self.recovery_csv_urls = recovery_csv_urls
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
+        self.filter_test_messages = filter_test_messages
         self.drive_upload = drive_upload
         self.flow_definitions_upload_url_prefix = flow_definitions_upload_url_prefix
 
@@ -317,6 +321,7 @@ class PipelineConfiguration(object):
         rapid_pro_token_file_url = configuration_dict["RapidProTokenFileURL"]
         activation_flow_names = configuration_dict["ActivationFlowNames"]
         survey_flow_names = configuration_dict["SurveyFlowNames"]
+        recovery_csv_urls = configuration_dict.get("RecoveryCSVURLs")
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
         phone_number_uuid_table = PhoneNumberUuidTable.from_configuration_dict(configuration_dict["PhoneNumberUuidTable"])
@@ -325,6 +330,8 @@ class PipelineConfiguration(object):
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
 
+        filter_test_messages = configuration_dict["FilterTestMessages"]
+
         drive_upload_paths = None
         if "DriveUpload" in configuration_dict:
             drive_upload_paths = DriveUpload.from_configuration_dict(configuration_dict["DriveUpload"])
@@ -332,8 +339,8 @@ class PipelineConfiguration(object):
         flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                   rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, flow_definitions_upload_url_prefix,
-                   drive_upload_paths)
+                   rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings, filter_test_messages,
+                   flow_definitions_upload_url_prefix, recovery_csv_urls, drive_upload_paths)
 
     @classmethod
     def from_configuration_file(cls, f):
@@ -345,11 +352,16 @@ class PipelineConfiguration(object):
 
         validators.validate_list(self.activation_flow_names, "activation_flow_names")
         for i, activation_flow_name in enumerate(self.activation_flow_names):
-            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}")
+            validators.validate_string(activation_flow_name, f"activation_flow_names[{i}]")
 
         validators.validate_list(self.survey_flow_names, "survey_flow_names")
         for i, survey_flow_name in enumerate(self.survey_flow_names):
-            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}")
+            validators.validate_string(survey_flow_name, f"survey_flow_names[{i}]")
+
+        if self.recovery_csv_urls is not None:
+            validators.validate_list(self.recovery_csv_urls, "recovery_csv_urls")
+            for i, recovery_csv_url in enumerate(self.recovery_csv_urls):
+                validators.validate_string(recovery_csv_url, f"recovery_csv_urls[{i}]")
 
         validators.validate_list(self.rapid_pro_test_contact_uuids, "rapid_pro_test_contact_uuids")
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
@@ -363,6 +375,8 @@ class PipelineConfiguration(object):
             assert isinstance(remapping, RapidProKeyRemapping), \
                 f"rapid_pro_key_mappings[{i}] is not of type RapidProKeyRemapping"
             remapping.validate()
+
+        validators.validate_bool(self.filter_test_messages, "filter_test_messages")
 
         if self.drive_upload is not None:
             assert isinstance(self.drive_upload, DriveUpload), \

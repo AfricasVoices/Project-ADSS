@@ -22,11 +22,11 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("user", help="User launching this program")
-    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
-                        help="Path to the pipeline configuration json file"),
     parser.add_argument("google_cloud_credentials_file_path", metavar="google-cloud-credentials-file-path",
                         help="Path to a Google Cloud service account credentials file to use to access the "
                              "credentials bucket")
+    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
+                        help="Path to the pipeline configuration json file")
 
     parser.add_argument("raw_data_dir", metavar="raw-data-dir",
                         help="Path to a directory containing the raw data files exported by fetch_raw_data.py")
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
 
     log.info("Auto Coding Messages...")
-    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
+    data = AutoCodeShowMessages.auto_code_show_messages(user, data, pipeline_configuration, icr_output_dir, coded_dir_path)
 
     log.info("Exporting production CSV...")
     data = ProductionFile.generate(data, production_csv_output_path)
