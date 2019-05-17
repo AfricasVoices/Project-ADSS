@@ -4,9 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-CoreDataModules = {editable = true,git = "https://www.github.com/AfricasVoices/CoreDataModules",ref = "validate-datetime"}
-PipelineInfrastructure = {editable = true,git = "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",ref = "52604994137291ec4ecf6d035f32afc15f232ae6"}
-RapidProTools = {editable = true,git = "https://www.github.com/AfricasVoices/RapidProTools",ref = "e172b7a70c6f9e06817ee1b09fbeea44edd3bf1f"}
+CoreDataModules = {editable = true,git = "https://www.github.com/AfricasVoices/CoreDataModules",ref = "v0.9.1"}
+PipelineInfrastructure = {editable = true,git = "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",ref = "v0.0.2"}
+RapidProTools = {editable = true,git = "https://www.github.com/AfricasVoices/RapidProTools",ref = "v0.2.7"}
 pytz = "*"
 python-dateutil = ">=2.8.0"  # Need this minimum so that isoparse handles T24:00:00 correctly.
 google-cloud-storage = "*"
