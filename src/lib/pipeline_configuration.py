@@ -266,7 +266,7 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                 rapid_pro_test_contact_uuids, recovery_csv_urls, rapid_pro_key_remappings,
                  project_start_date, project_end_date, filter_test_messages,
                  flow_definitions_upload_url_prefix, drive_upload=None):
         """
@@ -343,7 +343,7 @@ class PipelineConfiguration(object):
         flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                   rapid_pro_test_contact_uuids, recovery_csv_urls, rapid_pro_key_remappings,
                    project_start_date, project_end_date, filter_test_messages,
                    flow_definitions_upload_url_prefix, drive_upload_paths)
 
