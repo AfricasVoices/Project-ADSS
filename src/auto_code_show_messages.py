@@ -53,7 +53,7 @@ class AutoCodeShowMessages(object):
 
         # Filter out runs sent outwith the project start and end dates
         data = MessageFilters.filter_time_range(
-            data, cls.SENT_ON_KEY, PipelineConfiguration.PROJECT_START_DATE, PipelineConfiguration.PROJECT_END_DATE)
+            data, cls.SENT_ON_KEY, pipeline_configuration.project_start_date, pipeline_configuration.project_end_date)
 
         # Tag messages which are noise as being noise
         for td in data:
@@ -64,7 +64,8 @@ class AutoCodeShowMessages(object):
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
-        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY,
+                                  pipeline_configuration.project_start_date, pipeline_configuration.project_end_date)
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)

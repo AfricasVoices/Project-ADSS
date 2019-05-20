@@ -74,6 +74,8 @@
     {"RapidProKey": "Csap_Involvement (Value) - csap s02 evaluation", "PipelineKey": "involvement_raw"},
     {"RapidProKey": "Csap_Involvement (Time) - csap s02 evaluation", "PipelineKey": "involvement_time"}
   ],
+  "ProjectStartDate": "2019-02-17T00:00:00+03:00",
+  "ProjectEndDate": "2019-03-30T24:00:00+03:00",
   "FilterTestMessages": true,
   "DriveUpload": {
     "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",

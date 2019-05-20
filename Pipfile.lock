@@ -110,11 +110,11 @@
         },
         "google-cloud-storage": {
             "hashes": [
-                "sha256:8032e576e2f91a1d3de2355118040c3bcd9916e0453a6b3f64c1b42ed151690a",
-                "sha256:9cb408cc05f08537a74a12ea0e7428d5a31b052bada343310e3547ceab392a47"
+                "sha256:aad501a7b47a92b20ce998208fc706959805982d639cc178f079382c43161283",
+                "sha256:fe98ecfba927f8de626b315cffe68d7c4a8da3658f95fee382269b92e3d71328"
             ],
             "index": "pypi",
-            "version": "==1.15.1"
+            "version": "==1.16.0"
         },
         "google-resumable-media": {
             "hashes": [
@@ -306,7 +306,7 @@
         "rapidprotools": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/RapidProTools",
-            "ref": "c15e4c10e3d6fd18be45612f1c24ad69fe2e7042"
+            "ref": "bd486f30b8235a1653e07322cb1047b72eec37b9"
         },
         "requests": {
             "hashes": [

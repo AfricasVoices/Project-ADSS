@@ -4,8 +4,6 @@ from core_data_modules.cleaners import Codes
 from core_data_modules.traced_data import Metadata
 from dateutil.parser import isoparse
 
-from src.lib import PipelineConfiguration
-
 
 class Channels(object):
     SMS_AD_KEY = "sms_ad"
@@ -89,7 +87,7 @@ class Channels(object):
         return False
 
     @classmethod
-    def set_channel_keys(cls, user, data, time_key):
+    def set_channel_keys(cls, user, data, time_key, project_start_date, project_end_date):
         for td in data:
             timestamp = isoparse(td[time_key])
 
@@ -107,7 +105,7 @@ class Channels(object):
             # Set time as NON_LOGICAL if it doesn't fall in range of the **sms ad/radio promo/radio_show**
             if time_range_matches == 0:
                 # Assert in range of project
-                assert PipelineConfiguration.PROJECT_START_DATE <= timestamp < PipelineConfiguration.PROJECT_END_DATE, \
+                assert project_start_date <= timestamp < project_end_date, \
                     f"Timestamp {td[time_key]} out of range of project"
                 channel_dict[cls.NON_LOGICAL_KEY] = Codes.TRUE
             else:
