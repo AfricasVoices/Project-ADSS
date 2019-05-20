@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "705b75b59f4851d7be99e97e9bd89aeeefa11a5c3d8ff5b0592271e16c63bf34"
+            "sha256": "eda1f414db8e3738771994bbef313766e3ce3afb2d24c072de8770b7bfa8d3da"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "879270bab0388c06ac5de15b40988898bb61396d"
+            "ref": "ce709d73e0784420af5f150fe59d03a3e79ca44d"
         },
         "deprecation": {
             "hashes": [
@@ -66,11 +66,11 @@
                 "grpc"
             ],
             "hashes": [
-                "sha256:9e6f4daf193be1c0230fc7a539058f7681c0a9741a02292614d0c9e3e091f4fc",
-                "sha256:c69bad1ae3e193764028f5ec58049d1d8ef81efd0320cf110c712cd1292daeab"
+                "sha256:5e29af30d9bb5791ea2c6f7817c4c9630b92b914c5e253ba52b8ce6b0eed888e",
+                "sha256:a77d98bd733ec455b03a91dc732cce6e7dfc900db4ff44c52743826e3d28a741"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==1.10.0"
+            "version": "==1.11.0"
         },
         "google-api-python-client": {
             "hashes": [
@@ -95,26 +95,26 @@
         },
         "google-cloud-core": {
             "hashes": [
-                "sha256:9bee63e0991be9801a4baf0b7841cf54f86c6e7fec922f45ea74cd4032ed4ee4",
-                "sha256:d85b1aaaf3bad9415ad1d8ee5eadce96d7007a82f13ce0a0629a003a11e83f29"
+                "sha256:5cf75936e3265cbfec028599ad013bccf10b855c79348b81488f7890ca3a3534",
+                "sha256:a5d643a172d2e7ba1a77ea9fa874898a413a15cbc61bd7f1986a1bd38eb6b2b5"
             ],
-            "version": "==0.29.1"
+            "version": "==1.0.0"
         },
         "google-cloud-firestore": {
             "hashes": [
-                "sha256:4ae5a5568d65b9082759c352144e306fd4c4109bed9fc400844be185d1c822d2",
-                "sha256:59d2907d717086a629ac3b7006ef9d9e93b887060c0d6384ec9220e3cdda1112"
+                "sha256:d60aa73389d67d391f6260a1f2b88e234fda66dc35b7a3e95e54bcd0bd1d163e",
+                "sha256:e95742e5441f5bc1bc3dabd7277e8b62b96b241a6a9566e549df950778db2cc1"
             ],
             "markers": "platform_python_implementation != 'PyPy'",
-            "version": "==0.32.1"
+            "version": "==1.2.0"
         },
         "google-cloud-storage": {
             "hashes": [
-                "sha256:0e02039f37d3e4531090f72d1200ad78316625503644864f81c1d6b91516bfa7",
-                "sha256:d66bfed1fd51f392ee361b5b7d84efd912f47db52a28722ee2e3994f0a54698d"
+                "sha256:8032e576e2f91a1d3de2355118040c3bcd9916e0453a6b3f64c1b42ed151690a",
+                "sha256:9cb408cc05f08537a74a12ea0e7428d5a31b052bada343310e3547ceab392a47"
             ],
             "index": "pypi",
-            "version": "==1.15.0"
+            "version": "==1.15.1"
         },
         "google-resumable-media": {
             "hashes": [
@@ -125,9 +125,9 @@
         },
         "googleapis-common-protos": {
             "hashes": [
-                "sha256:627ec53fab43d06c1b5c950e217fa9819e169daf753111a7f244e94bf8fb3384"
+                "sha256:d564872083af40bbcc7091340f17db778a316525c7c76497d58d11b98ca2aa74"
             ],
-            "version": "==1.5.9"
+            "version": "==1.5.10"
         },
         "grpcio": {
             "hashes": [
@@ -234,7 +234,7 @@
         "pipelineinfrastructure": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/Pipeline-Infrastructure",
-            "ref": "50d2c6ad616a9b44e3dc8be138f7ef7b887916ed"
+            "ref": "5ce34ba61925c3541bde472f56dba8c686b266d6"
         },
         "protobuf": {
             "hashes": [
@@ -306,14 +306,14 @@
         "rapidprotools": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/RapidProTools",
-            "ref": "ce47a21f7bf82d6156f319d998fcca77d6e9f606"
+            "ref": "c15e4c10e3d6fd18be45612f1c24ad69fe2e7042"
         },
         "requests": {
             "hashes": [
-                "sha256:502a824f31acdacb3a35b6690b5fbf0bc41d63a24a45c4004352b0242707598e",
-                "sha256:7bf2a778576d825600030a110f3c0e3e8edc51dfaafe1c146e39a2027784957b"
+                "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4",
+                "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"
             ],
-            "version": "==2.21.0"
+            "version": "==2.22.0"
         },
         "rsa": {
             "hashes": [
@@ -345,10 +345,10 @@
         },
         "urllib3": {
             "hashes": [
-                "sha256:4c291ca23bbb55c76518905869ef34bdd5f0e46af7afe6861e8375643ffee1a0",
-                "sha256:9a247273df709c4fedb38c711e44292304f73f39ab01beda9f6b9fc375669ac3"
+                "sha256:a53063d8b9210a7bdec15e7b272776b9d42b2fd6816401a0d43006ad2f9902db",
+                "sha256:d363e3607d8de0c220d31950a8f38b18d5ba7c0830facd71a1c6b1036b7ce06c"
             ],
-            "version": "==1.24.2"
+            "version": "==1.25.2"
         }
     },
     "develop": {}

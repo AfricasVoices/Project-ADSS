@@ -15,11 +15,12 @@ Development requires the following additional tools:
  - git
 
 ## Usage
-A pipeline run consists of the following four steps, executed in sequence:
-(1) Download coded data from Coda (optional), 
-(2) Fetch all the relevant data from Rapid Pro, 
-(3) Process the raw data to produce the outputs required for coding and then for analysis, and
-(4) Upload the new data to Coda for manual verification and coding.
+A pipeline run consists of the following five steps, executed in sequence:
+(1) Download coded data from Coda (optional)
+(2) Fetch all the relevant data from Rapid Pro
+(3) Process the raw data to produce the outputs required for coding and then for analysis
+(4) Upload the new data to Coda for manual verification and coding
+(5) Back-up the project data root (optional)
 
 To simplify the configuration and execution of these stages, this project includes a `run_scripts`
 directory, which contains shell scripts for driving each of those stages. 
@@ -130,6 +131,21 @@ where:
   in that location automatically.
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Downloaded Coda files are saved to `<data-root>/Coded Coda Files/<dataset>.json`.
+
+### 5. Back-up the Data Directory
+This stage makes a backup of the project data directory by creating a compressed, versioned, time-stamped copy at the
+requested location.
+To use, run the following command from the `run_scripts` directory:
+
+```
+$ ./5_backup_data_root.sh <data-root> <data-backups-dir>
+```
+
+where:
+- `data-root` is an absolute path to the directory to back-up.
+- `data-backups-dir` is a directory which the `data-root` directory will be backed-up to.
+  The data is gzipped and given the name `data-<utc-date-time-now>-<git-HEAD-hash>`.
+
 
 ## Development
 

@@ -69,7 +69,7 @@ class MessageFilters(object):
         """
         log.debug(f"Filtering out messages sent outside the time range "
                   f"{start_time_inclusive.isoformat()} to {end_time_inclusive.isoformat()}...")
-        filtered = [td for td in messages if start_time_inclusive <= isoparse(td.get(time_key)) < end_time_inclusive]
+        filtered = [td for td in messages if start_time_inclusive <= isoparse(td[time_key]) < end_time_inclusive]
         log.info(f"Filtered out messages sent outside the time range "
                  f"{start_time_inclusive.isoformat()} to {end_time_inclusive.isoformat()}. "
                  f"Returning {len(filtered)}/{len(messages)} messages.")
