@@ -11,7 +11,7 @@ class WSCorrection(object):
     @staticmethod
     def move_wrong_scheme_messages(user, data, coda_input_dir):
         log.info("Importing manually coded Coda files to '_WS_correct_dataset' coded fields...")
-        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+        for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
             TracedDataCodaV2IO.compute_message_ids(user, data, plan.raw_field, plan.id_field + "_WS")
             with open(f"{coda_input_dir}/{plan.coda_filename}") as f:
                 TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
@@ -39,7 +39,7 @@ class WSCorrection(object):
             moves = dict()  # dict of raw_field_from -> raw_field_to
 
             # Detect all the moves that need to happen for this TracedData item
-            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     continue
 
@@ -50,15 +50,16 @@ class WSCorrection(object):
             log.debug(f"Moves for this TracedData: {moves}")
 
             updates = dict()
-            # Clear data in source fields, preserve data that isn't moving
-            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+            # For each of the raw fields: if the data is moving, clear the raw_field. If it's not, copy it through
+            # to the updates dictionary and include a source field.
+            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
                 if plan.raw_field in moves.keys():
                     updates[plan.raw_field] = []
                 elif plan.raw_field in td:
                     updates[plan.raw_field] = [td[plan.raw_field]]
                     updates[f"{plan.raw_field}_source(s)"] = [plan.raw_field]
 
-            # Apply all the moves
+            # For each move, set the target field in the updates dictionary.
             for source_field, target_field in moves.items():
                 log.debug(f"Target field {target_field} has value {td.get(target_field)}")
 
