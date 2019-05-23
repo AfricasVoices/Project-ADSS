@@ -1,4 +1,7 @@
+import time
+
 from core_data_modules.logging import Logger
+from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
 
 from src.lib import PipelineConfiguration
@@ -28,12 +31,13 @@ class WSCorrection(object):
             CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("idp camp").code_id: "idp_camp_raw",
             CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("hh language").code_id: "hh_language_raw",
             CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("s02e01").code_id: "rqa_s02e01_raw",
+            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("s02e02").code_id: "rqa_s02e02_raw",
         }
 
         log.info("Computing WS re-maps...")
         for td in data:
             log.debug(f"Starting TracedData {td['uid']}. Raw keys:")
-            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
                 log.debug(f"{plan.raw_field}: {td.get(plan.raw_field)}")
 
             moves = dict()  # dict of raw_field_from -> raw_field_to
@@ -63,9 +67,6 @@ class WSCorrection(object):
             for source_field, target_field in moves.items():
                 log.debug(f"Target field {target_field} has value {td.get(target_field)}")
 
-                # TODO: Skip cases where source_field == target_field?
-                # TODO: Otherwise fields containing 'X' become 'X; X' after this step
-
                 # If the target field has not been set, we can safely write the source data to here.
                 # Otherwise, append it to the previous data (which may have originated from target data not moving or
                 # from another message being moved to here)
@@ -78,7 +79,11 @@ class WSCorrection(object):
 
                 # TODO: Change sources to be a list of dicts with nicer Metadata
 
-                # TODO: Update TracedData with the new dictionary
             log.debug(f"Updates for this TracedData: {updates}")
+
+            # Convert the dictionary to a form usable by the rest of the pipeline and update the TracedData
+            td_updates = {k: "; ".join(v) if len(v) > 0 else None for k, v in updates.items()}
+            log.debug(f"TracedData updates: {td_updates}")
+            td.append_data(td_updates, Metadata(user, Metadata.get_call_location(), time.time()))
 
         return data

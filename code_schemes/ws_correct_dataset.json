@@ -118,7 +118,10 @@
       "DisplayText": "s02e02",
       "StringValue": "s02e02",
       "NumericValue": 12,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues":  [
+        "s02e02"
+      ]
     },
     {
       "CodeID": "code-d321aaf7",
