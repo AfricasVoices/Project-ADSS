@@ -22,17 +22,10 @@ class WSCorrection(object):
                     {f"{plan.coded_field}_WS_correct_dataset": CodeSchemes.WS_CORRECT_DATASET}, f
                 )
 
-        dataset_map = {
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("age").code_id: "age_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("gender").code_id: "gender_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("location").code_id: "location_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("recently displaced").code_id:
-                "recently_displaced_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("idp camp").code_id: "idp_camp_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("hh language").code_id: "hh_language_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("s02e01").code_id: "rqa_s02e01_raw",
-            CodeSchemes.WS_CORRECT_DATASET.get_code_with_match_value("s02e02").code_id: "rqa_s02e02_raw",
-        }
+        ws_code_to_raw_field_map = dict()
+        for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+            if plan.ws_code is not None:
+                ws_code_to_raw_field_map[plan.ws_code.code_id] = plan.raw_field
 
         log.info("Computing WS re-maps...")
         for td in data:
@@ -49,8 +42,8 @@ class WSCorrection(object):
 
                 ws_code = CodeSchemes.WS_CORRECT_DATASET.get_code_with_id(td[f"{plan.coded_field}_WS_correct_dataset"]["CodeID"])
                 if ws_code.code_type == "Normal":
-                    log.debug(f"Detected redirect from {plan.raw_field} -> {dataset_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
-                    moves[plan.raw_field] = dataset_map.get(ws_code.code_id)
+                    log.debug(f"Detected redirect from {plan.raw_field} -> {ws_code_to_raw_field_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
+                    moves[plan.raw_field] = ws_code_to_raw_field_map.get(ws_code.code_id)
             log.debug(f"Moves for this TracedData: {moves}")
 
             updates = dict()
