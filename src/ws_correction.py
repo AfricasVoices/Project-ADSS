@@ -38,7 +38,7 @@ class WSCorrection(object):
 
             moves = dict()  # dict of raw_field_from -> raw_field_to
 
-            # Detect all the redirects for this TracedData item
+            # Detect all the moves that need to happen for this TracedData item
             for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     continue
@@ -47,26 +47,23 @@ class WSCorrection(object):
                 if ws_code.code_type == "Normal":
                     log.debug(f"Detected redirect from {plan.raw_field} -> {dataset_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
                     moves[plan.raw_field] = dataset_map.get(ws_code.code_id)
-
             log.debug(f"Moves for this TracedData: {moves}")
 
-            # Compute the updated values for all the redirects
-            updates = {plan.raw_field: []
-                       for plan in PipelineConfiguration.SURVEY_CODING_PLANS
-                       if plan.raw_field in moves.keys()}
+            updates = dict()
+            # Clear data in source fields, preserve data that isn't moving
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+                if plan.raw_field in moves.keys():
+                    updates[plan.raw_field] = []
+                elif plan.raw_field in td:
+                    updates[plan.raw_field] = [td[plan.raw_field]]
+                    updates[f"{plan.raw_field}_source(s)"] = [plan.raw_field]
 
+            # Apply all the moves
             for source_field, target_field in moves.items():
                 log.debug(f"Target field {target_field} has value {td.get(target_field)}")
 
-                message_moving_from_target = target_field in td and target_field in updates.keys()
-
                 # TODO: Skip cases where source_field == target_field?
                 # TODO: Otherwise fields containing 'X' become 'X; X' after this step
-
-                # If the target field data is not moving, preserve it in the updates dict.
-                if not message_moving_from_target:
-                    updates[target_field] = [td[target_field]]
-                    updates[f"{target_field}_source(s)"] = [target_field]
 
                 # If the target field has not been set, we can safely write the source data to here.
                 # Otherwise, append it to the previous data (which may have originated from target data not moving or
