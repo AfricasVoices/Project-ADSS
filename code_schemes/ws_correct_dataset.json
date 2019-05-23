@@ -119,7 +119,7 @@
       "StringValue": "s02e02",
       "NumericValue": 12,
       "VisibleInCoda": true,
-      "MatchValues":  [
+      "MatchValues": [
         "s02e02"
       ]
     },
@@ -129,7 +129,10 @@
       "DisplayText": "s02e03",
       "StringValue": "s02e03",
       "NumericValue": 13,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s02e03"
+      ]
     },
     {
       "CodeID": "code-adc56730",
@@ -137,7 +140,10 @@
       "DisplayText": "s02e04",
       "StringValue": "s02e04",
       "NumericValue": 14,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e04"
+      ]
     },
     {
       "CodeID": "code-f216169d",
@@ -145,7 +151,10 @@
       "DisplayText": "s02e05",
       "StringValue": "s02e05",
       "NumericValue": 15,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e05"
+      ]
     },
     {
       "CodeID": "code-015a26ae",
@@ -153,7 +162,10 @@
       "DisplayText": "s02e06",
       "StringValue": "s02e06",
       "NumericValue": 16,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e06"
+      ]
     },
     {
       "CodeID": "code-NR-5e3eee23",
