@@ -22,12 +22,15 @@ class WSCorrection(object):
                     {f"{plan.coded_field}_WS_correct_dataset": CodeSchemes.WS_CORRECT_DATASET}, f
                 )
 
+        # TODO: Check for coding errors i.e. WS but no correct_dataset or correct_dataset but no WS
+
         ws_code_to_raw_field_map = dict()
         for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.ws_code is not None:
                 ws_code_to_raw_field_map[plan.ws_code.code_id] = plan.raw_field
 
         log.info("Computing WS re-maps...")
+        corrected_data = []
         for td in data:
             log.debug(f"Starting TracedData {td['uid']}. Raw keys:")
             for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
@@ -71,12 +74,36 @@ class WSCorrection(object):
                     updates[f"{target_field}_source(s)"].append(source_field)
 
                 # TODO: Change sources to be a list of dicts with nicer Metadata
-
             log.debug(f"Updates for this TracedData: {updates}")
 
-            # Convert the dictionary to a form usable by the rest of the pipeline and update the TracedData
-            td_updates = {k: "; ".join(v) if len(v) > 0 else None for k, v in updates.items()}
-            log.debug(f"TracedData updates: {td_updates}")
-            td.append_data(td_updates, Metadata(user, Metadata.get_call_location(), time.time()))
+            # Convert from list format to concatenated string format.
+            updates = {k: None if len(v) == 0 else "; ".join(v) for k, v in updates.items()}
+            log.debug(f"Updates for this TracedData: {updates}")
 
-        return data
+            # Hide the keys currently in the TracedData which would otherwise be updated with the value None.
+            td.hide_keys({k for k, v in updates.items() if v is None}.intersection(td.keys()),
+                         Metadata(user, Metadata.get_call_location(), time.time()))
+
+            # For each RQA field with data, create a TracedData item with the current history, all survey keys,
+            # and just that one RQA field.
+            rqa_fields_with_messages = {plan.raw_field for plan in PipelineConfiguration.RQA_CODING_PLANS
+                                        if updates.get(plan.raw_field) is not None}
+            survey_updates = {plan.raw_field: updates[plan.raw_field] for plan in PipelineConfiguration.SURVEY_CODING_PLANS
+                              if updates.get(plan.raw_field) is not None}
+            for rqa_field in rqa_fields_with_messages:
+                td_updates = dict(survey_updates)
+                td_updates[rqa_field] = updates[rqa_field]
+
+                log.debug(f"td_updates: {td_updates}")
+
+                corrected_td = td.copy()
+                corrected_td.hide_keys((rqa_fields_with_messages - {rqa_field}).intersection(td.keys()),
+                                       Metadata(user, Metadata.get_call_location(), time.time()))
+                corrected_td.append_data(td_updates, Metadata(user, Metadata.get_call_location(), time.time()))
+                corrected_data.append(corrected_td)
+
+                log.debug(f"Created TracedData with data:")
+                for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+                    log.debug(f"{plan.raw_field}: {corrected_td.get(plan.raw_field)}")
+
+        return corrected_data
