@@ -77,34 +77,40 @@ class WSCorrection(object):
                     updates[f"{target_field}_source(s)"].append(source_field)
 
                 # TODO: Change sources to be a list of dicts with nicer Metadata
-            log.debug(f"Updates for this TracedData: {updates}")
 
-            # Convert from list format to concatenated string format.
-            updates = {k: None if len(v) == 0 else "; ".join(v) for k, v in updates.items()}
-            log.debug(f"Updates for this TracedData: {updates}")
+            # Get the survey updates only.
+            survey_updates = {plan.raw_field: updates[plan.raw_field]
+                              for plan in PipelineConfiguration.SURVEY_CODING_PLANS
+                              if plan.raw_field in updates}
 
-            # Hide the keys currently in the TracedData which would otherwise be updated with the value None.
-            td.hide_keys({k for k, v in updates.items() if v is None}.intersection(td.keys()),
+            # Convert the survey updates from list format to concatenated string format.
+            survey_updates = {k: None if len(v) == 0 else "; ".join(v) for k, v in survey_updates.items()}
+
+            # Hide the survey keys currently in the TracedData which have had data moved away.
+            td.hide_keys({k for k, v in survey_updates.items() if v is None}.intersection(td.keys()),
                          Metadata(user, Metadata.get_call_location(), time.time()))
 
-            # For each RQA field with data, create a TracedData item with the current history, all survey keys,
-            # and just that one RQA field.
-            rqa_fields_with_messages = {plan.raw_field for plan in PipelineConfiguration.RQA_CODING_PLANS
-                                        if updates.get(plan.raw_field) is not None}
-            survey_updates = {plan.raw_field: updates[plan.raw_field] for plan in PipelineConfiguration.SURVEY_CODING_PLANS
-                              if updates.get(plan.raw_field) is not None}
-            for rqa_field in rqa_fields_with_messages:
-                td_updates = dict(survey_updates)
-                td_updates[rqa_field] = updates[rqa_field]
+            # Update with the corrected survey data
+            td.append_data(survey_updates, Metadata(user, Metadata.get_call_location(), time.time()))
 
-                corrected_td = td.copy()
-                corrected_td.hide_keys((rqa_fields_with_messages - {rqa_field}).intersection(td.keys()),
-                                       Metadata(user, Metadata.get_call_location(), time.time()))
-                corrected_td.append_data(td_updates, Metadata(user, Metadata.get_call_location(), time.time()))
-                corrected_data.append(corrected_td)
+            # Hide all the RQA fields (they will be added back, in turn, in the next step).
+            td.hide_keys({plan.raw_field for plan in PipelineConfiguration.RQA_CODING_PLANS}.intersection(td.keys()),
+                         Metadata(user, Metadata.get_call_location(), time.time()))
 
-                log.debug(f"Created TracedData with data:")
-                for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-                    log.debug(f"{plan.raw_field}: {corrected_td.get(plan.raw_field)}")
+            # For each rqa message, create a copy of this td, append the rqa message, and add this to the
+            # list of TracedData.
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
+                for rqa_message in updates.get(plan.raw_field, []):
+                    corrected_td = td.copy()
+                    corrected_td.append_data({plan.raw_field: rqa_message},
+                                             Metadata(user, Metadata.get_call_location(), time.time()))
+                    corrected_data.append(corrected_td)
+
+                    log.debug(f"Created TracedData with data:")
+                    for _plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+                        log.debug(f"{_plan.raw_field}: {corrected_td.get(_plan.raw_field)}")
+
+                if len(updates.get(plan.raw_field, [])) >= 2:
+                    exit(0)
 
         return corrected_data
