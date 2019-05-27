@@ -36,7 +36,7 @@ class WSCorrection(object):
             for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
                 log.debug(f"{plan.raw_field}: {td.get(plan.raw_field)}")
 
-            moves = dict()  # dict of raw_field_from -> raw_field_to
+            moves = dict()  # dict of raw source_field -> target_field
 
             # Detect all the moves that need to happen for this TracedData item
             for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
@@ -61,6 +61,9 @@ class WSCorrection(object):
 
             # For each move, set the target field in the updates dictionary.
             for source_field, target_field in moves.items():
+                # TODO: If constructing from data moved from surveys, only do so once.
+                #       Can possibly do this by logging which raw fields have been moved from surveys to RQAs here,
+                #       and skipping moves that we've seen before.
                 log.debug(f"Target field {target_field} has value {td.get(target_field)}")
 
                 # If the target field has not been set, we can safely write the source data to here.
@@ -93,8 +96,6 @@ class WSCorrection(object):
             for rqa_field in rqa_fields_with_messages:
                 td_updates = dict(survey_updates)
                 td_updates[rqa_field] = updates[rqa_field]
-
-                log.debug(f"td_updates: {td_updates}")
 
                 corrected_td = td.copy()
                 corrected_td.hide_keys((rqa_fields_with_messages - {rqa_field}).intersection(td.keys()),
