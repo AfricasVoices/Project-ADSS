@@ -65,7 +65,7 @@ class WSCorrection(object):
                 ws_code = CodeSchemes.WS_CORRECT_DATASET.get_code_with_id(td[f"{plan.coded_field}_WS_correct_dataset"]["CodeID"])
                 if ws_code.code_type == "Normal":
                     log.debug(f"Detected redirect from {plan.raw_field} -> {ws_code_to_raw_field_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
-                    survey_moves[plan.raw_field] = ws_code_to_raw_field_map.get(ws_code.code_id)
+                    survey_moves[plan.raw_field] = ws_code_to_raw_field_map[ws_code.code_id]
 
             # Find all the RQA data being moved.
             rqa_moves = dict()  # of (index in group, source_field) -> target_field
@@ -76,7 +76,7 @@ class WSCorrection(object):
                     ws_code = CodeSchemes.WS_CORRECT_DATASET.get_code_with_id(td[f"{plan.coded_field}_WS_correct_dataset"]["CodeID"])
                     if ws_code.code_type == "Normal":
                         log.debug(f"Detected redirect from ({i}, {plan.raw_field}) -> {ws_code_to_raw_field_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
-                        rqa_moves[(i, plan.raw_field)] = ws_code_to_raw_field_map.get(ws_code.code_id)
+                        rqa_moves[(i, plan.raw_field)] = ws_code_to_raw_field_map[ws_code.code_id]
 
             # Build a dictionary of the survey fields that haven't been moved, and cleared fields for those which have.
             survey_updates = dict()  # of raw_field -> updated value
