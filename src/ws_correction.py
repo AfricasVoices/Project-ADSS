@@ -112,7 +112,7 @@ class WSCorrection(object):
                 if target_field in raw_survey_fields:
                     survey_updates[target_field] = survey_updates.get(target_field, []) + [update]
                 else:
-                    assert target_field in raw_rqa_fields
+                    assert target_field in raw_rqa_fields, f"Raw field '{target_field}' not in any coding plan"
                     rqa_updates.append((target_field, update))
 
             # Add data moving from survey fields to the relevant survey_/rqa_updates
@@ -124,7 +124,7 @@ class WSCorrection(object):
                         if target_field in raw_survey_fields:
                             survey_updates[target_field] = survey_updates.get(target_field, []) + [update]
                         else:
-                            assert target_field in raw_rqa_fields
+                            assert target_field in raw_rqa_fields, f"Raw field '{target_field}' not in any coding plan"
                             rqa_updates.append((target_field, update))
 
             # Re-format the survey updates to a form suitable for use by the rest of the pipeline
