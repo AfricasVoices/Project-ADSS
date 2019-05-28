@@ -46,6 +46,7 @@ class WSCorrection(object):
             data_grouped_by_uid[uid].append(td)
 
         # Perform the WS correction for each uid.
+        log.info("Performing WS correction...")
         corrected_data = []  # List of TracedData with the WS data moved.
         for group in data_grouped_by_uid.values():
             log.debug(f"\n\nStarting re-map for {group[0]['uid']}...")
