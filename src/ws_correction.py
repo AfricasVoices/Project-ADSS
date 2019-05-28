@@ -31,79 +31,122 @@ class WSCorrection(object):
 
         # TODO: Check for coding errors i.e. WS but no correct_dataset or correct_dataset but no WS
 
+        # Construct a map from WS normal code id to the raw field that code indicates a requested move to.
         ws_code_to_raw_field_map = dict()
         for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.ws_code is not None:
                 ws_code_to_raw_field_map[plan.ws_code.code_id] = plan.raw_field
 
-        log.info("Computing WS re-maps...")
-        corrected_data = []
+        # Group the TracedData by uid.
+        data_grouped_by_uid = dict()
         for td in data:
-            log.debug(f"\n\nStarting TracedData {td['uid']}. Raw keys:")
-            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-                log.debug(f"{plan.raw_field}: {td.get(plan.raw_field)}")
-                log.debug(f"{plan.time_field}: {td.get(plan.time_field)}")
+            uid = td["uid"]
+            if uid not in data_grouped_by_uid:
+                data_grouped_by_uid[uid] = []
+            data_grouped_by_uid[uid].append(td)
 
-            moves = dict()  # dict of raw source_field -> target_field
+        # Perform the WS correction for each uid.
+        corrected_data = []  # List of TracedData with the WS data moved.
+        for group in data_grouped_by_uid.values():
+            log.debug(f"\n\nStarting re-map for {group[0]['uid']}...")
+            for i, td in enumerate(group):
+                log.debug(f"--------------td[{i}]--------------")
+                for _plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+                    log.debug(f"{_plan.raw_field}: {td.get(_plan.raw_field)}")
+                    log.debug(f"{_plan.time_field}: {td.get(_plan.time_field)}")
 
-            # Detect all the moves that need to happen for this TracedData item
-            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+            # Find all the surveys data being moved.
+            # (Note: we only need to check one td in this group because all the demographics are the same)
+            td = group[0]
+            survey_moves = dict()  # of source_field -> target_field
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     continue
-
                 ws_code = CodeSchemes.WS_CORRECT_DATASET.get_code_with_id(td[f"{plan.coded_field}_WS_correct_dataset"]["CodeID"])
                 if ws_code.code_type == "Normal":
                     log.debug(f"Detected redirect from {plan.raw_field} -> {ws_code_to_raw_field_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
-                    moves[plan.raw_field] = ws_code_to_raw_field_map.get(ws_code.code_id)
+                    survey_moves[plan.raw_field] = ws_code_to_raw_field_map.get(ws_code.code_id)
 
-            updates = dict()
-            # For each of the raw fields: if the data is moving, clear the raw_field. If it's not, copy it through
-            # to the updates dictionary and include a source field.
-            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-                if plan.raw_field in moves.keys():
+            # Find all the RQA data being moved.
+            rqa_moves = dict()  # of (index in group, source_field) -> target_field
+            for i, td in enumerate(group):
+                for plan in PipelineConfiguration.RQA_CODING_PLANS:
+                    if plan.raw_field not in td:
+                        continue
+                    ws_code = CodeSchemes.WS_CORRECT_DATASET.get_code_with_id(td[f"{plan.coded_field}_WS_correct_dataset"]["CodeID"])
+                    if ws_code.code_type == "Normal":
+                        log.debug(f"Detected redirect from ({i}, {plan.raw_field}) -> {ws_code_to_raw_field_map.get(ws_code.code_id, ws_code.code_id)} for message {td[plan.raw_field]}")
+                        rqa_moves[(i, plan.raw_field)] = ws_code_to_raw_field_map.get(ws_code.code_id)
+
+            # Build a dictionary of the survey fields that haven't been moved, and cleared fields for those which have.
+            survey_updates = dict()  # of raw_field -> updated value
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+                if plan.raw_field in survey_moves.keys():
                     # Data is moving
-                    updates[plan.raw_field] = []
+                    survey_updates[plan.raw_field] = []
                 elif plan.raw_field in td:
                     # Data is not moving
-                    updates[plan.raw_field] = [_WSUpdate(td[plan.raw_field], td[plan.time_field], plan.raw_field)]
+                    survey_updates[plan.raw_field] = [_WSUpdate(td[plan.raw_field], td[plan.time_field], plan.raw_field)]
 
-            # For each moving field, set the target field in the updates dictionary.
-            for plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-                if plan.raw_field not in moves:
+            # Build a list of the rqa fields that haven't been moved.
+            rqa_updates = []  # of (field, value)
+            for i, td in enumerate(group):
+                for plan in PipelineConfiguration.RQA_CODING_PLANS:
+                    if plan.raw_field in td:
+                        if (i, plan.raw_field) in rqa_moves.keys():
+                            # Data is moving
+                            pass
+                        else:
+                            # Data is not moving
+                            rqa_updates.append((plan.raw_field, _WSUpdate(td[plan.raw_field], td[plan.time_field], plan.raw_field)))
+
+            # Add data moving from survey fields to the relevant survey_/rqa_updates
+            raw_survey_fields = {plan.raw_field for plan in PipelineConfiguration.SURVEY_CODING_PLANS}
+            raw_rqa_fields = {plan.raw_field for plan in PipelineConfiguration.RQA_CODING_PLANS}
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS + PipelineConfiguration.RQA_CODING_PLANS:
+                if plan.raw_field not in survey_moves:
                     continue
-
-                # If the target field has not been set, we can safely write the source data to here.
-                # Otherwise, append it to the previous data (which may have originated from target data not moving or
-                # from another message being moved to here)
-                target_field = moves[plan.raw_field]
+                target_field = survey_moves[plan.raw_field]
                 update = _WSUpdate(td[plan.raw_field], td[plan.time_field], plan.raw_field)
-                updates[target_field] = updates.get(target_field, []) + [update]
+                if target_field in raw_survey_fields:
+                    survey_updates[target_field] = survey_updates.get(target_field, []) + [update]
+                else:
+                    assert target_field in raw_rqa_fields
+                    rqa_updates.append((target_field, update))
 
-                # TODO: If constructing from data moved from surveys, only do so once.
-                #       Can possibly do this by logging which raw fields have been moved from surveys to RQAs here,
-                #       and skipping moves that we've seen before.
+            # Add data moving from survey fields to the relevant survey_/rqa_updates
+            for (i, source_field), target_field in rqa_moves.items():
+                for plan in PipelineConfiguration.SURVEY_CODING_PLANS + PipelineConfiguration.RQA_CODING_PLANS:
+                    if plan.raw_field == source_field:
+                        _td = group[i]
+                        update = _WSUpdate(_td[plan.raw_field], _td[plan.time_field], plan.raw_field)
+                        if target_field in raw_survey_fields:
+                            survey_updates[target_field] = survey_updates.get(target_field, []) + [update]
+                        else:
+                            assert target_field in raw_rqa_fields
+                            rqa_updates.append((target_field, update))
 
-            # Get the survey updates only, converted to a format suitable for use by the rest of the pipeline.
-            survey_updates = {}
+            # Re-format the survey updates to a form suitable for use by the rest of the pipeline
+            flattened_survey_updates = {}
             for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
-                if plan.raw_field in updates:
-                    plan_updates = updates[plan.raw_field]
+                if plan.raw_field in survey_updates:
+                    plan_updates = survey_updates[plan.raw_field]
 
                     if len(plan_updates) > 0:
-                        survey_updates[plan.raw_field] = "; ".join([u.message for u in plan_updates])
-                        survey_updates[plan.time_field] = sorted([u.sent_on for u in plan_updates])[0]
-                        survey_updates[f"{plan.raw_field}_source"] = "; ".join([u.source for u in plan_updates])
+                        flattened_survey_updates[plan.raw_field] = "; ".join([u.message for u in plan_updates])
+                        flattened_survey_updates[plan.time_field] = sorted([u.sent_on for u in plan_updates])[0]
+                        flattened_survey_updates[f"{plan.raw_field}_source"] = "; ".join([u.source for u in plan_updates])
                     else:
-                        survey_updates[plan.raw_field] = None
-                        survey_updates[plan.time_field] = None
-                        survey_updates[f"{plan.raw_field}_source"] = None
+                        flattened_survey_updates[plan.raw_field] = None
+                        flattened_survey_updates[plan.time_field] = None
+                        flattened_survey_updates[f"{plan.raw_field}_source"] = None
 
             # Hide the survey keys currently in the TracedData which have had data moved away.
-            td.hide_keys({k for k, v in survey_updates.items() if v is None}.intersection(td.keys()),
+            td.hide_keys({k for k, v in flattened_survey_updates.items() if v is None}.intersection(td.keys()),
                          Metadata(user, Metadata.get_call_location(), time.time()))
 
             # Update with the corrected survey data
-            td.append_data({k: v for k, v in survey_updates.items() if v is not None},
+            td.append_data({k: v for k, v in flattened_survey_updates.items() if v is not None},
                            Metadata(user, Metadata.get_call_location(), time.time()))
 
             # Hide all the RQA fields (they will be added back, in turn, in the next step).
@@ -112,21 +155,22 @@ class WSCorrection(object):
 
             # For each rqa message, create a copy of this td, append the rqa message, and add this to the
             # list of TracedData.
-            for plan in PipelineConfiguration.RQA_CODING_PLANS:
-                for rqa_update in updates.get(plan.raw_field, []):
-                    rqa_dict = {
-                        plan.raw_field: rqa_update.message,
-                        "sent_on": rqa_update.sent_on,
-                        f"{plan.raw_field}_source": rqa_update.source
-                    }
+            for target_field, update in rqa_updates:
+                rqa_dict = {
+                    target_field: update.message,
+                    "sent_on": update.sent_on,
+                    f"{target_field}_source": update.source
+                }
 
-                    corrected_td = td.copy()
-                    corrected_td.append_data(rqa_dict, Metadata(user, Metadata.get_call_location(), time.time()))
-                    corrected_data.append(corrected_td)
+                corrected_td = td.copy()
+                corrected_td.append_data(rqa_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+                corrected_data.append(corrected_td)
 
-                    log.debug(f"Created TracedData with data:")
-                    for _plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
-                        log.debug(f"{_plan.raw_field}: {corrected_td.get(_plan.raw_field)}")
-                        log.debug(f"{_plan.time_field}: {corrected_td.get(_plan.time_field)}")
+                log.debug(f"----------Created TracedData--------------")
+                for _plan in PipelineConfiguration.RQA_CODING_PLANS + PipelineConfiguration.SURVEY_CODING_PLANS:
+                    log.debug(f"{_plan.raw_field}: {corrected_td.get(_plan.raw_field)}")
+                    log.debug(f"{_plan.time_field}: {corrected_td.get(_plan.time_field)}")
+
+                corrected_data.append(corrected_td)
 
         return corrected_data
