@@ -172,6 +172,4 @@ class WSCorrection(object):
                     log.debug(f"{_plan.raw_field}: {corrected_td.get(_plan.raw_field)}")
                     log.debug(f"{_plan.time_field}: {corrected_td.get(_plan.time_field)}")
 
-                corrected_data.append(corrected_td)
-
         return corrected_data
