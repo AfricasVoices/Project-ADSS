@@ -27,7 +27,7 @@ class TranslateRapidProKeys(object):
             show_dict = dict()
 
             for remapping in pipeline_configuration.rapid_pro_key_remappings:
-                if not remapping.activation_message:
+                if not remapping.is_activation_message:
                     continue
 
                 if remapping.rapid_pro_key in td:
@@ -120,7 +120,7 @@ class TranslateRapidProKeys(object):
             remapped = dict()
                
             for remapping in pipeline_configuration.rapid_pro_key_remappings:
-                if remapping.activation_message:
+                if remapping.is_activation_message:
                     continue
 
                 old_key = remapping.rapid_pro_key
