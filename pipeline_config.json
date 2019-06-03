@@ -26,6 +26,13 @@
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},
 
+    {"RapidProKey": "Rqa_S02E01 (Value) - csap_s02e01_activation", "PipelineKey": "rqa_s02e01_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E02 (Value) - csap_s02e02_activation", "PipelineKey": "rqa_s02e02_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E03 (Value) - csap_s02e03_activation", "PipelineKey": "rqa_s02e03_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E04 (Value) - csap_s02e04_activation", "PipelineKey": "rqa_s02e04_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E05 (Value) - csap_s02e05_activation", "PipelineKey": "rqa_s02e05_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E06 (Value) - csap_s02e06_activation", "PipelineKey": "rqa_s02e06_raw", "IsActivationMessage": true},
+
     {"RapidProKey": "Rqa_S02E01 (Run ID) - csap_s02e01_activation", "PipelineKey": "rqa_s02e01_run_id"},
     {"RapidProKey": "Rqa_S02E02 (Run ID) - csap_s02e02_activation", "PipelineKey": "rqa_s02e02_run_id"},
     {"RapidProKey": "Rqa_S02E03 (Run ID) - csap_s02e03_activation", "PipelineKey": "rqa_s02e03_run_id"},
@@ -73,6 +80,8 @@
     {"RapidProKey": "Csap_Involvement (Value) - csap s02 evaluation", "PipelineKey": "involvement_raw"},
     {"RapidProKey": "Csap_Involvement (Time) - csap s02 evaluation", "PipelineKey": "involvement_time"}
   ],
+  "ProjectStartDate": "2019-02-17T00:00:00+03:00",
+  "ProjectEndDate": "2019-03-30T24:00:00+03:00",
   "FilterTestMessages": true,
   "DriveUpload": {
     "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
