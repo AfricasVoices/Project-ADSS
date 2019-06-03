@@ -85,7 +85,7 @@ class WSCorrection(object):
                     }
                     td.append_data(coding_error_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Check for coding errors in the surveys datasets, except location is handled differently below.
+        # Check for coding errors in the surveys datasets, except location, as this is handled differently below.
         for td in data:
             for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
                 if plan.raw_field == "location_raw":

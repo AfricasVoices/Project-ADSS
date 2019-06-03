@@ -76,7 +76,10 @@
       "DisplayText": "s01e01",
       "StringValue": "s01e01",
       "NumericValue": 7,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s01e01"
+      ]
     },
     {
       "CodeID": "code-9a5f15d6",
@@ -84,7 +87,10 @@
       "DisplayText": "s01e02",
       "StringValue": "s01e02",
       "NumericValue": 8,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s01e02"
+      ]
     },
     {
       "CodeID": "code-e8621530",
@@ -92,7 +98,10 @@
       "DisplayText": "s01e03",
       "StringValue": "s01e03",
       "NumericValue": 9,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s01e03"
+      ]
     },
     {
       "CodeID": "code-f7a875ee",
@@ -100,7 +109,10 @@
       "DisplayText": "s01e04",
       "StringValue": "s01e04",
       "NumericValue": 10,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s01e04"
+      ]
     },
     {
       "CodeID": "code-4dc91858",
@@ -175,6 +187,15 @@
       "DisplayText": "NR (not reviewed)",
       "NumericValue": -40,
       "StringValue": "NR",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-CE-016c1e22",
+      "CodeType": "Control",
+      "ControlCode": "CE",
+      "DisplayText": "CE (coding error)",
+      "NumericValue": -60,
+      "StringValue": "CE",
       "VisibleInCoda": false
     }
   ]
