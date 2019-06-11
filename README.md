@@ -40,7 +40,7 @@ $ ./run_pipeline.sh <user> <pipeline-configuration-file-path> <coda-pull-auth-fi
 where:
 - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
   e.g. `user@africasvoices.org` 
-- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `pipeline-configuration-file-path` is an absolute path to a pipeline configuration json file.
 - `coda-pull-auth-file` is an absolute path to the private credentials file for the Coda instance to download manually coded datasets from.
 - `coda-push-auth-file` is an absolute path to the private credentials file for the Coda instance to upload datasets to be manually coded to.
 - `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
@@ -83,7 +83,7 @@ where:
   e.g. `user@africasvoices.org` 
 - `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
   for accessing a cloud storage credentials bucket containing all the other project credentials files.
-- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `pipeline-configuration-file-path` is an absolute path to a pipeline configuration json file.
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`.
 
@@ -101,7 +101,7 @@ where:
   e.g. `user@africasvoices.org`.
 - `google-cloud-credentials-file-path` is an absolute path to a json file containing the private key credentials
   for accessing a cloud storage credentials bucket containing all the other project credentials files.
-- `pipeline-configuration-file-path ` is an absolute path to a pipeline configuration json file.
+- `pipeline-configuration-file-path` is an absolute path to a pipeline configuration json file.
 - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
   All output files will be saved in `<data-root>/Outputs`.
    
