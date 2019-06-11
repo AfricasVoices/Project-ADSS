@@ -4,7 +4,8 @@ import os
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from core_data_modules.util import IOUtils
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from storage.google_cloud import google_cloud_utils
 from storage.google_drive import drive_client_wrapper
 
@@ -27,9 +28,6 @@ if __name__ == "__main__":
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file")
 
-    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
-                        help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
-                             "datasets")
     parser.add_argument("raw_data_dir", metavar="raw-data-dir",
                         help="Path to a directory containing the raw data files exported by fetch_raw_data.py")
     parser.add_argument("prev_coded_dir_path", metavar="prev-coded-dir-path",
@@ -62,7 +60,6 @@ if __name__ == "__main__":
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
 
-    phone_number_uuid_table_path = args.phone_number_uuid_table_path
     raw_data_dir = args.raw_data_dir
     prev_coded_dir_path = args.prev_coded_dir_path
 
@@ -78,17 +75,24 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
+    log.info("Downloading Firestore Uuid Table credentials...")
+    firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path,
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
+    ))
+    phone_number_uuid_table = FirestoreUuidTable(
+        pipeline_configuration.phone_number_uuid_table.table_name,
+        firestore_uuid_table_credentials,
+        "avf-phone-uuid-"
+    )
+
     if pipeline_configuration.drive_upload is not None:
         log.info(f"Downloading Google Drive service account credentials...")
         credentials_info = json.loads(google_cloud_utils.download_blob_to_string(
             google_cloud_credentials_file_path, pipeline_configuration.drive_upload.drive_credentials_file_url))
         drive_client_wrapper.init_client_from_info(credentials_info)
 
-    log.info("Loading Phone Number <-> UUID Table...")
-    with open(phone_number_uuid_table_path, "r") as f:
-        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
-
-    log.info("Loading messages datasets:")
+    # Load messages
     messages_datasets = []
     for i, activation_flow_name in enumerate(pipeline_configuration.activation_flow_names):
         raw_activation_path = f"{raw_data_dir}/{activation_flow_name}.json"

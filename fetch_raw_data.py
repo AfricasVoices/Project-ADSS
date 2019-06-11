@@ -4,9 +4,10 @@ from urllib.parse import urlparse
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
-from google.cloud import storage
+from core_data_modules.util import IOUtils
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from rapid_pro_tools.rapid_pro_client import RapidProClient
+from storage.google_cloud import google_cloud_utils
 from temba_client.v2 import Contact, Run
 
 from src.lib import PipelineConfiguration
@@ -24,8 +25,6 @@ if __name__ == "__main__":
                              "credentials bucket")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
                         help="Path to the pipeline configuration json file"),
-    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
-                        help="Path to a ")
     parser.add_argument("raw_data_dir", metavar="raw-data-dir",
                         help="Path to a directory to save the raw data to")
 
@@ -34,7 +33,6 @@ if __name__ == "__main__":
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
-    phone_number_uuid_table_path = args.phone_number_uuid_table_path
     raw_data_dir = args.raw_data_dir
 
     # Read the settings from the configuration file
@@ -42,24 +40,22 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
-    # Fetch the Rapid Pro Token from the Google Cloud Storage URL
-    parsed_rapid_pro_token_file_url = urlparse(pipeline_configuration.rapid_pro_token_file_url)
-    assert parsed_rapid_pro_token_file_url.scheme == "gs", "RapidProTokenFileURL needs to be a gs URL " \
-                                                           "(i.e. of the form gs://bucket-name/file)"
-    bucket_name = parsed_rapid_pro_token_file_url.netloc
-    blob_name = parsed_rapid_pro_token_file_url.path.lstrip("/")
+    log.info("Downloading Rapid Pro access token...")
+    rapid_pro_token = google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path, pipeline_configuration.rapid_pro_token_file_url).strip()
 
-    log.info(f"Downloading Rapid Pro token from file '{blob_name}' in bucket '{bucket_name}'...")
-    storage_client = storage.Client.from_service_account_json(google_cloud_credentials_file_path)
-    credentials_bucket = storage_client.bucket(bucket_name)
-    credentials_blob = credentials_bucket.blob(blob_name)
-    rapid_pro_token = credentials_blob.download_as_string().strip().decode("utf-8")
-    log.info("Downloaded Rapid Pro token.")
+    log.info("Downloading Firestore UUID Table credentials...")
+    firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path,
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
+    ))
 
-    log.info("Loading Phone Number <-> UUID Table...")
-    with open(phone_number_uuid_table_path) as f:
-        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
-    log.info(f"Loaded {len(phone_number_uuid_table.numbers())} phone number <-> uuid mappings")
+    phone_number_uuid_table = FirestoreUuidTable(
+        pipeline_configuration.phone_number_uuid_table.table_name,
+        firestore_uuid_table_credentials,
+        "avf-phone-uuid-"
+    )
+    log.info("Initialised the Firestore UUID table")
 
     rapid_pro = RapidProClient(pipeline_configuration.rapid_pro_domain, rapid_pro_token)
 
@@ -112,11 +108,6 @@ if __name__ == "__main__":
         with open(raw_runs_path, "w") as raw_runs_file:
             json.dump([run.serialize() for run in raw_runs], raw_runs_file)
         log.info(f"Saved {len(raw_runs)} raw runs")
-
-        log.info(f"Saving the updated phone number <-> uuid table to {phone_number_uuid_table_path}...")
-        with open(phone_number_uuid_table_path, "w") as f:
-            phone_number_uuid_table.dump(f)
-        log.info(f"Saved the phone number <-> uuid table ({len(phone_number_uuid_table.numbers())} mappings)")
 
         log.info(f"Saving {len(traced_runs)} traced runs to {traced_runs_output_path}...")
         IOUtils.ensure_dirs_exist_for_file(traced_runs_output_path)

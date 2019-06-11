@@ -266,7 +266,7 @@ class PipelineConfiguration(object):
     ])
 
     def __init__(self, rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                 rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                 rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings,
                  project_start_date, project_end_date, filter_test_messages,
                  flow_definitions_upload_url_prefix, recovery_csv_urls=None, drive_upload=None):
         """
@@ -283,6 +283,8 @@ class PipelineConfiguration(object):
                                              Runs for any of those test contacts will be tagged with {'test_run': True},
                                              and dropped when the pipeline is in production mode.
         :type rapid_pro_test_contact_uuids: list of str
+        :param phone_number_uuid_table: Configuration for the Firestore phone number <-> uuid table.
+        :type phone_number_uuid_table: PhoneNumberUuidTable
         :param rapid_pro_key_remappings: List of rapid_pro_key -> pipeline_key remappings.
         :type rapid_pro_key_remappings: list of RapidProKeyRemapping
         :param project_start_date: When data collection started - all activation messages received before this date
@@ -294,10 +296,10 @@ class PipelineConfiguration(object):
         :param filter_test_messages: Whether to filter out messages sent from the rapid_pro_test_contact_uuids
         :type filter_test_messages: bool
         :param flow_definitions_upload_url_prefix: The prefix of the GS URL to uploads serialised flow definitions to.
-                                                   This prefix will be appended with the current datetime and the 
+                                                   This prefix will be appended with the current datetime and the
                                                    ".json" file extension.
         :type flow_definitions_upload_url_prefix: str
-          :param recovery_csv_urls: GS URLs to CSVs in Shaqadoon's recovery format, or None.
+        :param recovery_csv_urls: GS URLs to CSVs in Shaqadoon's recovery format, or None.
         :type recovery_csv_urls: list of str | None
         :param drive_upload: Configuration for uploading to Google Drive, or None.
                              If None, does not upload to Google Drive.
@@ -308,6 +310,7 @@ class PipelineConfiguration(object):
         self.activation_flow_names = activation_flow_names
         self.survey_flow_names = survey_flow_names
         self.rapid_pro_test_contact_uuids = rapid_pro_test_contact_uuids
+        self.phone_number_uuid_table = phone_number_uuid_table
         self.recovery_csv_urls = recovery_csv_urls
         self.rapid_pro_key_remappings = rapid_pro_key_remappings
         self.project_start_date = project_start_date
@@ -327,6 +330,8 @@ class PipelineConfiguration(object):
         recovery_csv_urls = configuration_dict.get("RecoveryCSVURLs")
         rapid_pro_test_contact_uuids = configuration_dict["RapidProTestContactUUIDs"]
 
+        phone_number_uuid_table = PhoneNumberUuidTable.from_configuration_dict(configuration_dict["PhoneNumberUuidTable"])
+
         rapid_pro_key_remappings = []
         for remapping_dict in configuration_dict["RapidProKeyRemappings"]:
             rapid_pro_key_remappings.append(RapidProKeyRemapping.from_configuration_dict(remapping_dict))
@@ -343,7 +348,7 @@ class PipelineConfiguration(object):
         flow_definitions_upload_url_prefix = configuration_dict["FlowDefinitionsUploadURLPrefix"]
 
         return cls(rapid_pro_domain, rapid_pro_token_file_url, activation_flow_names, survey_flow_names,
-                   rapid_pro_test_contact_uuids, rapid_pro_key_remappings,
+                   rapid_pro_test_contact_uuids, phone_number_uuid_table, rapid_pro_key_remappings,
                    project_start_date, project_end_date, filter_test_messages,
                    flow_definitions_upload_url_prefix, recovery_csv_urls, drive_upload_paths)
 
@@ -372,6 +377,9 @@ class PipelineConfiguration(object):
         for i, contact_uuid in enumerate(self.rapid_pro_test_contact_uuids):
             validators.validate_string(contact_uuid, f"rapid_pro_test_contact_uuids[{i}]")
 
+        assert isinstance(self.phone_number_uuid_table, PhoneNumberUuidTable)
+        self.phone_number_uuid_table.validate()
+
         validators.validate_list(self.rapid_pro_key_remappings, "rapid_pro_key_remappings")
         for i, remapping in enumerate(self.rapid_pro_key_remappings):
             assert isinstance(remapping, RapidProKeyRemapping), \
@@ -389,6 +397,32 @@ class PipelineConfiguration(object):
             self.drive_upload.validate()
 
         validators.validate_string(self.flow_definitions_upload_url_prefix, "flow_definitions_upload_url_prefix")
+
+
+class PhoneNumberUuidTable(object):
+    def __init__(self, firebase_credentials_file_url, table_name):
+        """
+        :param firebase_credentials_file_url: GS URL to the private credentials file for the Firebase account where
+                                                 the phone number <-> uuid table is stored.
+        :type firebase_credentials_file_url: str
+        :param table_name: Name of the data <-> uuid table in Firebase to use.
+        :type table_name: str
+        """
+        self.firebase_credentials_file_url = firebase_credentials_file_url
+        self.table_name = table_name
+
+        self.validate()
+
+    @classmethod
+    def from_configuration_dict(cls, configuration_dict):
+        firebase_credentials_file_url = configuration_dict["FirebaseCredentialsFileURL"]
+        table_name = configuration_dict["TableName"]
+
+        return cls(firebase_credentials_file_url, table_name)
+
+    def validate(self):
+        validators.validate_url(self.firebase_credentials_file_url, "firebase_credentials_file_url", scheme="gs")
+        validators.validate_string(self.table_name, "table_name")
 
 
 class RapidProKeyRemapping(object):

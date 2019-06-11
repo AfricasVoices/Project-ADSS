@@ -14,14 +14,18 @@
     "csap_s02_demog",
     "csap s02 evaluation"
   ],
+  "RecoveryCSVURLs": [
+    "gs://avf-project-datasets/2019/ADSS/recovered_1_hormud.csv"
+  ],
+  "PhoneNumberUuidTable": {
+    "FirebaseCredentialsFileURL": "gs://avf-credentials/avf-id-infrastructure-firebase-adminsdk-6xps8-b9173f2bfd.json",
+    "TableName": "ADSS_phone_number_avf_phone_id"
+  },
   "RapidProTestContactUUIDs": [
     "6f251195-5889-437a-a8b5-ad74b8e4eb62",
     "ed65f87f-4805-42ad-9b66-27f34c81c4ff",
     "e5b3d475-4e73-41a0-80a2-b39b28aad89c",
     "856a55d8-9159-4970-bd22-ede3ae5f94e0"
-  ],
-  "RecoveryCSVURLs": [
-    "gs://avf-project-datasets/2019/ADSS/recovered_1_hormud.csv"
   ],
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},
