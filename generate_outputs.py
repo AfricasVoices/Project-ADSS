@@ -102,6 +102,20 @@ if __name__ == "__main__":
         log.debug(f"Loaded {len(messages)} messages")
         messages_datasets.append(messages)
 
+    recovery_datasets = []
+    if pipeline_configuration.recovery_csv_urls is None:
+        log.debug("Not loading any recovery datasets (because the pipeline configuration json does not contain the key "
+                  "'RecoveryCSVURLs')")
+    else:
+        log.info("Loading recovery datasets:")
+        for i, recovery_csv_url in enumerate(pipeline_configuration.recovery_csv_urls):
+            raw_recovery_path = f"{raw_data_dir}/{recovery_csv_url.split('/')[-1].split('.')[0]}.json"
+            log.info(f"Loading {raw_recovery_path}...")
+            with open(raw_recovery_path, "r") as f:
+                messages = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+            log.debug(f"Loaded {len(messages)} messages")
+            recovery_datasets.append(messages)
+
     log.info("Loading surveys datasets:")
     surveys_datasets = []
     for i, survey_flow_name in enumerate(pipeline_configuration.survey_flow_names):
@@ -117,7 +131,8 @@ if __name__ == "__main__":
     coalesced_surveys_datasets = []
     for dataset in surveys_datasets:
         coalesced_surveys_datasets.append(CombineRawDatasets.coalesce_traced_runs_by_key(user, dataset, "avf_phone_id"))
-    data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, coalesced_surveys_datasets)
+    data = CombineRawDatasets.combine_raw_datasets(
+        user, messages_datasets + recovery_datasets, coalesced_surveys_datasets)
 
     log.info("Translating Rapid Pro Keys...")
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
