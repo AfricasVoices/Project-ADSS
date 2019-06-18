@@ -9,7 +9,10 @@
       "DisplayText": "age",
       "StringValue": "age",
       "NumericValue": 1,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues":  [
+        "age"
+      ]
     },
     {
       "CodeID": "code-6774cedd",
@@ -17,7 +20,10 @@
       "DisplayText": "gender",
       "StringValue": "gender",
       "NumericValue": 2,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "gender"
+      ]
     },
     {
       "CodeID": "code-dda6e4b4",
@@ -25,7 +31,10 @@
       "DisplayText": "location",
       "StringValue": "location",
       "NumericValue": 3,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "location"
+      ]
     },
     {
       "CodeID": "code-c2ef3b7f",
@@ -33,7 +42,10 @@
       "DisplayText": "recently displaced",
       "StringValue": "recently displaced",
       "NumericValue": 4,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "recently displaced"
+      ]
     },
     {
       "CodeID": "code-cd9eeed9",
@@ -41,7 +53,10 @@
       "DisplayText": "idp camp",
       "StringValue": "idp camp",
       "NumericValue": 5,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "idp camp"
+      ]
     },
     {
       "CodeID": "code-87ec1cb8",
@@ -49,7 +64,11 @@
       "DisplayText": "hh language",
       "StringValue": "hh language",
       "NumericValue": 6,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "hh language",
+        "household language"
+      ]
     },
     {
       "CodeID": "code-9bd0f2b1",
@@ -89,7 +108,10 @@
       "DisplayText": "s02e01",
       "StringValue": "s02e01",
       "NumericValue": 11,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s02e01"
+      ]
     },
     {
       "CodeID": "code-93ae8d7f",
@@ -97,7 +119,10 @@
       "DisplayText": "s02e02",
       "StringValue": "s02e02",
       "NumericValue": 12,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s02e02"
+      ]
     },
     {
       "CodeID": "code-d321aaf7",
@@ -105,7 +130,10 @@
       "DisplayText": "s02e03",
       "StringValue": "s02e03",
       "NumericValue": 13,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s02e03"
+      ]
     },
     {
       "CodeID": "code-adc56730",
@@ -113,7 +141,10 @@
       "DisplayText": "s02e04",
       "StringValue": "s02e04",
       "NumericValue": 14,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e04"
+      ]
     },
     {
       "CodeID": "code-f216169d",
@@ -121,7 +152,10 @@
       "DisplayText": "s02e05",
       "StringValue": "s02e05",
       "NumericValue": 15,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e05"
+      ]
     },
     {
       "CodeID": "code-015a26ae",
@@ -129,7 +163,10 @@
       "DisplayText": "s02e06",
       "StringValue": "s02e06",
       "NumericValue": 16,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+       "MatchValues": [
+        "s02e06"
+      ]
     },
     {
       "CodeID": "code-NR-5e3eee23",
