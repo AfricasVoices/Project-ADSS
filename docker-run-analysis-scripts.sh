@@ -2,7 +2,8 @@
 
 set -e
 
-IMAGE_NAME=adss
+# TODO: Change back to adss before merging to master
+IMAGE_NAME=adss-analysis
 
 # Check that the correct number of arguments were provided.
 if [[ $# -ne 1 ]]; then
