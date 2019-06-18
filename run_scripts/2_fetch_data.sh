@@ -20,7 +20,7 @@ done
 
 if [[ $# -ne 4 ]]; then
     echo "Usage: ./2_fetch_raw_data.sh [--profile-cpu <cpu-profile-output-path>] <user> <google-cloud-credentials-file-path> <pipeline-configuration-file-path> <data-root>"
-    echo "Fetches all the raw data from Rapid Pro and from the Shaqadoon recovery CSVS, and converts to TracedData"
+    echo "Fetches all the raw data from Rapid Pro and from the Shaqadoon recovery CSVs, and converts to TracedData"
     exit
 fi
 
