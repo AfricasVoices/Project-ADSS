@@ -14,6 +14,13 @@
     "csap_s02_demog",
     "csap s02 evaluation"
   ],
+  "RecoveryCSVURLs": [
+    "gs://avf-project-datasets/2019/ADSS/recovered_1_hormud.csv"
+  ],
+  "PhoneNumberUuidTable": {
+    "FirebaseCredentialsFileURL": "gs://avf-credentials/avf-id-infrastructure-firebase-adminsdk-6xps8-b9173f2bfd.json",
+    "TableName": "ADSS_phone_number_avf_phone_id"
+  },
   "RapidProTestContactUUIDs": [
     "6f251195-5889-437a-a8b5-ad74b8e4eb62",
     "ed65f87f-4805-42ad-9b66-27f34c81c4ff",
@@ -22,6 +29,13 @@
   ],
   "RapidProKeyRemappings": [
     {"RapidProKey": "avf_phone_id", "PipelineKey": "uid"},
+
+    {"RapidProKey": "Rqa_S02E01 (Value) - csap_s02e01_activation", "PipelineKey": "rqa_s02e01_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E02 (Value) - csap_s02e02_activation", "PipelineKey": "rqa_s02e02_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E03 (Value) - csap_s02e03_activation", "PipelineKey": "rqa_s02e03_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E04 (Value) - csap_s02e04_activation", "PipelineKey": "rqa_s02e04_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E05 (Value) - csap_s02e05_activation", "PipelineKey": "rqa_s02e05_raw", "IsActivationMessage": true},
+    {"RapidProKey": "Rqa_S02E06 (Value) - csap_s02e06_activation", "PipelineKey": "rqa_s02e06_raw", "IsActivationMessage": true},
 
     {"RapidProKey": "Rqa_S02E01 (Run ID) - csap_s02e01_activation", "PipelineKey": "rqa_s02e01_run_id"},
     {"RapidProKey": "Rqa_S02E02 (Run ID) - csap_s02e02_activation", "PipelineKey": "rqa_s02e02_run_id"},
@@ -36,6 +50,10 @@
     {"RapidProKey": "Rqa_S02E04 (Time) - csap_s02e04_activation", "PipelineKey": "sent_on"},
     {"RapidProKey": "Rqa_S02E05 (Time) - csap_s02e05_activation", "PipelineKey": "sent_on"},
     {"RapidProKey": "Rqa_S02E06 (Time) - csap_s02e06_activation", "PipelineKey": "sent_on"},
+
+    {"RapidProKey": "message", "PipelineKey": "recovered_raw", "IsActivationMessage": true},
+    {"RapidProKey": "received_on", "PipelineKey": "sent_on"},
+    {"RapidProKey": "run_id", "PipelineKey": "recovered_run_id"},
 
     {"RapidProKey": "Gender (Value) - csap_demog", "PipelineKey": "gender_raw"},
     {"RapidProKey": "Gender (Time) - csap_demog", "PipelineKey": "gender_time"},
@@ -70,6 +88,9 @@
     {"RapidProKey": "Csap_Involvement (Value) - csap s02 evaluation", "PipelineKey": "involvement_raw"},
     {"RapidProKey": "Csap_Involvement (Time) - csap s02 evaluation", "PipelineKey": "involvement_time"}
   ],
+  "ProjectStartDate": "2019-02-17T00:00:00+03:00",
+  "ProjectEndDate": "2019-03-30T24:00:00+03:00",
+  "FilterTestMessages": true,
   "DriveUpload": {
     "DriveCredentialsFileURL": "gs://avf-credentials/pipeline-runner-service-acct-avf-data-core-64cc71459fe7.json",
     "ProductionUploadPath": "adss_analysis_outputs/csap_s02_production.csv",

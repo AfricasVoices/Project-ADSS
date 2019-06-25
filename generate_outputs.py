@@ -4,12 +4,13 @@ import os
 
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
-from core_data_modules.util import PhoneNumberUuidTable, IOUtils
+from core_data_modules.util import IOUtils
+from id_infrastructure.firestore_uuid_table import FirestoreUuidTable
 from storage.google_cloud import google_cloud_utils
 from storage.google_drive import drive_client_wrapper
 
 from src import AnalysisFile, ApplyManualCodes, AutoCodeShowMessages, AutoCodeSurveys, CombineRawDatasets, \
-    ProductionFile, TranslateRapidProKeys
+    ProductionFile, TranslateRapidProKeys, WSCorrection
 from src.lib import PipelineConfiguration
 
 Logger.set_project_name("ADSS")
@@ -21,15 +22,12 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument("user", help="User launching this program")
-    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
-                        help="Path to the pipeline configuration json file"),
     parser.add_argument("google_cloud_credentials_file_path", metavar="google-cloud-credentials-file-path",
                         help="Path to a Google Cloud service account credentials file to use to access the "
                              "credentials bucket")
+    parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
+                        help="Path to the pipeline configuration json file")
 
-    parser.add_argument("phone_number_uuid_table_path", metavar="phone-number-uuid-table-path",
-                        help="JSON file containing the phone number <-> UUID lookup table for the messages/surveys "
-                             "datasets")
     parser.add_argument("raw_data_dir", metavar="raw-data-dir",
                         help="Path to a directory containing the raw data files exported by fetch_raw_data.py")
     parser.add_argument("prev_coded_dir_path", metavar="prev-coded-dir-path",
@@ -62,7 +60,6 @@ if __name__ == "__main__":
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     google_cloud_credentials_file_path = args.google_cloud_credentials_file_path
 
-    phone_number_uuid_table_path = args.phone_number_uuid_table_path
     raw_data_dir = args.raw_data_dir
     prev_coded_dir_path = args.prev_coded_dir_path
 
@@ -78,17 +75,24 @@ if __name__ == "__main__":
     with open(pipeline_configuration_file_path) as f:
         pipeline_configuration = PipelineConfiguration.from_configuration_file(f)
 
+    log.info("Downloading Firestore Uuid Table credentials...")
+    firestore_uuid_table_credentials = json.loads(google_cloud_utils.download_blob_to_string(
+        google_cloud_credentials_file_path,
+        pipeline_configuration.phone_number_uuid_table.firebase_credentials_file_url
+    ))
+    phone_number_uuid_table = FirestoreUuidTable(
+        pipeline_configuration.phone_number_uuid_table.table_name,
+        firestore_uuid_table_credentials,
+        "avf-phone-uuid-"
+    )
+
     if pipeline_configuration.drive_upload is not None:
         log.info(f"Downloading Google Drive service account credentials...")
         credentials_info = json.loads(google_cloud_utils.download_blob_to_string(
             google_cloud_credentials_file_path, pipeline_configuration.drive_upload.drive_credentials_file_url))
         drive_client_wrapper.init_client_from_info(credentials_info)
 
-    log.info("Loading Phone Number <-> UUID Table...")
-    with open(phone_number_uuid_table_path, "r") as f:
-        phone_number_uuid_table = PhoneNumberUuidTable.load(f)
-
-    log.info("Loading messages datasets:")
+    # Load messages
     messages_datasets = []
     for i, activation_flow_name in enumerate(pipeline_configuration.activation_flow_names):
         raw_activation_path = f"{raw_data_dir}/{activation_flow_name}.json"
@@ -97,6 +101,20 @@ if __name__ == "__main__":
             messages = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
         log.debug(f"Loaded {len(messages)} messages")
         messages_datasets.append(messages)
+
+    recovery_datasets = []
+    if pipeline_configuration.recovery_csv_urls is None:
+        log.debug("Not loading any recovery datasets (because the pipeline configuration json does not contain the key "
+                  "'RecoveryCSVURLs')")
+    else:
+        log.info("Loading recovery datasets:")
+        for i, recovery_csv_url in enumerate(pipeline_configuration.recovery_csv_urls):
+            raw_recovery_path = f"{raw_data_dir}/{recovery_csv_url.split('/')[-1].split('.')[0]}.json"
+            log.info(f"Loading {raw_recovery_path}...")
+            with open(raw_recovery_path, "r") as f:
+                messages = TracedDataJsonIO.import_json_to_traced_data_iterable(f)
+            log.debug(f"Loaded {len(messages)} messages")
+            recovery_datasets.append(messages)
 
     log.info("Loading surveys datasets:")
     surveys_datasets = []
@@ -113,13 +131,17 @@ if __name__ == "__main__":
     coalesced_surveys_datasets = []
     for dataset in surveys_datasets:
         coalesced_surveys_datasets.append(CombineRawDatasets.coalesce_traced_runs_by_key(user, dataset, "avf_phone_id"))
-    data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, coalesced_surveys_datasets)
+    data = CombineRawDatasets.combine_raw_datasets(
+        user, messages_datasets + recovery_datasets, coalesced_surveys_datasets)
 
     log.info("Translating Rapid Pro Keys...")
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, pipeline_configuration, prev_coded_dir_path)
 
+    log.info("Redirecting WS messages...")
+    data = WSCorrection.move_wrong_scheme_messages(user, data, prev_coded_dir_path)
+
     log.info("Auto Coding Messages...")
-    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
+    data = AutoCodeShowMessages.auto_code_show_messages(user, data, pipeline_configuration, icr_output_dir, coded_dir_path)
 
     log.info("Exporting production CSV...")
     data = ProductionFile.generate(data, production_csv_output_path)

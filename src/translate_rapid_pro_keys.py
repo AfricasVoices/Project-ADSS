@@ -1,25 +1,17 @@
 from datetime import datetime
 
 import pytz
+from core_data_modules.logging import Logger
 from core_data_modules.traced_data import Metadata
 from core_data_modules.util import TimeUtils
 from dateutil.parser import isoparse
 
+log = Logger(__name__)
+
 
 class TranslateRapidProKeys(object):
-    # Map from Rapid Pro Key to Pipeline Key
-    # TODO: Move to Pipeline Configuration JSON
-    SHOW_MAP = {
-        "Rqa_S02E01 (Value) - csap_s02e01_activation": "rqa_s02e01_raw",
-        "Rqa_S02E02 (Value) - csap_s02e02_activation": "rqa_s02e02_raw",
-        "Rqa_S02E03 (Value) - csap_s02e03_activation": "rqa_s02e03_raw",
-        "Rqa_S02E04 (Value) - csap_s02e04_activation": "rqa_s02e04_raw",
-        "Rqa_S02E05 (Value) - csap_s02e05_activation": "rqa_s02e05_raw",
-        "Rqa_S02E06 (Value) - csap_s02e06_activation": "rqa_s02e06_raw",
-    }
-
     @classmethod
-    def set_show_ids(cls, user, data, show_map):
+    def set_show_ids(cls, user, data, pipeline_configuration):
         """
         Sets a show pipeline key for each message, using the presence of Rapid Pro value keys to determine which
         show each message belongs to.
@@ -28,17 +20,20 @@ class TranslateRapidProKeys(object):
         :type user: str
         :param data: TracedData objects to set the show ids of.
         :type data: iterable of TracedData
-        :param show_map: Dictionary of Rapid Pro value key to pipeline key.
-        :type show_map: dict of str -> str
+        :param pipeline_configuration: Pipeline configuration.
+        :type pipeline_configuration: PipelineConfiguration
         """
         for td in data:
             show_dict = dict()
 
-            for rapid_pro_key, pipeline_key in show_map.items():
-                if rapid_pro_key in td:
+            for remapping in pipeline_configuration.rapid_pro_key_remappings:
+                if not remapping.is_activation_message:
+                    continue
+
+                if remapping.rapid_pro_key in td:
                     assert "rqa_message" not in show_dict
-                    show_dict["rqa_message"] = td[rapid_pro_key]
-                    show_dict["show_pipeline_key"] = pipeline_key
+                    show_dict["rqa_message"] = td[remapping.rapid_pro_key]
+                    show_dict["show_pipeline_key"] = remapping.pipeline_key
 
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
@@ -74,8 +69,14 @@ class TranslateRapidProKeys(object):
         if range_end is None:
             range_end = pytz.utc.localize(datetime.max)
 
+        log.info(f"Remapping messages in time range {range_start.isoformat()} to {range_end.isoformat()} "
+                 f"to show {show_pipeline_key_to_remap_to}...")
+
+        remapped_count = 0
         for td in data:
             if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
+                remapped_count += 1
+
                 remapped = {
                     "show_pipeline_key": show_pipeline_key_to_remap_to
                 }
@@ -84,6 +85,8 @@ class TranslateRapidProKeys(object):
 
                 td.append_data(remapped,
                                Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+        log.info(f"Remapped {remapped_count} messages to show {show_pipeline_key_to_remap_to}")
 
     @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):
@@ -98,8 +101,17 @@ class TranslateRapidProKeys(object):
         :param coda_input_dir: Directory to read coded coda files from.
         :type coda_input_dir: str
         """
-        # No implementation needed yet, because no flow is yet to go wrong in production.
-        pass
+        # Correct week 1 and 2 messages recovered from the Hormud/Shaqadoon SSL certificate expiration issue
+        cls._remap_radio_show_by_time_range(
+            user, data, "received_on", "rqa_s02e01_raw",
+            isoparse("2019-02-19T13:48:00+03:00"),
+            isoparse("2019-02-23T24:00:00+03:00")
+        )
+        cls._remap_radio_show_by_time_range(
+            user, data, "received_on", "rqa_s02e02_raw",
+            isoparse("2019-02-24T00:00:00+03:00"),
+            isoparse("2019-02-24T17:24:00+03:00")
+        )
 
     @classmethod
     def remap_key_names(cls, user, data, pipeline_configuration):
@@ -117,6 +129,9 @@ class TranslateRapidProKeys(object):
             remapped = dict()
                
             for remapping in pipeline_configuration.rapid_pro_key_remappings:
+                if remapping.is_activation_message:
+                    continue
+
                 old_key = remapping.rapid_pro_key
                 new_key = remapping.pipeline_key
                 
@@ -157,7 +172,7 @@ class TranslateRapidProKeys(object):
         # Set the show pipeline key for each message, using the presence of Rapid Pro value keys in the TracedData.
         # These are necessary in order to be able to remap radio shows and key names separately (because data
         # can't be 'deleted' from TracedData).
-        cls.set_show_ids(user, data, cls.SHOW_MAP)
+        cls.set_show_ids(user, data, pipeline_configuration)
 
         # Move rqa messages which ended up in the wrong flow to the correct one.
         cls.remap_radio_shows(user, data, coda_input_dir)

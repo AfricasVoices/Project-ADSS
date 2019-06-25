@@ -40,17 +40,20 @@ class AutoCodeShowMessages(object):
                       f"of {total_messages_count} total")
 
     @classmethod
-    def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
+    def auto_code_show_messages(cls, user, data, pipeline_configuration, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        if not PipelineConfiguration.DEV_MODE:
+        if pipeline_configuration.filter_test_messages:
             data = MessageFilters.filter_test_messages(data)
+        else:
+            log.debug("Not filtering out test messages (because the pipeline configuration json key "
+                      "'FilterTestMessages' was set to false)")
 
         # Filter for runs which don't contain a response to any week's question
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
 
         # Filter out runs sent outwith the project start and end dates
         data = MessageFilters.filter_time_range(
-            data, cls.SENT_ON_KEY, PipelineConfiguration.PROJECT_START_DATE, PipelineConfiguration.PROJECT_END_DATE)
+            data, cls.SENT_ON_KEY, pipeline_configuration.project_start_date, pipeline_configuration.project_end_date)
 
         # Tag messages which are noise as being noise
         for td in data:
@@ -61,7 +64,8 @@ class AutoCodeShowMessages(object):
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
-        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY,
+                                  pipeline_configuration.project_start_date, pipeline_configuration.project_end_date)
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
