@@ -20,11 +20,11 @@ done
 
 
 # Check that the correct number of arguments were provided.
-if [[ $# -ne 12 ]]; then
+if [[ $# -ne 13 ]]; then
     echo "Usage: ./docker-run.sh
     [--profile-cpu <profile-output-path>]
     <user> <pipeline-configuration-file-path> <google-cloud-credentials-file-path> <phone-number-uuid-table-path>
-    <raw-data-dir> <prev-coded-dir> <json-output-path>
+    <raw-data-dir> <prev-coded-dir> <messages-json-output-path> <individuals-json-output-path>
     <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>"
     exit
 fi
@@ -36,12 +36,13 @@ GOOGLE_CLOUD_CREDENTIALS_FILE_PATH=$3
 INPUT_PHONE_UUID_TABLE=$4
 INPUT_RAW_DATA_DIR=$5
 PREV_CODED_DIR=$6
-OUTPUT_JSON=$7
-OUTPUT_ICR_DIR=$8
-OUTPUT_CODED_DIR=$9
-OUTPUT_MESSAGES_CSV=${10}
-OUTPUT_INDIVIDUALS_CSV=${11}
-OUTPUT_PRODUCTION_CSV=${12}
+OUTPUT_MESSAGES_JSON=$7
+OUTPUT_INDIVIDUALS_JSON=$8
+OUTPUT_ICR_DIR=$9
+OUTPUT_CODED_DIR=${10}
+OUTPUT_MESSAGES_CSV=${11}
+OUTPUT_INDIVIDUALS_CSV=${12}
+OUTPUT_PRODUCTION_CSV=${13}
 
 # Build an image for this pipeline stage.
 docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
@@ -55,7 +56,7 @@ CMD="pipenv run $PROFILE_CPU_CMD python -u generate_outputs.py \
     \"$USER\" /data/pipeline_configuration.json /credentials/google-cloud-credentials.json \
     /data/phone-number-uuid-table-input.json \
     /data/raw-data /data/prev-coded \
-    /data/output.json /data/output-icr /data/coded \
+    /data/output-messages.json /data/output-individuals.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
 "
 container="$(docker container create ${SYS_PTRACE_CAPABILITY} -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
@@ -79,8 +80,11 @@ fi
 docker start -a -i "$container"
 
 # Copy the output data back out of the container
-mkdir -p "$(dirname "$OUTPUT_JSON")"
-docker cp "$container:/data/output.json" "$OUTPUT_JSON"
+mkdir -p "$(dirname "$OUTPUT_MESSAGES_JSON")"
+docker cp "$container:/data/output-messages.json" "$OUTPUT_MESSAGES_JSON"
+
+mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_JSON")"
+docker cp "$container:/data/output-individuals.json" "$OUTPUT_INDIVIDUALS_JSON"
 
 mkdir -p "$OUTPUT_ICR_DIR"
 docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"

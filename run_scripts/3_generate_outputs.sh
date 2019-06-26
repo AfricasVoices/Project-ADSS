@@ -36,7 +36,7 @@ cd ..
 ./docker-run-generate-outputs.sh ${CPU_PROFILE_ARG} \
     "$USER" "$PIPELINE_CONFIGURATION" "$GOOGLE_CLOUD_CREDENTIALS_FILE_PATH" "$DATA_ROOT/UUIDs/phone_uuids.json" \
     "$DATA_ROOT/Raw Data" "$DATA_ROOT/Coded Coda Files/" \
-    "$DATA_ROOT/Outputs/traced_data.json" \
+    "$DATA_ROOT/Outputs/messages_traced_data.json" "$DATA_ROOT/Outputs/individuals_traced_data.json"  \
     "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
     "$DATA_ROOT/Outputs/csap_s02_messages.csv" "$DATA_ROOT/Outputs/csap_s02_individuals.csv" \
     "$DATA_ROOT/Outputs/csap_s02_production.csv"
