@@ -54,7 +54,7 @@ if __name__ == "__main__":
     chart = alt.Chart(
         alt.Data(values=[{"show": k, "count": v} for k, v in messages_per_show.items()])
     ).mark_bar().encode(
-        x=alt.X("show:O", title="Show"),
+        x=alt.X("show:N", title="Show", sort=list(messages_per_show.keys())),
         y=alt.Y("count:Q", title="Number of Messages")
     ).properties(
         title="Messages per Show"
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     chart = alt.Chart(
         alt.Data(values=[{"show": k, "count": v} for k, v in individuals_per_show.items()])
     ).mark_bar().encode(
-        x=alt.X("show:O", title="Show"),
+        x=alt.X("show:N", title="Show", sort=list(individuals_per_show.keys())),
         y=alt.Y("count:Q", title="Number of Individuals")
     ).properties(
         title="Individuals per Show"
