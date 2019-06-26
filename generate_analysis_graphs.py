@@ -83,3 +83,24 @@ if __name__ == "__main__":
     chart.save(f"{output_dir}/individuals_per_show.html")
     
     # Plot the per-season distribution of responses for each survey question, per individual
+    for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+        if plan.analysis_file_key is None:
+            continue
+
+        log.info(f"Graphing the distribution of codes for {plan.analysis_file_key}...")
+        label_counts = OrderedDict()
+        for code in plan.code_scheme.codes:
+            label_counts[code.string_value] = 0
+
+        for ind in individuals:
+            label_counts[ind[plan.analysis_file_key]] += 1
+
+        chart = alt.Chart(
+            alt.Data(values=[{"label": k, "count": v} for k, v in label_counts.items()])
+        ).mark_bar().encode(
+            x=alt.X("label:N", title="Label", sort=list(label_counts.keys())),
+            y=alt.Y("count:Q", title="Number of Individuals")
+        ).properties(
+            title=f"Season Distribution: {plan.analysis_file_key}"
+        )
+        chart.save(f"{output_dir}/season_distribution_{plan.analysis_file_key}.html")
