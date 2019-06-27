@@ -1,7 +1,7 @@
 import argparse
 from collections import OrderedDict
 
-import altair as alt
+import altair
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
 
@@ -51,11 +51,11 @@ if __name__ == "__main__":
             if msg.get(plan.raw_field, "") != "":
                 messages_per_show[plan.raw_field] += 1
 
-    chart = alt.Chart(
-        alt.Data(values=[{"show": k, "count": v} for k, v in messages_per_show.items()])
+    chart = altair.Chart(
+        altair.Data(values=[{"show": k, "count": v} for k, v in messages_per_show.items()])
     ).mark_bar().encode(
-        x=alt.X("show:N", title="Show", sort=list(messages_per_show.keys())),
-        y=alt.Y("count:Q", title="Number of Messages")
+        x=altair.X("show:N", title="Show", sort=list(messages_per_show.keys())),
+        y=altair.Y("count:Q", title="Number of Messages")
     ).properties(
         title="Messages per Show"
     )
@@ -72,11 +72,11 @@ if __name__ == "__main__":
             if ind.get(plan.raw_field, "") != "":
                 individuals_per_show[plan.raw_field] += 1
 
-    chart = alt.Chart(
-        alt.Data(values=[{"show": k, "count": v} for k, v in individuals_per_show.items()])
+    chart = altair.Chart(
+        altair.Data(values=[{"show": k, "count": v} for k, v in individuals_per_show.items()])
     ).mark_bar().encode(
-        x=alt.X("show:N", title="Show", sort=list(individuals_per_show.keys())),
-        y=alt.Y("count:Q", title="Number of Individuals")
+        x=altair.X("show:N", title="Show", sort=list(individuals_per_show.keys())),
+        y=altair.Y("count:Q", title="Number of Individuals")
     ).properties(
         title="Individuals per Show"
     )
@@ -95,11 +95,11 @@ if __name__ == "__main__":
         for ind in individuals:
             label_counts[ind[plan.analysis_file_key]] += 1
 
-        chart = alt.Chart(
-            alt.Data(values=[{"label": k, "count": v} for k, v in label_counts.items()])
+        chart = altair.Chart(
+            altair.Data(values=[{"label": k, "count": v} for k, v in label_counts.items()])
         ).mark_bar().encode(
-            x=alt.X("label:N", title="Label", sort=list(label_counts.keys())),
-            y=alt.Y("count:Q", title="Number of Individuals")
+            x=altair.X("label:N", title="Label", sort=list(label_counts.keys())),
+            y=altair.Y("count:Q", title="Number of Individuals")
         ).properties(
             title=f"Season Distribution: {plan.analysis_file_key}"
         )
