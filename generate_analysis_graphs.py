@@ -11,6 +11,8 @@ from src.lib import PipelineConfiguration
 Logger.set_project_name("ADSS")
 log = Logger(__name__)
 
+IMG_SCALE_FACTOR = 10  # Increase this to increase the resolution of the outputted PNGs
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generates graphs for analysis")
 
@@ -63,6 +65,7 @@ if __name__ == "__main__":
         title="Messages per Show"
     )
     chart.save(f"{output_dir}/messages_per_show.html")
+    chart.save(f"{output_dir}/messages_per_show.png", scale_factor=IMG_SCALE_FACTOR)
 
     # Compute the number of individuals in each show and graph
     log.info(f"Graphing the number of individuals who responded to each show...")
@@ -84,7 +87,8 @@ if __name__ == "__main__":
         title="Individuals per Show"
     )
     chart.save(f"{output_dir}/individuals_per_show.html")
-    
+    chart.save(f"{output_dir}/individuals_per_show.png", scale_factor=IMG_SCALE_FACTOR)
+
     # Plot the per-season distribution of responses for each survey question, per individual
     for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
         if plan.analysis_file_key is None:
@@ -107,3 +111,4 @@ if __name__ == "__main__":
             title=f"Season Distribution: {plan.analysis_file_key}"
         )
         chart.save(f"{output_dir}/season_distribution_{plan.analysis_file_key}.html")
+        chart.save(f"{output_dir}/season_distribution_{plan.analysis_file_key}.png", scale_factor=IMG_SCALE_FACTOR)
