@@ -4,6 +4,7 @@ from collections import OrderedDict
 import altair
 from core_data_modules.logging import Logger
 from core_data_modules.traced_data.io import TracedDataJsonIO
+from core_data_modules.util import IOUtils
 
 from src.lib import PipelineConfiguration
 
@@ -27,6 +28,8 @@ if __name__ == "__main__":
     messages_json_input_path = args.messages_json_input_path
     individuals_json_input_path = args.individuals_json_input_path
     output_dir = args.output_dir
+
+    IOUtils.ensure_dirs_exist(output_dir)
 
     # Read the messages dataset
     log.info(f"Loading the messages dataset from {messages_json_input_path}...")
