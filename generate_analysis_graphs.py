@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     for msg in messages:
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            if msg.get(plan.raw_field, "") != "":
+            if msg.get(plan.raw_field, "") != "" and msg["consent_withdrawn"] == "false":
                 messages_per_show[plan.raw_field] += 1
 
     chart = altair.Chart(
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     for ind in individuals:
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            if ind.get(plan.raw_field, "") != "":
+            if ind.get(plan.raw_field, "") != "" and ind["consent_withdrawn"] == "false":
                 individuals_per_show[plan.raw_field] += 1
 
     chart = altair.Chart(
